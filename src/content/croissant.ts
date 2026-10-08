@@ -164,7 +164,7 @@ export const croissant = {
   final: {
     title: 'Lass uns gemeinsam frühstücken.',
     textHtml:
-      'Wir nehmen uns 30 Minuten Zeit für ein virtuelles Frühstück. Wir lernen uns kennen, deine Marke und alles, was sie besonders macht. Wir stellen Fragen, hören zu und schauen gemeinsam, wo noch ein bisschen mehr drinsteckt. Ganz entspannt und ohne Verpflichtungen. Wir freuen uns auf dich!',
+      'Nehmen wir uns 30 Minuten Zeit für ein virtuelles Frühstück. Wir lernen uns kennen, deine Marke und alles, was sie besonders macht. Wir stellen Fragen, hören zu und schauen gemeinsam, wo noch ein bisschen mehr drinsteckt. Ganz entspannt und ohne Verpflichtungen. Wir freuen uns auf dich!',
   },
 
   cta: {
