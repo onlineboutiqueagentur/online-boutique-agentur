@@ -79,7 +79,7 @@ const jsonLd = {
     <!-- 2 · Einstieg: Warum ein Croissant … (Header mit vollflächigem Bild) -->
     <section class="c-why1" id="warum" aria-labelledby="c-why1">
       <div class="c-why1__media">
-        <Picture src={img.cafe.src} alt="" widths={[img.cafe.src.width]} sizes="100vw" formats={['avif', 'webp']} loading="eager" fetchpriority="high" decoding="async" />
+        <Picture src={img.header.src} alt="" widths={[828, 1400, img.header.src.width]} sizes="100vw" formats={['avif', 'webp']} loading="eager" fetchpriority="high" decoding="async" />
       </div>
       <div class="container--text c-why1__inner parallax-hero">
         <h1 class="c-why1__title" id="c-why1">
@@ -538,7 +538,7 @@ const jsonLd = {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 50% 35%;
+    object-position: 55% 50%;
   }
   @media (min-width: 64rem) and (hover: hover) and (prefers-reduced-motion: no-preference) {
     .c-why1__media {
