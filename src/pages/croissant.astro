@@ -248,6 +248,7 @@ const jsonLd = {
           </div>
           <input type="hidden" name="ts" value="" data-ts />
           <input type="hidden" name="quelle" value="croissant" />
+          <input type="hidden" name="quiz" value="" data-quiz-field />
           <input type="hidden" name="design" value="" data-design-field />
 
           <p class="form__privacy">Mit dem Absenden werden deine Angaben zur Bearbeitung deiner Anfrage verwendet. Mehr dazu in der <a href="/datenschutz/">Datenschutzerklärung</a>.</p>
@@ -289,8 +290,12 @@ const jsonLd = {
     const body = text.querySelector<HTMLElement>('[data-quiz-body]')!;
     const answers: { from: number; title: string; text: string }[] = JSON.parse(text.dataset.answers || '[]');
     let current: (typeof answers)[number] | null = null;
+    const field = document.querySelector<HTMLInputElement>('[data-quiz-field]');
     const update = () => {
-      const n = buttons.filter((b) => b.getAttribute('aria-pressed') === 'true').length;
+      const pressed = buttons.filter((b) => b.getAttribute('aria-pressed') === 'true');
+      const n = pressed.length;
+      // Angetippte Aussagen gehen mit der Einladung mit (Mail + Admin-Übersicht)
+      if (field) field.value = pressed.map((b) => b.textContent?.trim() ?? '').join('\n');
       let next: (typeof answers)[number] | null = null;
       for (const a of answers) if (n >= a.from) next = a;
       quiz.classList.add('is-touched');

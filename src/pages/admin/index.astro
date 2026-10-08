@@ -64,6 +64,10 @@ import '../../styles/base.css';
           <a class="anfrage__mail"></a>
           <a class="anfrage__tel"></a>
         </p>
+        <div class="anfrage__quiz" hidden>
+          <p class="anfrage__quiz-title"></p>
+          <ul role="list"></ul>
+        </div>
         <p class="anfrage__text"></p>
         <div class="anfrage__actions">
           <a class="btn btn--sm anfrage__reply">Antworten</a>
@@ -89,6 +93,7 @@ import '../../styles/base.css';
         quelle?: string;
         format?: string;
         webseite?: string;
+        quiz?: string[];
         wunschtermin?: string;
       }
 
@@ -157,6 +162,18 @@ import '../../styles/base.css';
             tel.href = `tel:${a.telefon.replace(/[^\d+]/g, '')}`;
             tel.textContent = a.telefon;
           } else tel.remove();
+
+          if (a.quiz?.length) {
+            const quiz = $('.anfrage__quiz', li);
+            quiz.hidden = false;
+            $('.anfrage__quiz-title', li).textContent = `🥐 Im Quiz angetippt (${a.quiz.length} von 6)`;
+            const ul = $('ul', quiz);
+            for (const q of a.quiz) {
+              const item = document.createElement('li');
+              item.textContent = q;
+              ul.append(item);
+            }
+          }
 
           const text = $('.anfrage__text', li);
           text.textContent = a.nachricht || '(keine Notizen)';
@@ -423,6 +440,15 @@ import '../../styles/base.css';
       }
       .anfrage__text {
         white-space: pre-line;
+      }
+      .anfrage__quiz {
+        font-size: 0.875rem;
+      }
+      .anfrage__quiz-title {
+        font-weight: 600;
+      }
+      .anfrage__quiz li::before {
+        content: '– ';
       }
       .anfrage__text.is-kurz {
         display: -webkit-box;

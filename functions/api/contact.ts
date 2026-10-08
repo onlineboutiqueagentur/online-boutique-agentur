@@ -23,7 +23,8 @@ import { sendSmtp } from '../../lib/smtp';
 const MIN_FILL_MS = 2500; // schneller ausgefüllt = sehr wahrscheinlich ein Bot
 const MAX_AGE_MS = 1000 * 60 * 60 * 24; // Formular älter als 24 h → neu laden
 const RATE_LIMIT = 5; // Anfragen pro Stunde und Absender
-const LIMITS = { name: 120, firma: 160, webseite: 200, email: 200, telefon: 40, nachricht: 5000, wunschtermin: 200 } as const;
+const QUIZ_MAX = 6; // so viele Aussagen hat das Quiz
+const LIMITS = { quizAussage: 200, name: 120, firma: 160, webseite: 200, email: 200, telefon: 40, nachricht: 5000, wunschtermin: 200 } as const;
 /** Croissant-Einladung: erlaubte Antworten auf „Wo frühstücken wir?“ */
 const FORMATE: Record<string, string> = { 'bei-uns': 'Bei euch in Pasching', 'bei-mir': 'Beim Kunden', virtuell: 'Virtuell' };
 const EMAIL_RE = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[a-z]{2,}$/i;
@@ -68,6 +69,12 @@ async function sendMail(env: Env, a: Anfrage, adminUrl: string): Promise<boolean
     a.telefon ? `Tel.: ${a.telefon}` : null,
     croissant ? null : `Design: ${a.design === 'louder' ? 'Louder' : a.design === 'minimal' ? 'Minimal' : 'unbekannt'}`,
     croissant ? `Wann passt es: ${a.wunschtermin || '–'}` : null,
+    croissant ? '' : null,
+    croissant
+      ? a.quiz?.length
+        ? `Im Quiz angetippt (${a.quiz.length} von ${QUIZ_MAX}):\n${a.quiz.map((q) => `– ${q}`).join('\n')}`
+        : 'Im Quiz angetippt: nichts'
+      : null,
     '',
     a.nachricht || '(keine Notizen)',
     '',
@@ -176,6 +183,11 @@ export const onRequestPost = async ({ request, env }: Context): Promise<Response
           quelle: 'croissant' as const,
           format: FORMATE[String(form.get('format'))] ? String(form.get('format')) : undefined,
           wunschtermin: clean(form.get('when'), LIMITS.wunschtermin),
+          quiz: String(form.get('quiz') ?? '')
+            .split('\n')
+            .map((q) => clean(q, LIMITS.quizAussage))
+            .filter(Boolean)
+            .slice(0, QUIZ_MAX),
         }
       : { quelle: 'website' as const }),
     mail: 'nicht eingerichtet',
