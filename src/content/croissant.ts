@@ -56,7 +56,7 @@ export const croissant = {
       titleSecond: 'Jetzt weißt du auch warum.',
     },
     web: {
-      title: 'Hast du Gusto auf ein Croissant bekommen?',
+      title: 'Na, hast du Gusto auf ein Croissant bekommen?',
     },
     textHtml: 'Wir laden dich zu einem kostenlosen 30-Minuten-Gespräch ein – ein <em>ganz unkompliziertes, virtuelles Frühstück</em>.',
     tagline: '30 Minuten. Ein paar Fragen. Ein frischer Blick auf deine Marke.',
