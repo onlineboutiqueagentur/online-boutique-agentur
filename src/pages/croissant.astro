@@ -205,7 +205,6 @@ const jsonLd = {
         </figure>
         <h2 class="heading c-h2 c-final__title" id="c-final">{c.final.title}</h2>
         <p class="lead-text" set:html={c.final.textHtml} />
-        <p class="c-signature c-final__signature">{c.why.signature}</p>
       </div>
 
       <form class="form c-form" action="/api/contact" method="post" novalidate data-contact-form>
@@ -1246,9 +1245,6 @@ const jsonLd = {
     object-position: 63% 30%;
     transform: scale(1.45);
     transform-origin: 63% 32%;
-  }
-  .c-final__signature {
-    margin-top: 0.75rem;
   }
   .c-final__head .lead-text {
     max-width: 40rem;
