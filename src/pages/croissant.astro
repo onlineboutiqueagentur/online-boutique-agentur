@@ -200,8 +200,12 @@ const jsonLd = {
     <section class="c-final" id="einladung" aria-labelledby="c-final">
       <div class="v-line" aria-hidden="true"></div>
       <div class="container--text c-final__head">
+        <figure class="c-team reveal">
+          <Picture src={img.team.src} alt={img.team.alt} widths={[520, 1040]} sizes="16rem" formats={['avif', 'webp']} loading="lazy" decoding="async" />
+        </figure>
         <h2 class="heading c-h2 c-final__title" id="c-final">{c.final.title}</h2>
         <p class="lead-text" set:html={c.final.textHtml} />
+        <p class="c-signature c-final__signature">{c.why.signature}</p>
       </div>
 
       <form class="form c-form" action="/api/contact" method="post" novalidate data-contact-form>
@@ -1227,6 +1231,24 @@ const jsonLd = {
   }
   .c-final__head {
     text-align: center;
+  }
+  .c-team {
+    width: 11rem;
+    aspect-ratio: 1;
+    margin: 0 auto 1.75rem;
+    overflow: hidden;
+    border-radius: 50%;
+  }
+  .c-team :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 63% 30%;
+    transform: scale(1.45);
+    transform-origin: 63% 32%;
+  }
+  .c-final__signature {
+    margin-top: 0.75rem;
   }
   .c-final__head .lead-text {
     max-width: 40rem;

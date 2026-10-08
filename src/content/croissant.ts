@@ -7,6 +7,7 @@
 import cafeImg from '../assets/images/croissant/croissant-cafe-la-vie-est-belle.jpg';
 import zutatenImg from '../assets/images/croissant/croissant-zutaten-einer-marke.jpg';
 import verpackungImg from '../assets/images/croissant/boutique-croissant-verpackung.jpg';
+import teamImg from '../assets/images/shared/pia-nina-online-marketing-agentur-oberoesterreich.jpg';
 import fruehstueckImg from '../assets/images/croissant/franzoesisches-fruehstueck-kaffee-croissant.jpg';
 
 /** Bilder der Croissant-Seite (Zwischenlösung aus dem Moodboard – später durch echte Fotos ersetzen). */
@@ -22,6 +23,10 @@ export const croissantImages = {
   verpackung: {
     src: verpackungImg,
     alt: 'Croissant in einer Papierverpackung mit dem Aufdruck „The Boutique Croissant – A little extra for your brand“ und einem QR-Code',
+  },
+  team: {
+    src: teamImg,
+    alt: 'Nina und Pia, die Gründerinnen der Online Boutique Agentur, lachend in hellen Blazern vor einem Leinenvorhang',
   },
   fruehstueck: {
     src: fruehstueckImg,
