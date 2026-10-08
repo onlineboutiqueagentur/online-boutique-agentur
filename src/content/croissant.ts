@@ -62,7 +62,7 @@ export const croissant = {
     textHtml: 'Wir laden dich zu einem kostenlosen 30-Minuten-Gespräch ein – ein <em>ganz unkompliziertes, virtuelles Frühstück</em>.',
     tagline: '30 Minuten. Ein paar Fragen. Ein frischer Blick auf deine Marke.',
     steps: [
-      'Wir lernen dich kennen.',
+      'Wir lernen uns kennen.',
       'Du erzählst uns von deiner Marke.',
       'Wir stellen Fragen.',
       'Wir geben dir erste Gedanken mit.',

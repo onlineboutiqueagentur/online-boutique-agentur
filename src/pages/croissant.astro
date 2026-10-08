@@ -171,6 +171,7 @@ const jsonLd = {
     </section>
 
     <!-- 1 · Hero -->
+    <div class="v-line" aria-hidden="true"></div>
     <section class="c-hero container" aria-labelledby="c-title">
       <div class="c-hero__art">
         <CroissantArt draw label="Feine Linienzeichnung eines Croissants" />
@@ -189,9 +190,6 @@ const jsonLd = {
             {c.cta.label}
           </a>
         </div>
-        <ul role="list" class="c-steps">
-          {c.hero.steps.map((step) => <li><CroissantArt mini class="c-steps__icon" />{step}</li>)}
-        </ul>
       </div>
     </section>
 
@@ -200,6 +198,9 @@ const jsonLd = {
       <div class="v-line" aria-hidden="true"></div>
       <div class="container--text c-final__head">
         <h2 class="heading c-h2 c-final__title" id="c-final">{c.final.title}</h2>
+        <ul role="list" class="c-steps">
+          {c.hero.steps.map((step) => <li><CroissantArt mini class="c-steps__icon" />{step}</li>)}
+        </ul>
         <p class="lead-text" set:html={c.final.textHtml} />
       </div>
 
@@ -425,7 +426,10 @@ const jsonLd = {
     text-wrap: balance;
   }
   .c-title em {
+    display: inline-block;
+    margin-top: 0.2em;
     font-style: italic;
+    font-size: 0.7em;
   }
   :global(:root[data-design='louder']) .c-title {
     font-family: var(--f-bold);
@@ -465,8 +469,10 @@ const jsonLd = {
   }
   .c-steps {
     display: grid;
+    justify-content: center;
     gap: 0.5rem;
-    margin-top: 0.5rem;
+    margin: 1.5rem 0;
+    text-align: left;
     font-size: 0.9375rem;
   }
   .c-steps li {
@@ -507,9 +513,14 @@ const jsonLd = {
       gap: clamp(2rem, 6vw, 5rem);
       padding-top: 2rem;
     }
+    .c-hero {
+      align-items: start;
+      min-height: 0;
+    }
     .c-hero__art {
       order: 2;
       width: 100%;
+      margin-top: var(--hero-art-shift, 0);
     }
   }
 
