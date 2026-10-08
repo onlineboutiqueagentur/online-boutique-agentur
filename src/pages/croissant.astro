@@ -262,10 +262,11 @@ const jsonLd = {
 
   <Footer />
 
-  <!-- Mobil: dezente Einladung am unteren Rand – erscheint nach dem Hero, verschwindet beim Formular -->
+  <!-- Sticky-Einladung am unteren Rand – erscheint nach dem Header, macht Platz, solange ein anderer Einladungs-Button oder das Formular zu sehen ist -->
   <a class="c-sticky btn btn--solid" href="#einladung" data-sticky-cta>
     <CroissantArt mini class="c-cta__icon" />
     {c.cta.label}
+    <span class="c-sticky__meta">· 30 Min · virtuell</span>
   </a>
 </Base>
 
@@ -307,20 +308,15 @@ const jsonLd = {
   });
 
   const sticky = document.querySelector<HTMLElement>('[data-sticky-cta]');
-  const hero = document.querySelector('.c-hero');
-  const invite = document.getElementById('einladung');
-  if (sticky && hero && invite) {
-    let heroVisible = true;
-    let inviteVisible = false;
-    const update = () => sticky.classList.toggle('is-visible', !heroVisible && !inviteVisible);
-    new IntersectionObserver(([e]) => {
-      heroVisible = e.isIntersecting;
+  const blockers = ['.c-why1', '[data-quiz-cta]', '.c-hero .c-cta', '#einladung'].map((sel) => document.querySelector(sel)).filter((el): el is Element => !!el);
+  if (sticky && blockers.length) {
+    const visible = new Set<Element>(blockers);
+    const update = () => sticky.classList.toggle('is-visible', visible.size === 0);
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) e.isIntersecting ? visible.add(e.target) : visible.delete(e.target);
       update();
-    }).observe(hero);
-    new IntersectionObserver(([e]) => {
-      inviteVisible = e.isIntersecting;
-      update();
-    }).observe(invite);
+    });
+    blockers.forEach((el) => io.observe(el));
   }
 </script>
 
@@ -1273,7 +1269,7 @@ const jsonLd = {
     transform: rotate(-12deg) scale(1.08);
   }
 
-  /* ---------- Mobil: Sticky-Einladung ---------- */
+  /* ---------- Sticky-Einladung ---------- */
   .c-sticky {
     position: fixed;
     white-space: nowrap;
@@ -1295,9 +1291,26 @@ const jsonLd = {
     translate: -50% 0;
     opacity: 1;
   }
+  .c-sticky__meta {
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+  @media (max-width: 30rem) {
+    .c-sticky__meta {
+      display: none;
+    }
+  }
+  @media (hover: hover) {
+    .c-sticky:hover :global(.c-cta__icon) {
+      rotate: -12deg;
+    }
+  }
+  .c-sticky :global(.c-cta__icon) {
+    transition: rotate 0.3s var(--ease);
+  }
   @media (min-width: 48rem) {
     .c-sticky {
-      display: none;
+      bottom: 1.5rem;
     }
   }
 </style>
