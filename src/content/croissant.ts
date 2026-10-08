@@ -142,17 +142,17 @@ export const croissant = {
     answers: [
       {
         from: 1,
-        title: '„Na, da hat wohl jemand ein kleines Bauchgefühl …“',
+        title: 'Na, da hat wohl jemand ein kleines Bauchgefühl …',
         text: "Und das täuscht selten. Vielleicht fehlt deiner Marke nur eine Kleinigkeit, damit sie sich wieder richtig nach dir anfühlt. Finden wir's gemeinsam heraus?",
       },
       {
         from: 3,
-        title: '„Du spürst es also auch. Deine Marke kann mehr!“',
+        title: 'Du spürst es also auch. Deine Marke kann mehr!',
         text: 'Deine Marke könnte ein bisschen frischen Wind vertragen. Und manchmal braucht es dafür gar nicht viel. Nur den richtigen Blick von außen – und ein paar richtig gute Ideen.',
       },
       {
         from: 5,
-        title: '„Okay, wir müssen reden. 🥐“',
+        title: 'Okay, wir müssen reden. 🥐',
         text: 'Deine Marke und du – da geht noch was! Höchste Zeit für das gewisse Extra. Und keine Sorge: Wir haben schon ein paar Ideen, wie aus einem „Eh ganz okay“ ein „Wow, das bin ich!“ werden kann.',
       },
     ],
