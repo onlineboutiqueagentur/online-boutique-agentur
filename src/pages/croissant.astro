@@ -126,7 +126,7 @@ const jsonLd = {
     </section>
 
     <!-- 5 · Sag mal, spürst du das auch? -->
-    <section class="c-block" aria-labelledby="c-feel">
+    <section class="c-block c-feel-block" aria-labelledby="c-feel">
       <SectionHead id="c-feel" titleHtml={c.feel.title} textHtml={c.feel.textHtml} />
       <p class="c-feel__ask container--text">{c.feel.ask}</p>
       <div class="c-quiz container--text" data-quiz>
@@ -659,12 +659,15 @@ const jsonLd = {
   .section-head :global(b) {
     font-weight: var(--w-bold);
   }
+  .c-feel-block :global(.section-head__title) {
+    font-size: calc(var(--fs-h2) * 1.35);
+  }
   .c-feel__ask {
     margin-top: clamp(3.5rem, 7vw, 5rem);
     text-align: center;
     font-family: var(--f-display);
     font-style: italic;
-    font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem);
+    font-size: var(--fs-h2);
     color: var(--c-heading);
   }
   .c-feel {
