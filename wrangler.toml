@@ -1,0 +1,20 @@
+# Cloudflare Pages – Online Boutique Agentur
+# Deploy: npm run build && npx wrangler pages deploy dist --project-name online-boutique-agentur --branch main
+# Geheime Werte (ADMIN_USER, ADMIN_PASSWORD, SESSION_SECRET, SMTP_PASSWORD) liegen NICHT hier,
+# sondern als Secrets bei Cloudflare: npx wrangler pages secret put NAME --project-name online-boutique-agentur
+name = "online-boutique-agentur"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-09-01"
+
+# Speicher für die Kontaktanfragen (Übersicht unter /admin) – eigener Namespace, getrennt von anderen Projekten
+[[kv_namespaces]]
+binding = "ANFRAGEN"
+id = "52b908f2afee4c22818c1dbb41794053"
+
+# Nicht geheime Einstellungen
+[vars]
+MAIL_TO = "hello@online-boutique-agentur.at"
+# Versand über das Postfach bei World4You – Port 587 mit STARTTLS (Passwort als Secret SMTP_PASSWORD)
+SMTP_USER = "hello@online-boutique-agentur.at"
+SMTP_HOST = "smtp.world4you.com"
+SMTP_PORT = "587"
