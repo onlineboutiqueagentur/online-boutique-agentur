@@ -140,9 +140,21 @@ export const croissant = {
     empty: 'Deine Antwort erscheint hier.',
     /** Antwort je nach Anzahl der angeklickten Fragen (ab … Fragen) */
     answers: [
-      { from: 1, text: 'Schon ein kleines Ja zeigt: Da steckt mehr in deiner Marke. Lass uns bei einem Croissant darüber reden, was ihr noch fehlt.' },
-      { from: 3, text: 'Du spürst es also auch. Deine Marke kann mehr – und genau dafür sind wir da. Komm auf einen Kaffee vorbei, wir schauen sie uns gemeinsam an.' },
-      { from: 5, text: 'Dann wird es Zeit für dein kleines Extra. Komm, wir machen das jetzt richtig schön.' },
+      {
+        from: 1,
+        title: '„Na, da hat wohl jemand ein kleines Bauchgefühl …“',
+        text: "Und das täuscht selten. Vielleicht fehlt deiner Marke nur eine Kleinigkeit, damit sie sich wieder richtig nach dir anfühlt. Finden wir's gemeinsam heraus?",
+      },
+      {
+        from: 3,
+        title: '„Du spürst es also auch. Deine Marke kann mehr!“',
+        text: 'Deine Marke könnte ein bisschen frischen Wind vertragen. Und manchmal braucht es dafür gar nicht viel. Nur den richtigen Blick von außen – und ein paar richtig gute Ideen.',
+      },
+      {
+        from: 5,
+        title: '„Okay, wir müssen reden. 🥐“',
+        text: 'Deine Marke und du – da geht noch was! Höchste Zeit für das gewisse Extra. Und keine Sorge: Wir haben schon ein paar Ideen, wie aus einem „Eh ganz okay“ ein „Wow, das bin ich!“ werden kann.',
+      },
     ],
     cta: 'Lass uns frühstücken',
   },
