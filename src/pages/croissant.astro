@@ -264,8 +264,8 @@ const jsonLd = {
 
   <!-- Sticky-Einladung am unteren Rand – erscheint nach dem Header, macht Platz, solange ein anderer Einladungs-Button oder das Formular zu sehen ist -->
   <a class="c-sticky" href="#einladung" aria-label={`${c.cta.label} – ${c.cta.meta}`} data-sticky-cta>
-    <span class="c-sticky__label" aria-hidden="true">{c.cta.label}</span>
     <span class="c-sticky__icon" aria-hidden="true"><CroissantArt mini /></span>
+    <span class="c-sticky__label" aria-hidden="true">Einladung</span>
   </a>
 </Base>
 
@@ -310,16 +310,7 @@ const jsonLd = {
   const blockers = ['.c-why1', '[data-quiz-cta]', '.c-hero .c-cta', '#einladung'].map((sel) => document.querySelector(sel)).filter((el): el is Element => !!el);
   if (sticky && blockers.length) {
     const visible = new Set<Element>(blockers);
-    let peeked = false;
-    const update = () => {
-      const show = visible.size === 0;
-      sticky.classList.toggle('is-visible', show);
-      if (show && !peeked) {
-        peeked = true;
-        sticky.classList.add('is-peek');
-        setTimeout(() => sticky.classList.remove('is-peek'), 2800);
-      }
-    };
+    const update = () => sticky.classList.toggle('is-visible', visible.size === 0);
     const io = new IntersectionObserver((entries) => {
       for (const e of entries) e.isIntersecting ? visible.add(e.target) : visible.delete(e.target);
       update();
@@ -1277,140 +1268,53 @@ const jsonLd = {
     transform: rotate(-12deg) scale(1.08);
   }
 
-  /* ---------- Sticky-Einladung: runder Croissant-Button rechts unten, Text klappt beim Drüberfahren auf ---------- */
+  /* ---------- Sticky-Einladung: senkrechter Reiter am rechten Bildschirmrand ---------- */
   .c-sticky {
     position: fixed;
-    right: 1.5rem;
-    bottom: calc(35px + 1rem);
+    right: 0;
+    top: 50%;
     z-index: 30;
-    display: inline-flex;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    height: 3.75rem;
-    border-radius: 999px;
+    gap: 0.6rem;
+    width: 3rem;
+    padding: 0.85rem 0 1rem;
+    border-radius: 12px 0 0 12px;
     background: #111;
     color: #fff;
     text-decoration: none;
     box-shadow: 0 8px 24px rgb(0 0 0 / 0.22);
-    translate: 0 1rem;
-    scale: 0.6;
+    translate: 100% -50%;
     opacity: 0;
     pointer-events: none;
     transition:
       translate 0.4s var(--ease),
-      scale 0.4s var(--ease),
-      opacity 0.3s var(--ease);
+      opacity 0.3s var(--ease),
+      width 0.3s var(--ease);
   }
   .c-sticky.is-visible {
-    translate: 0 0;
-    scale: 1;
+    translate: 0 -50%;
     opacity: 1;
     pointer-events: auto;
   }
-  .c-sticky__icon {
-    display: grid;
-    place-items: center;
-    flex: none;
-    width: 3.75rem;
-    height: 3.75rem;
-  }
   .c-sticky__icon :global(svg) {
-    width: 2.1rem;
+    display: block;
+    width: 1.6rem;
     transition: rotate 0.3s var(--ease);
   }
   .c-sticky__label {
-    overflow: hidden;
-    max-width: 0;
-    padding-left: 0;
-    white-space: nowrap;
-    font-size: 0.875rem;
-    letter-spacing: 0.02em;
-    transition:
-      max-width 0.4s var(--ease),
-      padding 0.4s var(--ease);
-  }
-  .c-sticky.is-peek .c-sticky__label,
-  .c-sticky:focus-visible .c-sticky__label {
-    max-width: 12rem;
-    padding-left: 1.4rem;
+    writing-mode: vertical-rl;
+    rotate: 180deg;
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
   }
   @media (hover: hover) {
-    .c-sticky:hover .c-sticky__label {
-      max-width: 12rem;
-      padding-left: 1.4rem;
+    .c-sticky:hover {
+      width: 3.4rem;
     }
     .c-sticky:hover .c-sticky__icon :global(svg) {
       rotate: -12deg;
     }
-  }
-  @media (max-width: 30rem) {
-    .c-sticky {
-      right: 1rem;
-    }
-  }
-
-  /* Variante „Rand“: senkrechter Reiter am rechten Bildschirmrand */
-  .c-sticky[data-variant='edge'] {
-    right: 0;
-    bottom: auto;
-    top: 50%;
-    flex-direction: column-reverse;
-    height: auto;
-    width: 3rem;
-    padding: 1rem 0 0.75rem;
-    gap: 0.6rem;
-    border-radius: 12px 0 0 12px;
-    translate: 100% -50%;
-    scale: 1;
-  }
-  .c-sticky[data-variant='edge'].is-visible {
-    translate: 0 -50%;
-  }
-  .c-sticky[data-variant='edge'] .c-sticky__icon {
-    width: 3rem;
-    height: auto;
-  }
-  .c-sticky[data-variant='edge'] .c-sticky__icon :global(svg) {
-    width: 1.6rem;
-  }
-  .c-sticky[data-variant='edge'] .c-sticky__label,
-  .c-sticky[data-variant='edge']:hover .c-sticky__label {
-    max-width: none;
-    padding: 0;
-    writing-mode: vertical-rl;
-    rotate: 180deg;
-    font-size: 0.8125rem;
-  }
-  @media (hover: hover) {
-    .c-sticky[data-variant='edge']:hover {
-      width: 3.4rem;
-    }
-  }
-
-  /* Variante „Leiste“: Button unten mittig */
-  .c-sticky[data-variant='bar'] {
-    right: auto;
-    left: 50%;
-    bottom: 1.5rem;
-    height: auto;
-    padding: 0.85rem 1.6rem 0.85rem 1.1rem;
-    gap: 0.6rem;
-    border-radius: 0;
-    flex-direction: row-reverse;
-    translate: -50% 140%;
-    scale: 1;
-  }
-  .c-sticky[data-variant='bar'].is-visible {
-    translate: -50% 0;
-  }
-  .c-sticky[data-variant='bar'] .c-sticky__icon {
-    width: auto;
-    height: auto;
-  }
-  .c-sticky[data-variant='bar'] .c-sticky__icon :global(svg) {
-    width: 1.5rem;
-  }
-  .c-sticky[data-variant='bar'] .c-sticky__label {
-    max-width: none;
-    padding: 0;
   }
 </style>
