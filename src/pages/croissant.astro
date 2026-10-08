@@ -198,9 +198,6 @@ const jsonLd = {
       <div class="v-line" aria-hidden="true"></div>
       <div class="container--text c-final__head">
         <h2 class="heading c-h2 c-final__title" id="c-final">{c.final.title}</h2>
-        <ul role="list" class="c-steps">
-          {c.hero.steps.map((step) => <li><CroissantArt mini class="c-steps__icon" />{step}</li>)}
-        </ul>
         <p class="lead-text" set:html={c.final.textHtml} />
       </div>
 
@@ -1220,6 +1217,10 @@ const jsonLd = {
   }
   .c-final__head {
     text-align: center;
+  }
+  .c-final__head .lead-text {
+    max-width: 40rem;
+    margin-inline: auto;
   }
   .c-final__title {
     text-align: center;

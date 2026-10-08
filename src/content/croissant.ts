@@ -162,8 +162,9 @@ export const croissant = {
   },
 
   final: {
-    title: 'Dann lass uns gemeinsam frühstücken.',
-    textHtml: 'Vielleicht beginnt eure Zusammenarbeit ja mit einem Croissant.',
+    title: 'Lass uns gemeinsam frühstücken.',
+    textHtml:
+      'Wir nehmen uns 30 Minuten Zeit für ein virtuelles Frühstück. Wir lernen uns kennen, deine Marke und alles, was sie besonders macht. Wir stellen Fragen, hören zu und schauen gemeinsam, wo noch ein bisschen mehr drinsteckt. Ganz entspannt und ohne Verpflichtungen. Wir freuen uns auf dich!',
   },
 
   cta: {
@@ -173,7 +174,7 @@ export const croissant = {
 
   form: {
     title: 'Schön, dass du dabei bist.',
-    text: 'Verrate uns kurz, wer du bist und wo wir frühstücken. Wir melden uns mit einem Terminvorschlag.',
+    text: 'Verrate uns kurz, wer du bist. Wir melden uns gerne mit einem Terminvorschlag.',
     fields: {
       name: 'Dein Name',
       company: 'Marke / Unternehmen',
