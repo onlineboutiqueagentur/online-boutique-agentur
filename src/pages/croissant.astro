@@ -181,14 +181,17 @@ const jsonLd = {
           <span class="c-variant c-variant--web">{c.hero.web.title}<br /><em>{c.hero.web.titleSecond}</em></span>
           <span class="c-variant c-variant--qr">{c.hero.qr.title}<br /><em>{c.hero.qr.titleSecond}</em></span>
         </h2>
-        <p class="c-lead">{c.hero.text}</p>
+        <p class="c-lead" set:html={c.hero.textHtml} />
+        <p class="c-hero__tagline">{c.hero.tagline}</p>
         <div class="c-cta">
           <a class="btn btn--solid c-cta__btn" href="#einladung">
             <CroissantArt mini class="c-cta__icon" />
             {c.cta.label}
           </a>
-          <p class="c-cta__meta">{c.cta.meta}</p>
         </div>
+        <ul role="list" class="c-steps">
+          {c.hero.steps.map((step) => <li><CroissantArt mini class="c-steps__icon" />{step}</li>)}
+        </ul>
       </div>
     </section>
 
@@ -453,6 +456,32 @@ const jsonLd = {
   .c-lead {
     max-width: 34rem;
     font-size: 1.0625rem;
+  }
+  .c-hero__tagline {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.25rem);
+    color: var(--c-heading);
+  }
+  .c-steps {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.9375rem;
+  }
+  .c-steps li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .c-steps :global(.c-steps__icon) {
+    flex: none;
+    width: 1.35rem;
+  }
+  :global(:root[data-design='louder']) .c-hero__tagline {
+    font-family: var(--f-body);
+    font-style: normal;
+    font-weight: 600;
   }
   .c-cta {
     display: grid;

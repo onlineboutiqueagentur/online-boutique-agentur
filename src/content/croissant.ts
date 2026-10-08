@@ -56,10 +56,18 @@ export const croissant = {
       titleSecond: 'Jetzt weißt du auch warum.',
     },
     web: {
-      title: 'Noch kein Croissant bekommen?',
-      titleSecond: 'Vielleicht wird es Zeit für ein Frühstück.',
+      title: 'Hast du Gusto auf ein Croissant bekommen?',
+      titleSecond: 'Dann lass uns gemeinsam frühstücken!',
     },
-    text: 'Wir glauben, dass gute Zusammenarbeit mit einem guten Gefühl beginnt. Und manchmal mit einem ziemlich guten Croissant.',
+    textHtml: 'Wir laden dich zu einem kostenlosen 30-Minuten-Gespräch ein – ein <em>ganz unkompliziertes, virtuelles Frühstück</em>.',
+    tagline: '30 Minuten. Ein paar Fragen. Ein frischer Blick auf deine Marke.',
+    steps: [
+      'Wir lernen dich kennen.',
+      'Du erzählst uns von deiner Marke.',
+      'Wir stellen Fragen.',
+      'Wir geben dir erste Gedanken mit.',
+      'Wir schauen gemeinsam, wo Potenzial steckt.',
+    ],
     scroll: 'Warum ein Croissant?',
   },
 
