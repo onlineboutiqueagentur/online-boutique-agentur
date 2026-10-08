@@ -23,7 +23,7 @@ import { sendSmtp } from '../../lib/smtp';
 const MIN_FILL_MS = 2500; // schneller ausgefüllt = sehr wahrscheinlich ein Bot
 const MAX_AGE_MS = 1000 * 60 * 60 * 24; // Formular älter als 24 h → neu laden
 const RATE_LIMIT = 5; // Anfragen pro Stunde und Absender
-const LIMITS = { name: 120, firma: 160, email: 200, telefon: 40, nachricht: 5000, wunschtermin: 200 } as const;
+const LIMITS = { name: 120, firma: 160, webseite: 200, email: 200, telefon: 40, nachricht: 5000, wunschtermin: 200 } as const;
 /** Croissant-Einladung: erlaubte Antworten auf „Wo frühstücken wir?“ */
 const FORMATE: Record<string, string> = { 'bei-uns': 'Bei euch in Pasching', 'bei-mir': 'Beim Kunden', virtuell: 'Virtuell' };
 const EMAIL_RE = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[a-z]{2,}$/i;
@@ -63,10 +63,10 @@ async function sendMail(env: Env, a: Anfrage, adminUrl: string): Promise<boolean
     '',
     `Name: ${a.name}`,
     `Firma: ${a.firma}`,
+    a.webseite ? `Website: ${a.webseite}` : null,
     `E-Mail: ${a.email}`,
     a.telefon ? `Tel.: ${a.telefon}` : null,
     croissant ? null : `Design: ${a.design === 'louder' ? 'Louder' : a.design === 'minimal' ? 'Minimal' : 'unbekannt'}`,
-    croissant ? `Wo frühstücken wir: ${FORMATE[a.format ?? ''] ?? '–'}` : null,
     croissant ? `Wann passt es: ${a.wunschtermin || '–'}` : null,
     '',
     a.nachricht || '(keine Notizen)',
@@ -143,6 +143,7 @@ export const onRequestPost = async ({ request, env }: Context): Promise<Response
   const daten = {
     name: clean(form.get('name'), LIMITS.name),
     firma: clean(form.get('company'), LIMITS.firma),
+    webseite: clean(form.get('webseite'), LIMITS.webseite),
     email: clean(form.get('email'), LIMITS.email),
     telefon: clean(form.get('phone'), LIMITS.telefon),
     nachricht: clean(form.get('message'), LIMITS.nachricht),

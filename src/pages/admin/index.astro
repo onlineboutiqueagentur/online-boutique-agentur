@@ -88,6 +88,7 @@ import '../../styles/base.css';
         design?: string;
         quelle?: string;
         format?: string;
+        webseite?: string;
         wunschtermin?: string;
       }
 
@@ -140,6 +141,7 @@ import '../../styles/base.css';
             $('.anfrage__meta', li).textContent +=
               ' · 🥐 Frühstück' + (a.format ? ` (${formate[a.format] ?? a.format})` : '') + (a.wunschtermin ? ` · Wann: ${a.wunschtermin}` : '');
           }
+          if (a.webseite) $('.anfrage__meta', li).textContent += ` · Website: ${a.webseite}`;
           const badge = $('.anfrage__badge', li);
           badge.textContent = a.gelesen ? 'gelesen' : 'neu';
           if (a.mail === 'fehlgeschlagen') {

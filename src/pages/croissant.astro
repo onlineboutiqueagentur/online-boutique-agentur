@@ -215,6 +215,10 @@ const jsonLd = {
             <p class="form__error" id="c-company-err" hidden>Wie heißt deine Marke oder dein Unternehmen?</p>
           </div>
           <div class="form__field">
+            <label for="c-webseite">{fields.website}</label>
+            <input id="c-webseite" name="webseite" type="text" inputmode="url" autocomplete="url" maxlength="200" placeholder={fields.websitePlaceholder} />
+          </div>
+          <div class="form__field">
             <label for="c-email">{fields.email} <span aria-hidden="true">*</span></label>
             <input id="c-email" name="email" type="email" autocomplete="email" required maxlength="200" aria-describedby="c-email-err" />
             <p class="form__error" id="c-email-err" hidden>Bitte gib eine gültige E-Mail-Adresse an.</p>
@@ -223,17 +227,6 @@ const jsonLd = {
             <label for="c-phone">{fields.phone}</label>
             <input id="c-phone" name="phone" type="tel" autocomplete="tel" maxlength="40" />
           </div>
-          <fieldset class="form__choices">
-            <legend>{fields.format}</legend>
-            {
-              c.form.formats.map((f, i) => (
-                <label class="form__choice">
-                  <input type="radio" name="format" value={f.value} checked={i === 0} />
-                  <span>{f.label}</span>
-                </label>
-              ))
-            }
-          </fieldset>
           <div class="form__field">
             <label for="c-when">{fields.when}</label>
             <input id="c-when" name="when" type="text" maxlength="200" placeholder={fields.whenPlaceholder} />

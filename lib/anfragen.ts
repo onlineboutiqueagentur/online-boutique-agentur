@@ -11,6 +11,8 @@ export interface Anfrage {
   gelesen: boolean;
   name: string;
   firma: string;
+  /** Optional: Website der anfragenden Marke */
+  webseite?: string;
   email: string;
   telefon: string;
   nachricht: string;

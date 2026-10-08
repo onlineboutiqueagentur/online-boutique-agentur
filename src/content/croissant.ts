@@ -169,7 +169,7 @@ export const croissant = {
 
   cta: {
     label: 'Einladung annehmen',
-    meta: '30 Minuten · kostenlos · live oder virtuell',
+    meta: '30 Minuten · kostenlos · virtuell',
   },
 
   form: {
@@ -178,18 +178,14 @@ export const croissant = {
     fields: {
       name: 'Dein Name',
       company: 'Marke / Unternehmen',
+      website: 'Website (optional)',
+      websitePlaceholder: 'z. B. www.deine-marke.at',
       email: 'E-Mail',
       phone: 'Telefon (optional)',
-      format: 'Wo frühstücken wir?',
       when: 'Wann passt es dir meistens? (optional)',
       whenPlaceholder: 'z. B. vormittags, Di oder Do',
       message: 'Magst du uns schon etwas erzählen? (optional)',
     },
-    formats: [
-      { value: 'bei-uns', label: 'Bei euch in Pasching' },
-      { value: 'bei-mir', label: 'Bei mir' },
-      { value: 'virtuell', label: 'Virtuell' },
-    ],
     submit: 'Einladung annehmen',
     sending: 'Kaffee wird aufgesetzt …',
     success: 'Wunderbar – wir freuen uns auf dich!\nWir melden uns ganz bald mit einem Terminvorschlag.\nNina & Pia',
