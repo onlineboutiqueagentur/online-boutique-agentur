@@ -1,0 +1,443 @@
+---
+/**
+ * /admin – Übersicht aller Kontaktanfragen (eigener Login, gleiches Prinzip wie kristinainhof.at/admin).
+ * Nicht indexiert, nicht gecacht (siehe public/_headers). Daten kommen ausschließlich über /api/*.
+ */
+import '../../styles/fonts.css';
+import '../../styles/tokens.css';
+import '../../styles/base.css';
+---
+
+<!doctype html>
+<html lang="de-AT">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Anfragen · Online Boutique Agentur</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="admin">
+    <!-- Login -->
+    <main class="admin__login" id="login" hidden>
+      <h1 class="admin__brand">Online <em>Boutique</em> Agentur<sup aria-hidden="true">²</sup></h1>
+      <p class="admin__sub">Anfragen · Login</p>
+      <form class="admin__form" id="login-form">
+        <label for="benutzer">Benutzername</label>
+        <input id="benutzer" name="benutzer" autocomplete="username" required />
+        <label for="passwort">Passwort</label>
+        <input id="passwort" name="passwort" type="password" autocomplete="current-password" required />
+        <p class="admin__error" id="login-fehler" role="alert" hidden></p>
+        <button class="btn" type="submit">Anmelden</button>
+      </form>
+    </main>
+
+    <!-- Übersicht -->
+    <div class="admin__app" id="app" hidden>
+      <header class="admin__bar">
+        <p class="admin__brand admin__brand--sm">Online <em>Boutique</em> Agentur<sup aria-hidden="true">²</sup></p>
+        <button class="btn btn--sm" type="button" id="logout">Abmelden</button>
+      </header>
+      <main class="admin__main">
+        <div class="admin__head">
+          <h1 class="admin__title">Anfragen <span id="zaehler"></span></h1>
+          <div class="admin__filter" role="group" aria-label="Filter">
+            <button type="button" data-filter="alle" aria-pressed="true">Alle</button>
+            <button type="button" data-filter="ungelesen" aria-pressed="false">Ungelesen</button>
+          </div>
+        </div>
+        <p class="admin__status" id="status" role="status"></p>
+        <ul role="list" class="admin__list" id="liste"></ul>
+      </main>
+    </div>
+
+    <template id="karte">
+      <li class="anfrage">
+        <div class="anfrage__top">
+          <div>
+            <p class="anfrage__name"></p>
+            <p class="anfrage__meta"></p>
+          </div>
+          <span class="anfrage__badge"></span>
+        </div>
+        <p class="anfrage__kontakt">
+          <a class="anfrage__mail"></a>
+          <a class="anfrage__tel"></a>
+        </p>
+        <p class="anfrage__text"></p>
+        <div class="anfrage__actions">
+          <a class="btn btn--sm anfrage__reply">Antworten</a>
+          <button type="button" class="btn btn--sm anfrage__toggle"></button>
+          <button type="button" class="btn btn--sm anfrage__more" hidden>Ganz lesen</button>
+          <button type="button" class="btn btn--sm anfrage__delete">Löschen</button>
+        </div>
+      </li>
+    </template>
+
+    <script>
+      interface Anfrage {
+        id: string;
+        eingang: string;
+        gelesen: boolean;
+        name: string;
+        firma: string;
+        email: string;
+        telefon: string;
+        nachricht: string;
+        mail: string;
+        design?: string;
+        quelle?: string;
+        format?: string;
+        wunschtermin?: string;
+      }
+
+      const $ = <T extends HTMLElement>(sel: string, root: ParentNode = document) => root.querySelector<T>(sel)!;
+      const login = $('#login');
+      const app = $('#app');
+      const liste = $('#liste');
+      const status = $('#status');
+      const tpl = $<HTMLTemplateElement>('#karte');
+      let alle: Anfrage[] = [];
+      let filter: 'alle' | 'ungelesen' = 'alle';
+
+      const datum = new Intl.DateTimeFormat('de-AT', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Vienna' });
+
+      async function api(url: string, init: RequestInit = {}) {
+        const res = await fetch(url, { ...init, headers: { 'Content-Type': 'application/json', ...(init.headers ?? {}) } });
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 401) zeigeLogin();
+        if (!res.ok) throw new Error(data.fehler ?? 'Das hat leider nicht geklappt.');
+        return data;
+      }
+
+      function zeigeLogin() {
+        app.hidden = true;
+        login.hidden = false;
+        $<HTMLInputElement>('#benutzer').focus();
+      }
+
+      function render() {
+        const sichtbar = filter === 'ungelesen' ? alle.filter((a) => !a.gelesen) : alle;
+        const ungelesen = alle.filter((a) => !a.gelesen).length;
+        $('#zaehler').textContent = ungelesen ? `(${ungelesen} neu)` : '';
+        document.title = `${ungelesen ? `(${ungelesen}) ` : ''}Anfragen · Online Boutique Agentur`;
+        liste.replaceChildren();
+        if (!sichtbar.length) {
+          status.textContent = filter === 'ungelesen' ? 'Alles gelesen.' : 'Noch keine Anfragen.';
+          return;
+        }
+        status.textContent = '';
+
+        for (const a of sichtbar) {
+          const li = tpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
+          li.classList.toggle('is-neu', !a.gelesen);
+          $('.anfrage__name', li).textContent = `${a.name} · ${a.firma}`;
+          const croissant = a.quelle === 'croissant';
+          const formate: Record<string, string> = { 'bei-uns': 'bei uns in Pasching', 'bei-mir': 'beim Kunden', virtuell: 'virtuell' };
+          const designName = croissant ? null : a.design === 'louder' ? 'Louder' : a.design === 'minimal' ? 'Minimal' : null;
+          $('.anfrage__meta', li).textContent = datum.format(new Date(a.eingang)) + (designName ? ` · Design: ${designName}` : '');
+          if (croissant) {
+            $('.anfrage__meta', li).textContent +=
+              ' · 🥐 Frühstück' + (a.format ? ` (${formate[a.format] ?? a.format})` : '') + (a.wunschtermin ? ` · Wann: ${a.wunschtermin}` : '');
+          }
+          const badge = $('.anfrage__badge', li);
+          badge.textContent = a.gelesen ? 'gelesen' : 'neu';
+          if (a.mail === 'fehlgeschlagen') {
+            badge.textContent += ' · Mail nicht zugestellt';
+            badge.classList.add('is-warn');
+          }
+
+          const mail = $<HTMLAnchorElement>('.anfrage__mail', li);
+          mail.href = `mailto:${a.email}`;
+          mail.textContent = a.email;
+          const tel = $<HTMLAnchorElement>('.anfrage__tel', li);
+          if (a.telefon) {
+            tel.href = `tel:${a.telefon.replace(/[^\d+]/g, '')}`;
+            tel.textContent = a.telefon;
+          } else tel.remove();
+
+          const text = $('.anfrage__text', li);
+          text.textContent = a.nachricht || '(keine Notizen)';
+          const more = $<HTMLButtonElement>('.anfrage__more', li);
+          if (a.nachricht.length > 280) {
+            text.classList.add('is-kurz');
+            more.hidden = false;
+            more.addEventListener('click', () => {
+              text.classList.remove('is-kurz');
+              more.remove();
+            });
+          }
+
+          const reply = $<HTMLAnchorElement>('.anfrage__reply', li);
+          reply.href = `mailto:${a.email}?subject=${encodeURIComponent('Deine Anfrage bei der Online Boutique Agentur')}`;
+
+          const toggle = $<HTMLButtonElement>('.anfrage__toggle', li);
+          toggle.textContent = a.gelesen ? 'Als ungelesen markieren' : 'Als gelesen markieren';
+          toggle.addEventListener('click', async () => {
+            try {
+              await api(`/api/anfragen?id=${a.id}`, { method: 'PUT', body: JSON.stringify({ gelesen: !a.gelesen }) });
+              a.gelesen = !a.gelesen;
+              render();
+            } catch (e) {
+              status.textContent = (e as Error).message;
+            }
+          });
+
+          const del = $<HTMLButtonElement>('.anfrage__delete', li);
+          let bestaetigt = false;
+          del.addEventListener('click', async () => {
+            if (!bestaetigt) {
+              bestaetigt = true;
+              del.textContent = 'Wirklich löschen?';
+              del.classList.add('is-danger');
+              setTimeout(() => {
+                bestaetigt = false;
+                del.textContent = 'Löschen';
+                del.classList.remove('is-danger');
+              }, 4000);
+              return;
+            }
+            try {
+              await api(`/api/anfragen?id=${a.id}`, { method: 'DELETE' });
+              alle = alle.filter((x) => x.id !== a.id);
+              render();
+              status.textContent = 'Anfrage gelöscht.';
+            } catch (e) {
+              status.textContent = (e as Error).message;
+            }
+          });
+
+          liste.append(li);
+        }
+      }
+
+      async function laden() {
+        status.textContent = 'Wird geladen …';
+        try {
+          const data = await api('/api/anfragen');
+          alle = data.anfragen;
+          login.hidden = true;
+          app.hidden = false;
+          render();
+        } catch (e) {
+          if (!login.hidden) return;
+          status.textContent = (e as Error).message;
+        }
+      }
+
+      $('#login-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const fehler = $('#login-fehler');
+        fehler.hidden = true;
+        const form = new FormData(event.target as HTMLFormElement);
+        try {
+          await api('/api/login', { method: 'POST', body: JSON.stringify({ benutzer: form.get('benutzer'), passwort: form.get('passwort') }) });
+          (event.target as HTMLFormElement).reset();
+          await laden();
+        } catch (e) {
+          fehler.textContent = (e as Error).message;
+          fehler.hidden = false;
+        }
+      });
+
+      $('#logout').addEventListener('click', async () => {
+        await fetch('/api/logout', { method: 'POST' });
+        alle = [];
+        liste.replaceChildren();
+        zeigeLogin();
+      });
+
+      document.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((btn) =>
+        btn.addEventListener('click', () => {
+          filter = btn.dataset.filter === 'ungelesen' ? 'ungelesen' : 'alle';
+          document.querySelectorAll('[data-filter]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+          render();
+        }),
+      );
+
+      (async () => {
+        const s = await fetch('/api/session').then((r) => r.json()).catch(() => ({ eingeloggt: false }));
+        if (s.eingeloggt) await laden();
+        else zeigeLogin();
+        if (s.eingerichtet === false) {
+          const f = $('#login-fehler');
+          f.textContent = 'Der Login ist noch nicht eingerichtet (Cloudflare-Secrets und KV-Bindung fehlen).';
+          f.hidden = false;
+        }
+      })();
+    </script>
+
+    <style is:global>
+      .admin {
+        min-height: 100vh;
+        font-size: 1rem;
+      }
+      .admin__login {
+        display: grid;
+        justify-items: center;
+        gap: 0.5rem;
+        width: min(100% - 2rem, 24rem);
+        margin: 0 auto;
+        padding: 12vh 0 4rem;
+        text-align: center;
+      }
+      .admin__brand {
+        font-family: var(--f-display);
+        font-weight: var(--w-regular);
+        font-size: 1.75rem;
+        letter-spacing: -1px;
+      }
+      .admin__brand--sm {
+        font-size: 1.25rem;
+      }
+      .admin__sub {
+        margin-bottom: 1.5rem;
+        opacity: 0.7;
+      }
+      .admin__form {
+        display: grid;
+        gap: 0.4rem;
+        width: 100%;
+        text-align: left;
+      }
+      .admin__form input {
+        min-height: 2.75rem;
+        margin-bottom: 0.75rem;
+        padding: 0.5rem 0.8rem;
+        border: 1px solid #fff;
+        background: #fff;
+        font-weight: var(--w-regular);
+      }
+      .admin__form .btn {
+        justify-self: center;
+        margin-top: 0.5rem;
+      }
+      .admin__error {
+        color: #8a1f1f;
+        font-weight: var(--w-regular);
+      }
+      .admin__bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1rem var(--gutter);
+        border-bottom: 1px solid rgb(0 0 0 / 0.1);
+      }
+      .admin__main {
+        width: min(100% - 2 * var(--gutter), 52rem);
+        margin: 0 auto;
+        padding: 2.5rem 0 4rem;
+      }
+      .admin__head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .admin__title {
+        font-family: var(--f-display);
+        font-weight: var(--w-regular);
+        font-size: 1.75rem;
+      }
+      .admin__title span {
+        font-family: var(--f-body);
+        font-size: 1rem;
+        opacity: 0.7;
+      }
+      .admin__filter {
+        display: inline-flex;
+        padding: 3px;
+        border: 1px solid #111;
+        border-radius: 999px;
+      }
+      .admin__filter button {
+        min-height: 2.25rem;
+        padding: 0 1rem;
+        border: 0;
+        border-radius: 999px;
+        background: none;
+        cursor: pointer;
+        font-weight: var(--w-regular);
+      }
+      .admin__filter button[aria-pressed='true'] {
+        background: #111;
+        color: #fff;
+      }
+      .admin__status {
+        min-height: 1.5rem;
+        margin: 1rem 0;
+        font-weight: var(--w-regular);
+      }
+      .admin__list {
+        display: grid;
+        gap: 1rem;
+      }
+      .anfrage {
+        display: grid;
+        gap: 0.75rem;
+        padding: 1.25rem 1.5rem;
+        border-radius: 14px;
+        background: #fff;
+        border-left: 4px solid transparent;
+      }
+      .anfrage.is-neu {
+        border-left-color: var(--c-accent);
+      }
+      .anfrage__top {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .anfrage__name {
+        font-weight: var(--w-bold);
+      }
+      .anfrage__meta {
+        font-size: 0.875rem;
+        opacity: 0.7;
+      }
+      .anfrage__badge {
+        align-self: start;
+        padding: 0.2rem 0.7rem;
+        border-radius: 999px;
+        background: #f1eee9;
+        font-size: 0.8125rem;
+        font-weight: var(--w-regular);
+        white-space: nowrap;
+      }
+      .is-neu .anfrage__badge {
+        background: var(--c-accent);
+      }
+      .anfrage__badge.is-warn {
+        background: #f6d4d4;
+        color: #8a1f1f;
+      }
+      .anfrage__kontakt {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem 1.5rem;
+        font-weight: var(--w-regular);
+      }
+      .anfrage__text {
+        white-space: pre-line;
+      }
+      .anfrage__text.is-kurz {
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .anfrage__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .anfrage__actions .is-danger {
+        background: #8a1f1f;
+        border-color: #8a1f1f;
+        color: #fff;
+      }
+    </style>
+  </body>
+</html>

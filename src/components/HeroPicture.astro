@@ -1,0 +1,38 @@
+---
+/**
+ * Hero-Bild mit Art Direction: Querformat ab Tablet, Hochformat auf Smartphones.
+ * AVIF → WebP → JPEG, responsive srcset, hohe Ladepriorität (LCP-Element).
+ */
+import { getImage } from 'astro:assets';
+import { hero } from '../content/site';
+
+const MOBILE = '(max-width: 47.99rem)';
+const build = (src: typeof hero.image.src, widths: number[], format: 'avif' | 'webp' | 'jpg') =>
+  getImage({ src, widths, format, quality: format === 'jpg' ? 78 : undefined });
+
+const [mAvif, mWebp, dAvif, dWebp, dJpg] = await Promise.all([
+  build(hero.imageMobile, [480, 750, 1080], 'avif'),
+  build(hero.imageMobile, [480, 750, 1080], 'webp'),
+  build(hero.image.src, [960, 1280, 1600, 1920], 'avif'),
+  build(hero.image.src, [960, 1280, 1600, 1920], 'webp'),
+  build(hero.image.src, [960, 1280, 1920], 'jpg'),
+]);
+---
+
+<picture>
+  <source media={MOBILE} type="image/avif" srcset={mAvif.srcSet.attribute} sizes="100vw" />
+  <source media={MOBILE} type="image/webp" srcset={mWebp.srcSet.attribute} sizes="100vw" />
+  <source type="image/avif" srcset={dAvif.srcSet.attribute} sizes="100vw" />
+  <source type="image/webp" srcset={dWebp.srcSet.attribute} sizes="100vw" />
+  <img
+    src={dJpg.src}
+    srcset={dJpg.srcSet.attribute}
+    sizes="100vw"
+    width={hero.image.src.width}
+    height={hero.image.src.height}
+    alt={hero.image.alt}
+    fetchpriority="high"
+    loading="eager"
+    decoding="async"
+  />
+</picture>

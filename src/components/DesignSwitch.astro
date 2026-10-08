@@ -1,0 +1,274 @@
+---
+/**
+ * DESIGN-SWITCH – "switch to twin design"
+ * Eine Logik (src/scripts/design.ts), drei Erscheinungsformen:
+ *  - twins:  zwei Kreise = die Zwillinge (Hero). Beim Hover rücken sie auseinander,
+ *            beim Klick tauscht die andere Welt nach vorne.
+ *  - toggle: Twin-Toggle minimal | louder mit gleitendem Knopf (Sektion „Welcher Design-Typ bist du?“)
+ *  - footer: kompakter Umschalter „Design-Typ minimal | louder“
+ * Alle Bedienelemente sind echte <button> mit eindeutigem Accessible Name.
+ */
+import { designSwitch } from '../content/site';
+
+interface Props {
+  variant: 'twins' | 'toggle' | 'footer';
+  class?: string;
+}
+const { variant, class: className } = Astro.props;
+const { names } = designSwitch;
+---
+
+{
+  variant === 'twins' && (
+    <div class:list={['twins', className]} role="group" aria-label={designSwitch.groupLabel}>
+      <span class="twins__label" aria-hidden="true">
+        {designSwitch.groupLabel}
+      </span>
+      <span class="twins__pair">
+        <button type="button" class="twins__c twins__c--minimal" data-design-set="minimal" aria-pressed="true">
+          {names.minimal}
+        </button>
+        <button type="button" class="twins__c twins__c--louder" data-design-set="louder" aria-pressed="false">
+          {names.louder}
+        </button>
+      </span>
+    </div>
+  )
+}
+
+{
+  variant === 'toggle' && (
+    <div class:list={['twin-toggle', className]} role="group" aria-label={designSwitch.groupLabel}>
+      <span class="twin-toggle__knob" aria-hidden="true" />
+      <button type="button" class="twin-toggle__opt twin-toggle__opt--minimal" data-design-set="minimal" aria-pressed="true">
+        {names.minimal}
+      </button>
+      <button type="button" class="twin-toggle__opt twin-toggle__opt--louder" data-design-set="louder" aria-pressed="false">
+        {names.louder}
+      </button>
+    </div>
+  )
+}
+
+{
+  variant === 'footer' && (
+    <div class:list={['switch-footer', className]} role="group" aria-label={designSwitch.groupLabel}>
+      <span class="switch-footer__label" aria-hidden="true">
+        {designSwitch.groupLabel}
+      </span>
+      <button type="button" class="switch-footer__opt switch-footer__opt--minimal" data-design-set="minimal" aria-pressed="true">
+        {names.minimal}
+      </button>
+      <button type="button" class="switch-footer__opt switch-footer__opt--louder" data-design-set="louder" aria-pressed="false">
+        {names.louder}
+      </button>
+    </div>
+  )
+}
+
+<style>
+  /* ---------- B · Twin-Kreise (Hero) ---------- */
+  .twins {
+    --d: var(--twins-size, 4.5rem);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--c-ink-hero);
+  }
+  .twins__label {
+    font-family: var(--f-body);
+    font-weight: var(--w-regular);
+    font-size: 0.9375rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .twins__pair {
+    position: relative;
+    flex: none;
+    width: calc(var(--d) * 2.45);
+    height: calc(var(--d) * 1.15);
+  }
+  .twins__c {
+    position: absolute;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: var(--d);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    font-size: calc(var(--d) * 0.19);
+    line-height: 1;
+    translate: 0 -50%;
+    transition:
+      transform 0.55s cubic-bezier(0.65, 0, 0.35, 1),
+      box-shadow 0.4s var(--ease);
+  }
+  .twins__c--minimal {
+    left: calc(var(--d) * 0.3);
+    z-index: 2;
+    background: #111;
+    color: #fff;
+    font-family: var(--f-display);
+    font-style: italic;
+  }
+  .twins__c--louder {
+    left: calc(var(--d) * 1.18); /* nur leichte Überlappung – beide Texte lesbar */
+    z-index: 1;
+    background: var(--c-accent);
+    color: #111;
+    font-family: var(--f-bold);
+    font-size: calc(var(--d) * 0.23);
+    letter-spacing: 0.03em;
+  }
+  /* Aktive Welt vorne, die andere etwas kleiner dahinter. */
+  .twins__c--minimal { z-index: 2; transform: scale(1.06); }
+  .twins__c--louder { z-index: 1; transform: scale(0.9); }
+  :global(:root[data-design='louder']) .twins__c--minimal { z-index: 1; transform: scale(0.9); }
+  :global(:root[data-design='louder']) .twins__c--louder { z-index: 2; transform: scale(1.06); }
+
+  /* Hover/Fokus nur auf die ANDERE Welt: Kreis wird größer und kommt nach vorne –
+     der Kreis der aktiven Welt bleibt unverändert. So ist klar, wohin man wechseln kann. */
+  :global(:root:not([data-design='louder'])) .twins__c--louder:hover,
+  :global(:root:not([data-design='louder'])) .twins__c--louder:focus-visible {
+    z-index: 3;
+    transform: translateX(14%) scale(1.22);
+  }
+  :global(:root[data-design='louder']) .twins__c--minimal:hover,
+  :global(:root[data-design='louder']) .twins__c--minimal:focus-visible {
+    z-index: 3;
+    transform: translateX(-14%) scale(1.22);
+  }
+
+  /* Jeder Kreis ist ein eigener Button: er führt immer in seine Welt */
+  .twins__c {
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+  }
+  .twins__c:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+    z-index: 3;
+  }
+  :global(:root:not([data-design='louder'])) .twins__c--minimal,
+  :global(:root[data-design='louder']) .twins__c--louder {
+    cursor: default;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .twins {
+      animation: twins-in 700ms 400ms var(--ease) both;
+    }
+  }
+  @keyframes twins-in {
+    from { opacity: 0; scale: 0.7; }
+    to { opacity: 1; scale: 1; }
+  }
+
+  /* ---------- A · Twin-Toggle (Sektion „Welcher Design-Typ bist du?“) ---------- */
+  .twin-toggle {
+    --tt-border: #111;
+    --tt-knob: #111;
+    --tt-on: #fff;
+    --tt-off: #111;
+    position: relative;
+    display: inline-grid;
+    grid-template-columns: 1fr 1fr;
+    width: 14rem;
+    height: 3rem;
+    padding: 3px;
+    border: 1px solid var(--tt-border);
+    border-radius: 999px;
+    background: transparent; /* übernimmt die Farbe der Sektion */
+  }
+  :global(:root[data-design='louder']) .twin-toggle {
+    --tt-border: #000;
+    --tt-knob: #000;
+    --tt-on: var(--c-accent);
+    --tt-off: #000;
+  }
+  .twin-toggle__knob {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    width: calc(50% - 3px);
+    border-radius: 999px;
+    background: var(--tt-knob);
+    transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1), background-color var(--t-med) var(--ease);
+  }
+  :global(:root[data-design='louder']) .twin-toggle__knob {
+    transform: translateX(100%);
+  }
+  .twin-toggle__opt {
+    position: relative;
+    z-index: 1;
+    min-width: 44px;
+    padding: 0 0.75rem;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    color: var(--tt-off);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.3s var(--ease), opacity var(--t-fast) var(--ease);
+  }
+  /* Die Beschriftung zeigt schon die Typografie der jeweiligen Welt */
+  .twin-toggle__opt--minimal {
+    font-family: var(--f-display);
+    font-style: italic;
+  }
+  .twin-toggle__opt--louder {
+    font-family: var(--f-bold);
+    font-size: 1.1rem;
+    letter-spacing: 0.04em;
+  }
+  /* Aktiver Zustand folgt data-design → kein Flackern vor dem JS-Sync von aria-pressed */
+  :global(:root:not([data-design='louder'])) .twin-toggle__opt--minimal,
+  :global(:root[data-design='louder']) .twin-toggle__opt--louder {
+    color: var(--tt-on);
+    cursor: default;
+  }
+  :global(:root:not([data-design='louder'])) .twin-toggle__opt--louder:hover,
+  :global(:root[data-design='louder']) .twin-toggle__opt--minimal:hover {
+    opacity: 0.65;
+  }
+
+  /* ---------- Footer-Umschalter ---------- */
+  .switch-footer {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 3px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.12);
+    font-size: 0.8125rem;
+  }
+  .switch-footer__label {
+    padding-inline: 0.75rem 0.4rem;
+    opacity: 0.75;
+  }
+  .switch-footer__opt {
+    min-height: 32px;
+    min-width: 44px;
+    padding: 0.2rem 0.9rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-weight: var(--w-regular);
+    transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+  }
+  :global(:root:not([data-design='louder'])) .switch-footer__opt--minimal,
+  :global(:root[data-design='louder']) .switch-footer__opt--louder {
+    background: var(--c-accent);
+    color: #000;
+  }
+  .switch-footer__opt:not([aria-pressed='true']):hover {
+    background: rgb(255 255 255 / 0.15);
+  }
+</style>

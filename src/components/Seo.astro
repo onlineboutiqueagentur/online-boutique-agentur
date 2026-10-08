@@ -1,0 +1,99 @@
+---
+/**
+ * Meta-Tags, Open Graph, Canonical + strukturierte Daten (JSON-LD).
+ * Beide Designwelten teilen sich EINE URL → kein Duplicate Content.
+ */
+import { getImage } from 'astro:assets';
+import { agency, hero, seo, services } from '../content/site';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  noindex?: boolean;
+  structuredData?: boolean;
+  /** Zusätzliche strukturierte Daten einer Unterseite (z. B. /croissant) */
+  extraJsonLd?: Record<string, unknown>;
+}
+const { title, description, path, noindex = false, structuredData = false, extraJsonLd } = Astro.props;
+
+const canonical = new URL(path, agency.url).href;
+const og = await getImage({ src: hero.image.src, width: 1200, height: 630, fit: 'cover', position: 'top', format: 'jpg', quality: 80 });
+const ogUrl = new URL(og.src, agency.url).href;
+
+const orgId = `${agency.url}/#organisation`;
+const founders = agency.founders.map((f) => ({
+  '@type': 'Person',
+  '@id': `${agency.url}/#${f.givenName.toLowerCase()}`,
+  name: [f.givenName, f.familyName].filter(Boolean).join(' '),
+  givenName: f.givenName,
+  ...(f.familyName ? { familyName: f.familyName } : {}),
+  jobTitle: 'Gründerin',
+  worksFor: { '@id': orgId },
+}));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'ProfessionalService',
+      '@id': orgId,
+      name: agency.name,
+      url: `${agency.url}/`,
+      email: agency.email,
+      telephone: agency.phoneE164,
+      image: ogUrl,
+      description: seo.description,
+      slogan: 'Gleiche DNA. Zwei Perspektiven.',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: agency.address.street,
+        postalCode: agency.address.zip,
+        addressLocality: agency.address.city,
+        addressRegion: agency.address.region,
+        addressCountry: agency.address.country,
+      },
+      areaServed: agency.areaServed.map((name) => ({ '@type': 'Place', name })),
+      founder: founders.map((f) => ({ '@id': f['@id'] })),
+      knowsAbout: services.items.map((s) => s.name),
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: 'Leistungen',
+        itemListElement: services.items.map((s) => ({
+          '@type': 'Offer',
+          itemOffered: { '@type': 'Service', name: s.name, provider: { '@id': orgId }, areaServed: agency.address.region },
+        })),
+      },
+    },
+    ...founders,
+    {
+      '@type': 'WebSite',
+      '@id': `${agency.url}/#website`,
+      url: `${agency.url}/`,
+      name: agency.name,
+      inLanguage: 'de-AT',
+      publisher: { '@id': orgId },
+    },
+  ],
+};
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
+
+<meta property="og:type" content="website" />
+<meta property="og:locale" content={seo.locale} />
+<meta property="og:site_name" content={agency.name} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={seo.ogImageAlt} />
+<meta name="twitter:card" content="summary_large_image" />
+
+{structuredData && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+{extraJsonLd && <script type="application/ld+json" set:html={JSON.stringify(extraJsonLd)} />}

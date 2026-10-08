@@ -1,0 +1,119 @@
+---
+/**
+ * Consent-Banner – wird NUR gerendert, wenn in site.ts ein Tracking-Dienst
+ * eingetragen ist. Ohne Tracking: kein Banner, keine Cookies.
+ *
+ * - "Ablehnen" und "Akzeptieren" sind gleichwertig gestaltet (kein Nudging).
+ * - Entscheidung wird in localStorage gespeichert, widerrufbar über
+ *   "Cookie-Einstellungen" im Footer.
+ * - Das Tracking-Script wird erst nach Einwilligung geladen.
+ * HINWEIS: Vor Aktivierung Datenschutzerklärung ergänzen (rechtliche Prüfung).
+ */
+import { tracking } from '../content/site';
+
+const gaId = tracking.ga4MeasurementId;
+---
+
+{
+  gaId && (
+    <div class="consent" id="consent" role="dialog" aria-labelledby="consent-title" aria-describedby="consent-text" hidden data-ga-id={gaId}>
+      <p class="consent__title" id="consent-title">
+        Darf’s ein bisschen Statistik sein?
+      </p>
+      <p id="consent-text">
+        Mit deiner Einwilligung nutzen wir Google Analytics, um zu verstehen, wie unsere Website genutzt wird. Dabei werden Cookies gesetzt und Daten an Google übermittelt. Du kannst deine Entscheidung jederzeit über „Cookie-Einstellungen“ im Footer ändern. <a href="/datenschutz/">Datenschutz</a>
+      </p>
+      <div class="consent__actions">
+        <button type="button" class="btn" data-consent="denied">
+          Ablehnen
+        </button>
+        <button type="button" class="btn" data-consent="granted">
+          Akzeptieren
+        </button>
+      </div>
+    </div>
+  )
+}
+
+{
+  gaId && (
+    <script>
+      const KEY = 'oba-consent';
+      const box = document.getElementById('consent');
+      const gaId = box?.dataset.gaId;
+
+      function loadAnalytics() {
+        if (!gaId || document.getElementById('ga-script')) return;
+        const s = document.createElement('script');
+        s.id = 'ga-script';
+        s.async = true;
+        s.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+        document.head.appendChild(s);
+        const w = window as unknown as { dataLayer: unknown[]; gtag: (...args: unknown[]) => void };
+        w.dataLayer = w.dataLayer || [];
+        w.gtag = function () {
+          // eslint-disable-next-line prefer-rest-params
+          w.dataLayer.push(arguments);
+        };
+        w.gtag('js', new Date());
+        w.gtag('config', gaId, { anonymize_ip: true });
+      }
+
+      let stored: string | null = null;
+      try {
+        stored = localStorage.getItem(KEY);
+      } catch {}
+      if (stored === 'granted') loadAnalytics();
+      else if (stored !== 'denied' && box) box.hidden = false;
+
+      document.addEventListener('click', (e) => {
+        const t = e.target as HTMLElement;
+        const choice = t.closest<HTMLElement>('[data-consent]')?.dataset.consent;
+        if (choice) {
+          try {
+            localStorage.setItem(KEY, choice);
+          } catch {}
+          if (box) box.hidden = true;
+          if (choice === 'granted') loadAnalytics();
+          else if (document.getElementById('ga-script')) location.reload(); // Widerruf: Script entladen
+        }
+        if (t.closest('[data-consent-open]') && box) {
+          box.hidden = false;
+          box.querySelector<HTMLButtonElement>('button')?.focus();
+        }
+      });
+    </script>
+  )
+}
+
+<style>
+  .consent {
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 50;
+    display: grid;
+    gap: 0.75rem;
+    max-width: 34rem;
+    margin-inline: auto;
+    padding: 1.25rem 1.5rem;
+    background: var(--c-bg);
+    color: var(--c-ink);
+    box-shadow: 0 10px 40px rgb(0 0 0 / 0.25);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+  }
+  .consent[hidden] {
+    display: none;
+  }
+  .consent__title {
+    font-family: var(--f-display);
+    font-size: 1.125rem;
+  }
+  .consent__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+</style>

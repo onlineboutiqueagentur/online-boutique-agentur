@@ -1,0 +1,10 @@
+---
+import Page from '../../layouts/Page.astro';
+import { agency, contact } from '../../content/site';
+---
+
+<Page title="Nachricht nicht gesendet | Online Boutique Agentur" description="Beim Senden ist ein Fehler aufgetreten." path="/kontakt/fehler/" heading="Ups." noindex>
+  <p>{contact.form.error}</p>
+  <p>Oder schreib uns direkt: <a href={`mailto:${agency.email}`}>{agency.email}</a></p>
+  <p><a class="btn" href="/#kontakt">Zurück zum Formular</a></p>
+</Page>

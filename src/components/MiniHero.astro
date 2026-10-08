@@ -1,0 +1,197 @@
+---
+/**
+ * Verkleinerter, live gerenderter Hero einer Designwelt – für die Vorschau in
+ * „Welcher Design-Typ bist du?“. Nutzt das Original-Foto (scharf auf jedem Bildschirm),
+ * echte Schriften und dieselben Maße wie der echte Hero (umgerechnet von 1440 px auf
+ * Container-Einheiten). Rein dekorativ (aria-hidden) – die Beschreibung steht als sr-Text daneben.
+ */
+import { Picture } from 'astro:assets';
+import { designSwitch, designType, hero, navigation } from '../content/site';
+
+interface Props {
+  /** Welche Welt die Vorschau zeigt */
+  shows: 'minimal' | 'louder';
+}
+const { shows } = Astro.props;
+---
+
+<span class:list={['mini-hero', `mini-hero--${shows}`]} aria-hidden="true">
+  <Picture src={hero.image.src} alt="" widths={[480, 800, 1200, 1600]} sizes="(min-width: 48rem) 50vw, 100vw" formats={['avif', 'webp']} loading="lazy" decoding="async" class="mini-hero__img" />
+
+  <span class="mini-hero__nav">
+    {navigation.map((item) => <span>{item.label}</span>)}
+  </span>
+
+  <span class="mini-hero__cta">
+    <span class="mini-hero__cta-label">{designType.previewCta}</span>
+    <span class:list={['mini-hero__circle', `mini-hero__circle--${shows}`]}>{designSwitch.names[shows]}</span>
+  </span>
+
+  <span class="mini-hero__content">
+    <span class="mini-hero__title">
+      <span class="w">Online</span> <em class="w">Boutique</em> <span class="w">Agentur</span><sup>²</sup>
+    </span>
+    <span class="mini-hero__sub">
+      Online Marketing für Einzel-, Klein– oder<br class="louder-only" /> mittelständische Unternehmen
+    </span>
+  </span>
+</span>
+
+<style>
+  .mini-hero {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    container-type: inline-size;
+    border-radius: var(--radius);
+    background: #ddd8d1;
+    text-align: left;
+  }
+  .mini-hero :global(.mini-hero__img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 0%;
+    transition: transform 0.8s var(--ease);
+  }
+
+  /* Navigation (16 px bei 1440 px → 1.11cqw) */
+  .mini-hero__nav {
+    position: absolute;
+    top: 4.5%;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 2.4cqw;
+    font-family: var(--f-body);
+    font-weight: var(--w-regular);
+    font-size: 1.15cqw;
+    color: #fff;
+    text-shadow: 0 0 1cqw rgb(0 0 0 / 0.3);
+  }
+
+  .mini-hero__content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 18%;
+    display: grid;
+    justify-items: center;
+    gap: 1.6cqw;
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 0.1cqw 0.2cqw rgb(0 0 0 / 0.25), 0 0 2cqw rgb(0 0 0 / 0.28);
+  }
+  .mini-hero__title {
+    font-family: var(--f-display);
+    font-size: 4.2cqw;
+    line-height: 1;
+    letter-spacing: -0.07cqw;
+  }
+  .mini-hero__title em {
+    font-style: italic;
+  }
+  .mini-hero__title sup {
+    font-size: 0.5em;
+  }
+  .mini-hero__sub {
+    font-family: var(--f-body);
+    font-weight: var(--w-regular);
+    font-size: 1.3cqw;
+  }
+  .louder-only {
+    display: none;
+  }
+
+  /* CTA: „switch to design“ + Kreis der gezeigten Welt */
+  .mini-hero__cta {
+    position: absolute;
+    top: 17%;
+    left: 10%;
+    display: inline-flex;
+    align-items: center;
+    gap: 1.4cqw;
+  }
+  .mini-hero__cta-label {
+    font-family: var(--f-body);
+    font-weight: var(--w-regular);
+    font-size: 1.9cqw;
+    color: #fff;
+    text-shadow: 0 0.1cqw 0.2cqw rgb(0 0 0 / 0.3), 0 0 1.6cqw rgb(0 0 0 / 0.3);
+  }
+  .mini-hero__circle {
+    display: grid;
+    place-items: center;
+    width: 11cqw;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    line-height: 1;
+    box-shadow: 0 0.6cqw 1.6cqw rgb(0 0 0 / 0.18);
+    transition: transform 0.5s var(--ease);
+  }
+  .mini-hero__circle--louder {
+    background: var(--c-accent);
+    color: #111;
+    font-family: var(--f-bold);
+    font-size: 2.5cqw;
+    letter-spacing: 0.03em;
+  }
+  .mini-hero__circle--minimal {
+    background: #111;
+    color: #fff;
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 2.1cqw;
+  }
+
+  /* ---------- Gezeigte Welt: louder ---------- */
+  .mini-hero--louder .mini-hero__nav {
+    justify-content: flex-end;
+    padding-right: 10%;
+    color: #050505;
+    text-shadow: none;
+  }
+  .mini-hero--louder .mini-hero__content {
+    top: 40%;
+    bottom: auto;
+    left: 10%;
+    justify-items: start;
+    gap: 2cqw;
+    text-align: left;
+    text-shadow: none;
+  }
+  .mini-hero--louder .mini-hero__title {
+    font-family: var(--f-bold);
+    font-size: 7cqw;
+    letter-spacing: 0.14cqw;
+    color: var(--c-accent);
+  }
+  .mini-hero--louder .mini-hero__title em {
+    font-style: normal;
+  }
+  .mini-hero--louder .mini-hero__title .w:nth-child(-n + 2) {
+    display: table;
+  }
+  .mini-hero--louder .mini-hero__sub {
+    color: #3f3f3f;
+  }
+  .mini-hero--louder .louder-only {
+    display: inline;
+  }
+  .mini-hero--louder .mini-hero__cta-label {
+    color: #050505;
+    text-shadow: none;
+  }
+
+  /* Hover: Kreis wächst leicht, Foto zoomt sanft */
+  :global(.design-type__hit:hover) .mini-hero__circle {
+    transform: scale(1.08) rotate(-4deg);
+  }
+  :global(.design-type__hit:hover) .mini-hero :global(.mini-hero__img) {
+    transform: scale(1.02);
+  }
+</style>

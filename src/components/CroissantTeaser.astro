@@ -1,0 +1,111 @@
+---
+/**
+ * Startseiten-Teaser „The Boutique Croissant“ – erzählt nicht die ganze Geschichte,
+ * sondern macht nur neugierig und führt auf /croissant/.
+ * Bestehende Design-Elemente; in beiden Designwelten.
+ */
+import CroissantArt from './CroissantArt.astro';
+import { croissantTeaser as t } from '../content/croissant';
+---
+
+<section class="teaser" aria-labelledby="croissant-teaser-title">
+  <div class="v-line" aria-hidden="true"></div>
+  <div class="teaser__inner container">
+    <a class="teaser__art" href={t.href} tabindex="-1" aria-hidden="true">
+      <CroissantArt draw />
+    </a>
+    <div class="teaser__text">
+      <p class="teaser__eyebrow">{t.eyebrow}</p>
+      <h2 class="teaser__title" id="croissant-teaser-title">{t.title}</h2>
+      <p class="teaser__copy" set:html={t.textHtml} />
+      <a class="btn teaser__cta" href={t.href}>
+        {t.cta} <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .teaser {
+    padding-bottom: clamp(4rem, 9vw, 7rem);
+  }
+  .teaser__inner {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+  .teaser__art {
+    display: block;
+    width: min(80%, 22rem);
+    margin-inline: auto;
+    color: var(--c-ink);
+    transition: transform 0.8s var(--ease);
+  }
+  .teaser__art:hover {
+    transform: rotate(-4deg) scale(1.03);
+  }
+  :global(:root[data-design='louder']) .teaser__art {
+    color: #000;
+    --croissant-fill: var(--c-accent);
+  }
+  .teaser__text {
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+  }
+  .teaser__eyebrow {
+    font-family: var(--f-display);
+    font-style: italic;
+    color: var(--c-ink-soft);
+  }
+  .teaser__title {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: var(--fs-h2);
+    line-height: 1.3;
+    letter-spacing: var(--ls-display);
+    max-width: 22ch;
+    text-wrap: balance;
+  }
+  .teaser__copy :global(em) {
+    font-family: var(--f-display);
+    font-style: italic;
+  }
+  .teaser__cta {
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .teaser__cta span {
+    transition: transform var(--t-fast) var(--ease);
+  }
+  .teaser__cta:hover span {
+    transform: translateX(4px);
+  }
+
+  :global(:root[data-design='louder']) .teaser__eyebrow {
+    font-family: var(--f-bold);
+    font-style: normal;
+    text-transform: lowercase;
+    letter-spacing: 1px;
+    color: #000;
+  }
+  :global(:root[data-design='louder']) .teaser__title {
+    font-family: var(--f-bold);
+    letter-spacing: 1px;
+    line-height: 1.15;
+    text-transform: lowercase;
+    color: var(--c-heading);
+  }
+
+  @media (min-width: 48rem) {
+    .teaser__inner {
+      grid-template-columns: 1fr 1.1fr;
+      gap: clamp(2rem, 6vw, 5rem);
+      width: min(100% - 2 * var(--gutter), 62rem);
+    }
+    .teaser__art {
+      width: 100%;
+    }
+  }
+</style>

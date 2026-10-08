@@ -1,0 +1,14 @@
+# Cloudflare Pages Redirects
+# Apex → www: siehe docs/DNS-WORLD4YOU.md (World4You-Weiterleitung bzw. Cloudflare Redirect Rule).
+# Alte Pfade, falls jemand sie auf der neuen Domain aufruft:
+/online-boutique-agentur        /                       301
+/online-boutique-agentur/       /                       301
+/online-boutique-agentur-louder  /?design=louder        301
+/online-boutique-agentur-louder/ /?design=louder        301
+/agentur-fancy                  /?design=louder         301
+/agentur-fancy/                 /?design=louder         301
+/agentur                        /                       301
+/agentur/                       /                       301
+/impressum-agentur              /impressum/             301
+/impressum-agentur/             /impressum/             301
+/index.html                     /                       301

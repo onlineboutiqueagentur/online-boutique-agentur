@@ -1,0 +1,54 @@
+---
+/**
+ * IMPRESSUM – übernommen von eternalflame.at/impressum-agentur/ und an die neue Domain angepasst.
+ * ⚠️ RECHTLICHE PRÜFUNG ERFORDERLICH (siehe docs/AUDIT.md → Recht):
+ *   - Pflichtangaben nach § 5 ECG / § 25 MedienG prüfen lassen.
+ *   - Absatz zur EU-Streitbeilegungsplattform (OS) entfernt: Die Plattform wurde
+ *     am 20.07.2025 eingestellt (VO (EU) 2024/3228).
+ */
+import Page from '../layouts/Page.astro';
+import { agency } from '../content/site';
+---
+
+<Page title="Impressum | Online Boutique Agentur" description="Impressum und Offenlegung der Online Boutique Agentur, Pasching bei Linz." path="/impressum/" heading="Impressum">
+  <p>
+    <strong>{agency.owner}</strong><br />
+    {agency.name}<br />
+    {agency.address.street}<br />
+    {agency.address.zip}
+    {agency.address.city}<br />
+    AUSTRIA
+  </p>
+
+  <p>
+    INTERNET<br />
+    <a href={agency.url}>www.online-boutique-agentur.at</a>
+  </p>
+  <p>
+    E-MAIL<br />
+    <a href={`mailto:${agency.email}`}>{agency.email}</a>
+  </p>
+  <p>
+    TELEFON<br />
+    <a href={`tel:${agency.phoneE164}`}>{agency.phone}</a>
+  </p>
+
+  <p>
+    Unternehmensgegenstand: Werbeagentur
+  </p>
+
+  <h2>Haftung für Links</h2>
+  <p>
+    Die von uns verwendeten Inhalte sowie externen Links wurden von uns sorgfältig zusammengestellt. Der Betreiber dieses Internetauftritts hat keinen Einfluss auf nachträgliche Änderungen der verlinkten Webseiten. Er übernimmt weder Verantwortung für die Inhalte dieser Seiten, noch macht er sich diese zu Eigen. Im Falle illegaler, inkorrekter oder unvollständiger Inhalte sowie bei Schäden, die durch die Verwendung oder Nichtverwendung dieser Informationen entstehen, haftet ausschließlich der Anbieter der Webseite, auf welche verlinkt wurde. Die Haftung desjenigen, der lediglich auf die Veröffentlichung durch einen Hyperlink hinweist, ist ausgeschlossen.
+  </p>
+
+  <h2>Streitbeilegung</h2>
+  <p>
+    Wir sind stets bemüht, Meinungsverschiedenheiten aus unserem Vertrag einvernehmlich beizulegen. Darüber hinaus haben wir uns jedoch entschieden, nicht an einem Schlichtungsverfahren teilzunehmen. Hierzu sind wir auch nicht verpflichtet.
+  </p>
+
+  <h2>Bildnachweis</h2>
+  <p>Photography: {agency.photography}</p>
+
+  <p><a href="/datenschutz/">Zur Datenschutzerklärung</a></p>
+</Page>

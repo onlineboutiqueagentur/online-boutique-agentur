@@ -1,0 +1,70 @@
+---
+/**
+ * Senkrechte Linie + Überschrift + Einleitungstext – das wiederkehrende
+ * Sektionsmuster der Website. Im Louder-Design: Anton, Kleinschreibung,
+ * orange (bzw. schwarz bei tone="dark").
+ */
+import Variant from './Variant.astro';
+import type { Variant as VariantValue } from '../content/site';
+
+interface Props {
+  id: string;
+  titleHtml: VariantValue;
+  textHtml?: string;
+  /** Louder: Farbe der Überschrift */
+  tone?: 'accent' | 'dark';
+  /** Louder: Überschrift links groß, Text rechts (wie "unsere leistungen") */
+  split?: boolean;
+  line?: boolean;
+}
+const { id, titleHtml, textHtml, tone = 'accent', split = false, line = true } = Astro.props;
+---
+
+<div class:list={['section-head', { 'section-head--split': split, 'section-head--dark': tone === 'dark' }]}>
+  {line && <div class="v-line" aria-hidden="true" />}
+  <div class="section-head__inner container--text">
+    <h2 class="heading section-head__title" id={id}><Variant value={titleHtml} /></h2>
+    {textHtml && <p class="lead-text section-head__text" set:html={textHtml} />}
+  </div>
+</div>
+
+<style>
+  .section-head__title :global(b) {
+    font-weight: var(--w-regular);
+  }
+
+  :global(:root[data-design='louder']) .section-head__title {
+    font-family: var(--f-bold);
+    font-size: var(--fs-h2);
+    line-height: 1.2;
+    letter-spacing: 2px;
+    text-transform: lowercase;
+    color: var(--c-heading);
+  }
+  :global(:root[data-design='louder']) .section-head--dark .section-head__title {
+    color: #000;
+  }
+  :global(:root[data-design='louder']) .section-head__title :global(em) {
+    font-style: normal;
+  }
+
+  /* Louder: zweispaltig, Überschrift sehr groß und rechtsbündig */
+  @media (min-width: 48rem) {
+    :global(:root[data-design='louder']) .section-head--split .section-head__inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 2.5rem;
+      width: min(100% - 2 * var(--gutter), 66rem);
+    }
+    :global(:root[data-design='louder']) .section-head--split .section-head__title {
+      font-size: var(--fs-h2-xl);
+      text-align: right;
+      line-height: 1.2;
+    }
+    :global(:root[data-design='louder']) .section-head--split .section-head__text {
+      margin-top: 0;
+      text-align: left;
+    }
+  }
+</style>

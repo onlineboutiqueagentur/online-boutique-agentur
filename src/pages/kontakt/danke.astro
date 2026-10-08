@@ -1,0 +1,9 @@
+---
+import Page from '../../layouts/Page.astro';
+import { contact } from '../../content/site';
+---
+
+<Page title="Danke! | Online Boutique Agentur" description="Deine Nachricht ist angekommen." path="/kontakt/danke/" heading="Danke!" noindex>
+  <p class="pre-line">{contact.form.success}</p>
+  <p><a class="btn" href="/">Zur Startseite</a></p>
+</Page>

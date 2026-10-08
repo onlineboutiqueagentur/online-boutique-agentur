@@ -1,0 +1,38 @@
+---
+/**
+ * Ein inhaltlich gleiches Bild mit je einer Bildvariante pro Designwelt.
+ * Beide <picture> stehen im HTML; die inaktive Variante ist display:none und
+ * wird dank loading="lazy" vom Browser nicht geladen → nur ein Download.
+ */
+import { Picture } from 'astro:assets';
+import type { ThemedImage } from '../content/site';
+
+interface Props {
+  image: ThemedImage;
+  widths: number[];
+  sizes: string;
+  class?: string;
+}
+const { image, widths, sizes, class: className } = Astro.props;
+
+// Animiertes GIF → animiertes WebP (AVIF unterstützt keine Animation über sharp)
+const formatsFor = (format: string) => (format === 'gif' ? (['webp'] as const) : (['avif', 'webp'] as const));
+---
+
+{
+  (['minimal', 'louder'] as const).map((design) => (
+    <Picture
+      src={image[design]}
+      alt={image.alt}
+      widths={image[design].format === 'gif' ? undefined : widths}
+      width={image[design].format === 'gif' ? image[design].width : undefined}
+      sizes={sizes}
+      formats={[...formatsFor(image[design].format)]}
+      fallbackFormat={image[design].format === 'gif' ? 'webp' : undefined}
+      loading="lazy"
+      decoding="async"
+      class={className}
+      pictureAttributes={{ class: `only-${design}` }}
+    />
+  ))
+}

@@ -1,0 +1,9 @@
+---
+import Base from '../layouts/Base.astro';
+import Home from '../components/Home.astro';
+import { seo } from '../content/site';
+---
+
+<Base title={seo.title} description={seo.description} path="/" structuredData>
+  <Home />
+</Base>

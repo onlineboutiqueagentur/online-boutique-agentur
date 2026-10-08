@@ -1,0 +1,186 @@
+---
+/**
+ * Hauptnavigation. Desktop: horizontale Leiste (minimal zentriert, louder rechtsbündig).
+ * Mobil: "Menü"-Button öffnet ein natives Popover (kein JavaScript nötig,
+ * Fokus-Management + Esc-Taste übernimmt der Browser).
+ */
+import { navigation } from '../content/site';
+
+interface Props {
+  /** Auf Unterseiten zeigen Anker auf die Startseite */
+  base?: string;
+}
+const { base = '' } = Astro.props;
+---
+
+<div class="nav-bar">
+  <nav class="nav" aria-label="Hauptnavigation">
+    <ul role="list" class="nav__list">
+      {
+        navigation.map((item) => (
+          <li>
+            <a href={`${base}${item.href}`}>{item.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <button type="button" class="nav-toggle" popovertarget="mobile-menu" aria-haspopup="true">
+    Menü
+    <svg width="22" height="18" viewBox="0 0 22 18" aria-hidden="true" focusable="false">
+      <path d="M1 2h20M1 9h20M1 16h20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path>
+    </svg>
+  </button>
+
+  <div id="mobile-menu" class="mobile-menu" popover>
+    <button type="button" class="mobile-menu__close" popovertarget="mobile-menu" popovertargetaction="hide">
+      <span class="sr-only">Menü schließen</span>
+      <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true" focusable="false">
+        <path d="M3 3l16 16M19 3L3 19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path>
+      </svg>
+    </button>
+    <nav aria-label="Mobile Navigation">
+      <ul role="list" class="mobile-menu__list">
+        {
+          navigation.map((item) => (
+            <li>
+              <a href={`${base}${item.href}`} data-close-menu>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<script>
+  // Menü nach Klick auf einen Anker schließen
+  const menu = document.getElementById('mobile-menu');
+  menu?.addEventListener('click', (event) => {
+    if ((event.target as HTMLElement).closest('[data-close-menu]')) menu.hidePopover();
+  });
+</script>
+
+<style>
+  .nav-bar {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    padding: 1.8rem var(--gutter) 0;
+  }
+  .nav__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem 2.4rem;
+  }
+  .nav__list a,
+  .nav-toggle {
+    color: var(--c-ink-hero);
+    font-weight: var(--w-regular);
+    font-size: 1rem;
+    text-decoration: none;
+  }
+  .nav__list a {
+    display: inline-block;
+    padding-block: 0.4rem;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size var(--t-med) var(--ease);
+  }
+  .nav__list a:hover {
+    background-size: 100% 1px;
+  }
+
+  .nav-toggle {
+    display: none;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 44px;
+    margin-left: auto;
+    padding: 0.5rem 0;
+    border: 0;
+    background: none;
+    font-size: 1.375rem;
+    cursor: pointer;
+  }
+
+  .mobile-menu {
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 5rem var(--gutter) 2rem;
+    border: 0;
+    background: var(--c-bg);
+    color: var(--c-ink);
+  }
+  .mobile-menu::backdrop {
+    background: rgb(0 0 0 / 0.3);
+  }
+  .mobile-menu__close {
+    position: absolute;
+    top: 1.5rem;
+    right: var(--gutter);
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .mobile-menu__list {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .mobile-menu__list a {
+    display: block;
+    padding: 0.6rem 0;
+    font-family: var(--f-display);
+    font-size: 1.75rem;
+    text-decoration: none;
+    border-bottom: 1px solid rgb(0 0 0 / 0.12);
+  }
+  :global(:root[data-design='louder']) .mobile-menu__list a {
+    font-family: var(--f-bold);
+    text-transform: lowercase;
+    font-size: 2.25rem;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .mobile-menu:popover-open {
+      animation: menu-in 260ms var(--ease);
+    }
+  }
+  @keyframes menu-in {
+    from { opacity: 0; transform: translateY(-12px); }
+  }
+
+  :global(:root[data-design='louder']) .nav-bar {
+    justify-content: flex-end;
+    width: min(100% - 2 * var(--gutter), 72rem);
+    margin-inline: auto;
+    padding-inline: 0;
+  }
+
+  @media (max-width: 63.99rem) {
+    .nav {
+      display: none;
+    }
+    .nav-toggle {
+      display: inline-flex;
+    }
+    .nav-bar,
+    :global(:root[data-design='louder']) .nav-bar {
+      padding-top: 2.5rem;
+      width: auto;
+      margin-inline: 0;
+      padding-inline: var(--gutter);
+    }
+  }
+</style>

@@ -1,0 +1,142 @@
+---
+import { hero } from '../content/site';
+import HeroPicture from './HeroPicture.astro';
+import Navigation from './Navigation.astro';
+import DesignSwitch from './DesignSwitch.astro';
+---
+
+<header class="hero" id="top">
+  <div class="hero__media">
+    <HeroPicture />
+  </div>
+
+  <Navigation />
+
+  <div class="hero__badge">
+    <DesignSwitch variant="twins" />
+  </div>
+
+  <div class="hero__content parallax-hero">
+    <h1 class="hero__title">
+      <Fragment set:html={hero.titleHtml} /><sup aria-hidden="true">²</sup>
+    </h1>
+    <p class="hero__sub" set:html={hero.subtitleHtml} />
+  </div>
+</header>
+
+<style>
+  .hero {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: max(37.5rem, 100svh);
+    color: var(--c-ink-hero);
+    background: #ddd8d1;
+    isolation: isolate;
+    clip-path: inset(0);
+  }
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+  .hero__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 0%;
+  }
+  /* Wie im Original: Foto bleibt beim Scrollen stehen (nur Desktop, ohne Layout-Kosten) */
+  @media (min-width: 64rem) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .hero__media {
+      position: fixed;
+      height: 100vh;
+    }
+  }
+
+  /* Lesbarkeit: weiße Schrift auf hellem Vorhang (im Original sehr kontrastarm) */
+  .hero__content,
+  .hero :global(.nav__list),
+  .hero :global(.nav-toggle),
+  .hero :global(.twins__label) {
+    text-shadow: 0 1px 2px rgb(0 0 0 / 0.25), 0 0 24px rgb(0 0 0 / 0.28);
+  }
+  :global(:root[data-design='louder']) .hero__content,
+  :global(:root[data-design='louder']) .hero :global(.nav__list),
+  :global(:root[data-design='louder']) .hero :global(.nav-toggle),
+  :global(:root[data-design='louder']) .hero :global(.twins__label) {
+    text-shadow: none;
+  }
+
+  .hero__content {
+    align-self: end;
+    padding: 0 var(--gutter) clamp(6rem, 24vh, 15rem);
+    text-align: center;
+  }
+  .hero__title {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: var(--fs-hero);
+    line-height: 1;
+    letter-spacing: var(--ls-display);
+    text-wrap: balance;
+  }
+  .hero__title :global(em) {
+    font-style: italic;
+  }
+  .hero__sub {
+    margin-top: 1.5rem;
+    font-weight: var(--w-regular);
+    font-size: var(--fs-hero-sub);
+    line-height: 1.54;
+  }
+
+  .hero__badge {
+    position: absolute;
+    top: clamp(5.5rem, 12vw, 8.5rem);
+    left: clamp(1rem, 13vw, 14rem);
+    --twins-size: clamp(3.75rem, 5.5vw, 4.75rem);
+  }
+
+  /* ---------- louder ---------- */
+  :global(:root[data-design='louder']) .hero__content {
+    align-self: center;
+    width: min(100% - 2 * var(--gutter), 72rem);
+    margin-inline: auto;
+    /* etwas tiefer als die vertikale Mitte */
+    padding: clamp(10rem, 26vh, 15rem) 0 3rem;
+    text-align: left;
+  }
+  :global(:root[data-design='louder']) .hero__title {
+    font-family: var(--f-bold);
+    color: var(--c-heading);
+    letter-spacing: 2px;
+  }
+  /* Online / Boutique / Agentur² – je eine Zeile */
+  :global(:root[data-design='louder']) .hero__title :global(.w:nth-child(-n + 2)) {
+    display: table;
+  }
+  :global(:root[data-design='louder']) .hero__title :global(em) {
+    font-style: normal;
+  }
+  :global(:root[data-design='louder']) .hero__sub {
+    color: #3f3f3f;
+  }
+
+  @media (max-width: 47.99rem) {
+    .hero__badge {
+      top: auto;
+      bottom: 3rem;
+      left: auto;
+      right: var(--gutter);
+      --twins-size: 3.5rem;
+    }
+    .hero__content {
+      padding-bottom: 9rem;
+    }
+    :global(:root[data-design='louder']) .hero__content {
+      align-self: end;
+      padding-bottom: 9rem;
+    }
+  }
+</style>

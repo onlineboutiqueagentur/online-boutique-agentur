@@ -1,0 +1,62 @@
+---
+import { Image } from 'astro:assets';
+import { services } from '../content/site';
+import SectionHead from './SectionHead.astro';
+---
+
+<section class="services" id="leistungen" aria-labelledby="leistungen-title">
+  <SectionHead id="leistungen-title" titleHtml={services.titleHtml} textHtml={services.textHtml} split />
+
+  <ul role="list" class="services__grid container parallax-up">
+    {
+      services.items.map((item) => (
+        <li class="services__item reveal-up">
+          <Image src={item.icon} alt="" width={106} height={71} densities={[1, 2]} format="webp" loading="lazy" decoding="async" class="services__icon" />
+          <h3 class="services__name">{item.name}</h3>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .services {
+    padding-top: clamp(4rem, 8vw, 7rem);
+  }
+  .services__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.75rem 2rem;
+    padding-top: clamp(2.5rem, 4vw, 3.6rem);
+  }
+  .services__item {
+    display: grid;
+    justify-items: center;
+    gap: 1.6rem;
+    text-align: center;
+  }
+  .services__icon {
+    width: 106px;
+    height: 71px;
+    object-fit: contain;
+  }
+  .services__name {
+    font-family: var(--f-serif);
+    font-weight: var(--w-regular);
+    font-size: var(--fs-service);
+    line-height: 1.33;
+    letter-spacing: 1px;
+  }
+  @media (max-width: 47.99rem) {
+    .services__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2.25rem 1rem;
+    }
+    .services__name {
+      font-size: 1.25rem;
+    }
+    .services__item {
+      gap: 1rem;
+    }
+  }
+</style>

@@ -1,0 +1,102 @@
+---
+import { Image } from 'astro:assets';
+import { experience } from '../content/site';
+---
+
+<section class="experience" id="erfahrungen" aria-labelledby="erfahrungen-title">
+  <div class="v-line" aria-hidden="true"></div>
+  <div class="experience__head">
+    <h2 class="heading experience__title" id="erfahrungen-title">
+      <span class="sr-only">{experience.headingStatic}</span>
+      <span aria-hidden="true" data-typewriter={JSON.stringify(experience.typewriter)}>
+        <span data-tw-prefix>{experience.typewriter[0].prefix}</span>
+        <span data-tw-word>{experience.typewriter[0].word}</span><span class="cursor">|</span>
+      </span>
+    </h2>
+    <p class="experience__lead">{experience.lead}</p>
+  </div>
+
+  <ul role="list" class="experience__grid container parallax-up">
+    {
+      experience.items.map((item) => (
+        <li class="experience__item reveal-up">
+          <Image src={item.logo} alt={item.logoAlt} width={155} height={103} densities={[1, 2]} format="webp" loading="lazy" decoding="async" class="experience__logo" />
+          <h3 class="experience__name" set:html={item.title} />
+          <p set:html={item.textHtml} />
+        </li>
+      ))
+    }
+  </ul>
+
+  <p class="text-center experience__cta">
+    <a class="btn btn--sm" href={experience.cta.href}>{experience.cta.label}</a>
+  </p>
+</section>
+
+<script>
+  import '../scripts/typewriter';
+</script>
+
+<style>
+  .experience {
+    padding-top: clamp(4rem, 8vw, 7rem);
+  }
+  .experience__head {
+    width: min(100% - 2 * var(--gutter), 36rem);
+    margin-inline: auto;
+    text-align: center;
+    padding-bottom: 2.5rem;
+  }
+  .experience__title {
+    font-size: var(--fs-typing);
+    min-height: 1.6em;
+  }
+  .experience__lead {
+    margin-top: 1.25rem;
+    font-size: 1rem;
+    line-height: 1.74;
+    color: var(--c-ink-soft);
+  }
+  .experience__grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem 2rem;
+  }
+  .experience__item {
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 0.6rem;
+    text-align: center;
+  }
+  .experience__logo {
+    width: 155px;
+    height: 103px;
+    object-fit: contain;
+    margin-bottom: 0.4rem;
+  }
+  .experience__name {
+    font-family: var(--f-serif);
+    font-weight: var(--w-regular);
+    font-size: var(--fs-exp);
+    line-height: 1.2;
+    color: var(--c-ink-soft);
+  }
+  .experience__cta {
+    padding: 3.5rem 0 4.5rem;
+  }
+  :global(:root[data-design='louder']) .experience__title {
+    font-family: var(--f-bold);
+    letter-spacing: 1px;
+  }
+  @media (max-width: 63.99rem) {
+    .experience__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 29.99rem) {
+    .experience__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

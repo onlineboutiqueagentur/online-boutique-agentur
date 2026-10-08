@@ -1,0 +1,123 @@
+---
+import { getImage } from 'astro:assets';
+import { insights } from '../content/site';
+
+// Hintergrundbild (dekorativ) – als CSS-Background mit modernen Formaten
+const [desktop, mobile] = await Promise.all([
+  getImage({ src: insights.image.src, width: 1920, format: 'webp', quality: 70 }),
+  getImage({ src: insights.image.srcMobile, width: 1080, format: 'webp', quality: 70 }),
+]);
+---
+
+<section class="insights" aria-labelledby="insights-title" style={`--bg-desktop:url(${desktop.src});--bg-mobile:url(${mobile.src})`}>
+  <h2 class="insights__title reveal-up" id="insights-title" set:html={insights.titleHtml} />
+  <ul role="list" class="insights__grid">
+    {
+      insights.items.map((item) => (
+        <li class="insights__item">
+          <span class="insights__value">
+            {item.prefix}<span data-count={item.value}>{item.value}</span>{item.suffix && <span class="insights__unit">{item.suffix}</span>}
+          </span>
+          <span class="insights__label">{item.label}</span>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<script>
+  // Zähl-Animation beim Sichtbarwerden; ohne JS / bei reduced motion stehen die Endwerte da.
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const nodes = document.querySelectorAll<HTMLElement>('[data-count]');
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          io.unobserve(entry.target);
+          const el = entry.target as HTMLElement;
+          const target = Number(el.dataset.count);
+          const start = performance.now();
+          const step = (now: number) => {
+            const p = Math.min((now - start) / 1400, 1);
+            el.textContent = String(Math.round(target * (1 - Math.pow(1 - p, 3))));
+            if (p < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        });
+      },
+      { threshold: 0.6 },
+    );
+    nodes.forEach((n) => {
+      n.textContent = '0';
+      io.observe(n);
+    });
+  }
+</script>
+
+<style>
+  .insights {
+    padding: clamp(6.5rem, 13vw, 11rem) var(--gutter);
+    background-color: #b4b4b4;
+    background-image: linear-gradient(#a8a8a8, #d0d0d0), var(--bg-mobile);
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: multiply;
+    color: var(--c-insights-ink);
+    text-align: center;
+  }
+  @media (min-width: 48rem) {
+    .insights {
+      background-image: linear-gradient(#a8a8a8, #d0d0d0), var(--bg-desktop);
+    }
+  }
+  @media (min-width: 64rem) and (hover: hover) {
+    .insights {
+      background-attachment: fixed;
+    }
+  }
+  .insights__title {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: var(--fs-h2-lg);
+    letter-spacing: var(--ls-display);
+    color: #fff;
+  }
+  .insights__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem 1.5rem;
+    width: min(100%, 50rem);
+    margin: 3rem auto 0;
+  }
+  .insights__item {
+    display: grid;
+    align-content: start;
+    gap: 0.4rem;
+  }
+  .insights__value {
+    font-size: var(--fs-counter);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .insights__unit {
+    font-size: 0.6em;
+    vertical-align: 0.6em;
+  }
+  .insights__label {
+    font-size: 1rem;
+    max-width: 12rem;
+    margin-inline: auto;
+  }
+  :global(:root[data-design='louder']) .insights__title {
+    font-family: var(--f-bold);
+    font-size: var(--fs-h2);
+    letter-spacing: 2px;
+    text-transform: lowercase;
+    color: var(--c-insights-ink);
+  }
+  @media (max-width: 47.99rem) {
+    .insights__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

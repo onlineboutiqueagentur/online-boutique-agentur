@@ -1,0 +1,45 @@
+/*
+ * Selbst gehostete Schriften (keine Verbindung zu Google → DSGVO-freundlich).
+ * Alle Schriften stehen unter der SIL Open Font License 1.1.
+ * Subset: Latin (inkl. deutscher Umlaute).
+ */
+@font-face {
+  font-family: 'Mulish';
+  src: url('/fonts/mulish-var.woff2') format('woff2');
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Libre Baskerville';
+  src: url('/fonts/libre-baskerville-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Libre Baskerville';
+  src: url('/fonts/libre-baskerville-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Anton';
+  src: url('/fonts/anton-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+/*
+ * Die bisherige Seite nutzt "Garamond, serif" als Systemschrift – auf vielen
+ * Geräten (u. a. macOS, iOS, Android) ist sie nicht installiert und es wird
+ * Times angezeigt. EB Garamond sorgt für ein einheitliches Schriftbild.
+ */
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('/fonts/eb-garamond-var.woff2') format('woff2');
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}

@@ -1,0 +1,24 @@
+---
+/**
+ * Gibt einen Text aus, der je Designwelt unterschiedlich lauten darf.
+ * String → für beide Designs gleich. { minimal, louder } → beide Varianten,
+ * die jeweils inaktive wird per CSS (display:none) auch für Screenreader ausgeblendet.
+ */
+import type { Variant } from '../content/site';
+
+interface Props {
+  value: Variant;
+}
+const { value } = Astro.props;
+---
+
+{
+  typeof value === 'string' ? (
+    <Fragment set:html={value} />
+  ) : (
+    <>
+      <span class="only-minimal" set:html={value.minimal} />
+      <span class="only-louder" set:html={value.louder} />
+    </>
+  )
+}

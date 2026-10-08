@@ -1,0 +1,131 @@
+---
+import { Picture } from 'astro:assets';
+import { testimonials } from '../content/site';
+
+const quoteMarks = { curly: ['“', '”'], german: ['„', '“'] } as const;
+// Scroll-Bewegung wie im Original: links ↑, Mitte ruhig, rechts ↓
+const motion = ['parallax-up', '', 'parallax-down'];
+const louderTitle = typeof testimonials.titleHtml === 'string' ? testimonials.titleHtml : testimonials.titleHtml.louder;
+const minimalTitle = typeof testimonials.titleHtml === 'string' ? testimonials.titleHtml : testimonials.titleHtml.minimal;
+---
+
+<section class="testimonials" id="kundenstimmen" aria-labelledby="kundenstimmen-title">
+  <div class="testimonials__head">
+    <h2 class="heading heading--serif testimonials__title" id="kundenstimmen-title">
+      <span class="only-minimal" set:html={minimalTitle} />
+      <span class="only-louder flash flash--fast" set:html={louderTitle} />
+    </h2>
+    <!-- Louder: Echo-Effekt (dekorativ) -->
+    <p class="only-louder testimonials__echo flash" aria-hidden="true" set:html={louderTitle} />
+    <p class="only-louder testimonials__echo flash flash--fast" aria-hidden="true" set:html={louderTitle} />
+  </div>
+
+  <ul role="list" class="testimonials__grid container">
+    {
+      testimonials.items.map((t, i) => (
+        <li class:list={['testimonial', motion[i]]}>
+          <figure>
+            <Picture src={t.image} alt={t.name} widths={[360, 600]} sizes="(min-width: 64rem) 353px, (min-width: 48rem) 33vw, 100vw" formats={['avif', 'webp']} loading="lazy" decoding="async" class="testimonial__img" />
+            <div class="testimonial__body">
+              <figcaption>
+                <span class="testimonial__name">{t.name}</span>
+                <span class="testimonial__role">{t.role}</span>
+              </figcaption>
+              <blockquote class="testimonial__quote">
+                <p>{`${quoteMarks[t.quoteStyle][0]}${t.quote}${quoteMarks[t.quoteStyle][1]}`}</p>
+              </blockquote>
+              {t.links.length > 0 && (
+                <p class="testimonial__links">
+                  {t.links.map((href) => (
+                    <a href={href} target="_blank" rel="noopener">
+                      {href.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                    </a>
+                  ))}
+                </p>
+              )}
+              {t.note && <p class="testimonial__links">{t.note}</p>}
+            </div>
+          </figure>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .testimonials {
+    padding: 4.5rem 0;
+  }
+  .testimonials__title {
+    font-size: 1.75rem;
+  }
+  .testimonials__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem 2.75rem;
+    align-items: start;
+    padding-top: 4rem;
+  }
+  .testimonial figure {
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--c-card);
+    transition: background-color var(--t-med) var(--ease);
+  }
+  .testimonial :global(.testimonial__img) {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+  .testimonial__body {
+    display: grid;
+    gap: 1.4rem;
+    padding: 20px 40px 40px;
+    text-align: center;
+  }
+  .testimonial figcaption {
+    display: grid;
+    font-size: 1rem;
+    line-height: 1.74;
+    color: var(--c-ink-soft);
+  }
+  .testimonial__name {
+    font-weight: var(--w-bold);
+  }
+  .testimonial__quote {
+    margin: 0;
+    white-space: pre-line;
+  }
+  .testimonial__links {
+    display: grid;
+    font-weight: var(--w-regular);
+  }
+  .testimonial__links a {
+    text-decoration: none;
+  }
+  .testimonial__links a:hover {
+    text-decoration: underline;
+  }
+
+  /* louder */
+  :global(:root[data-design='louder']) .testimonials__title,
+  .testimonials__echo {
+    font-family: var(--f-bold);
+    font-size: var(--fs-h2-testimonials);
+    line-height: 1.2;
+    letter-spacing: 2px;
+    text-transform: lowercase;
+    color: var(--c-heading);
+    text-align: center;
+  }
+
+  @media (max-width: 63.99rem) {
+    .testimonials__grid {
+      grid-template-columns: 1fr;
+      max-width: 28rem;
+    }
+    .testimonial__body {
+      padding: 20px 28px 32px;
+    }
+  }
+</style>

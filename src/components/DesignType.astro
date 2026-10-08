@@ -1,0 +1,94 @@
+---
+/**
+ * "Welcher Design-Typ bist du?" – Herzstück der Markenidee.
+ * Links: Vorschau der jeweils ANDEREN Welt (minimal zeigt louder, louder zeigt minimal).
+ *        Als verkleinerter, live gerenderter Hero (scharf, immer aktuell) mit „switch to design“-Kreis.
+ *        Ein Klick auf die Vorschau wechselt ebenfalls die Welt (Maus-Komfort; per Tastatur
+ *        übernimmt das der Twin-Toggle rechts).
+ * Rechts: Text + Twin-Toggle.
+ */
+import { designType } from '../content/site';
+import DesignSwitch from './DesignSwitch.astro';
+import MiniHero from './MiniHero.astro';
+---
+
+<section class="design-type" id="design-typ" aria-labelledby="design-typ-title">
+  {
+    (['minimal', 'louder'] as const).map((design) => {
+      const p = designType.preview[design];
+      return (
+        <div class:list={['design-type__preview', `only-${design}`]}>
+          <button type="button" class="design-type__hit" data-design-toggle tabindex="-1" aria-hidden="true">
+            <MiniHero shows={p.shows} />
+          </button>
+          <p class="sr-only">{p.alt}</p>
+        </div>
+      );
+    })
+  }
+
+  <div class="design-type__text">
+    <h2 class="design-type__title flash" id="design-typ-title">{designType.title}</h2>
+    <p class="design-type__claim"><strong>{designType.claim}</strong></p>
+    {designType.paragraphs.map((p) => <p>{p}</p>)}
+    <DesignSwitch variant="toggle" class="design-type__switch" />
+  </div>
+</section>
+
+<style>
+  .design-type {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    margin-block: clamp(3.5rem, 8vw, 7rem);
+    background: var(--c-design-type-bg);
+    transition: background-color var(--t-med) var(--ease);
+  }
+
+  .design-type__preview {
+    position: relative;
+    min-width: 0;
+  }
+  .design-type__hit {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .design-type__text {
+    display: grid;
+    gap: 1.2rem;
+    justify-items: start;
+    padding: 3rem clamp(1.5rem, 8vw, 9rem) 3rem clamp(1.5rem, 4vw, 3.5rem);
+    font-size: 1.125rem;
+    line-height: 1.54;
+  }
+  .design-type__title {
+    font-family: var(--f-bold);
+    font-weight: var(--w-regular);
+    font-size: var(--fs-design-type);
+    line-height: 1.2;
+    letter-spacing: 2px;
+    text-transform: lowercase;
+    max-width: 7.2em;
+  }
+  .design-type__claim strong {
+    font-weight: var(--w-regular);
+  }
+  .design-type__text :global(.design-type__switch) {
+    margin-top: 0.75rem;
+  }
+
+  @media (max-width: 47.99rem) {
+    .design-type {
+      grid-template-columns: 1fr;
+    }
+    .design-type__text {
+      padding: 2.5rem var(--gutter) 3.5rem;
+      font-size: 1rem;
+    }
+  }
+</style>

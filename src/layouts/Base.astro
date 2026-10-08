@@ -1,0 +1,73 @@
+---
+import '../styles/fonts.css';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/forms.css';
+import Seo from '../components/Seo.astro';
+import Consent from '../components/Consent.astro';
+import { designSwitch } from '../content/site';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  noindex?: boolean;
+  structuredData?: boolean;
+  extraJsonLd?: Record<string, unknown>;
+}
+const props = Astro.props;
+---
+
+<!doctype html>
+<html lang="de-AT" data-design="minimal">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--
+      Designwelt so früh wie möglich setzen (verhindert Flackern).
+      Quelle: ?design=louder|minimal (z. B. Weiterleitung der alten Louder-URL) oder localStorage.
+    -->
+    <script is:inline>
+      (function () {
+        var d = 'minimal', k = 'oba-design', h = document.documentElement;
+        try {
+          var p = new URLSearchParams(location.search), q = p.get('design');
+          if (q === 'louder' || q === 'minimal') {
+            d = q;
+            localStorage.setItem(k, q);
+            p.delete('design');
+            var s = p.toString();
+            history.replaceState(null, '', location.pathname + (s ? '?' + s : '') + location.hash);
+          } else {
+            var v = localStorage.getItem(k);
+            if (v === 'louder' || v === 'minimal') d = v;
+          }
+        } catch (e) {}
+        h.dataset.design = d;
+        if (d === 'louder') {
+          var l = document.createElement('link');
+          l.rel = 'preload'; l.as = 'font'; l.type = 'font/woff2'; l.crossOrigin = '';
+          l.href = '/fonts/anton-400.woff2';
+          document.head.appendChild(l);
+        }
+      })();
+    </script>
+    <link rel="preload" href="/fonts/mulish-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/libre-baskerville-400.woff2" as="font" type="font/woff2" crossorigin />
+    <meta name="theme-color" content="#f6f4f2" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <Seo {...props} />
+  </head>
+  <body>
+    <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+    <slot />
+    <p class="sr-only" id="design-status" aria-live="polite" data-minimal={designSwitch.announce.minimal} data-louder={designSwitch.announce.louder}></p>
+    <Consent />
+    <script>
+      import '../scripts/design';
+      import '../scripts/parallax';
+      import '../scripts/reveal';
+    </script>
+  </body>
+</html>

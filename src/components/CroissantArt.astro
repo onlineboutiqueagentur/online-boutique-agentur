@@ -1,0 +1,129 @@
+---
+/**
+ * Croissant als feine Linienzeichnung (Monoline, kein Cartoon) – Platzhalter, bis ein
+ * hochwertiges Croissant-Foto vorliegt. Die Schichten stehen für die Zutaten einer Marke.
+ * Mit `draw` zeichnet sich die Kontur und danach Schicht für Schicht von der Mitte nach außen,
+ * sobald die Grafik sichtbar wird (Klasse .is-in aus scripts/reveal.ts).
+ * Ohne JS bzw. bei reduced motion ist die Zeichnung sofort vollständig da.
+ */
+interface Props {
+  class?: string;
+  draw?: boolean;
+  /** Klein (z. B. im Button): nur Kontur + die mittleren Schichten */
+  mini?: boolean;
+  /** Ohne label rein dekorativ (aria-hidden) */
+  label?: string;
+}
+const { class: className, draw = false, mini = false, label } = Astro.props;
+
+const outline = 'M30 190 Q24.5 149.7 60 116 Q65.4 84.5 104 76 Q119.3 47.7 156 54 Q200 27.6 244 54 Q280.7 47.7 296 76 Q334.6 84.5 340 116 Q375.5 149.7 370 190 Q347.4 180.9 330 172 Q308.6 166.3 292 160 Q265.2 156.4 244 151 Q200 156.3 156 151 Q134.8 156.4 108 160 Q91.4 166.3 70 172 Q52.6 180.9 30 190 Z';
+const layers = [
+  {
+    d: 'M156 54 Q166 102.5 156 151',
+    step: 1
+  },
+  {
+    d: 'M244 54 Q234 102.5 244 151',
+    step: 1
+  },
+  {
+    d: 'M104 76 Q116 118 108 160',
+    step: 2
+  },
+  {
+    d: 'M296 76 Q284 118 292 160',
+    step: 2
+  },
+  {
+    d: 'M60 116 Q75 144 70 172',
+    step: 3
+  },
+  {
+    d: 'M340 116 Q325 144 330 172',
+    step: 3
+  }
+];
+const texture = [
+  {
+    d: 'M72.8 135.7 Q79.2 124.9 97.5 119.3',
+    step: 4
+  },
+  {
+    d: 'M115.8 110.6 Q126.1 100.7 146 100.9',
+    step: 4
+  },
+  {
+    d: 'M173.6 85 Q200 73.4 226.4 85',
+    step: 4
+  },
+  {
+    d: 'M173.6 112.2 Q200 100.6 226.4 112.2',
+    step: 4
+  },
+  {
+    d: 'M254 100.9 Q273.9 100.7 284.2 110.6',
+    step: 4
+  },
+  {
+    d: 'M302.5 119.3 Q320.8 124.9 327.2 135.7',
+    step: 4
+  }
+];
+---
+
+<svg
+  class:list={['croissant-art', { 'croissant-art--draw': draw }, className]}
+  viewBox="0 0 400 230"
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+>
+  <path class="croissant-art__fill" d={outline} />
+  <path class="croissant-art__line" d={outline} pathLength="1" style="--step:0" />
+  {(mini ? layers.slice(0, 4) : layers).map((l) => <path class="croissant-art__line" d={l.d} pathLength="1" style={`--step:${l.step}`} />)}
+  {!mini && texture.map((t) => <path class="croissant-art__line croissant-art__texture" d={t.d} pathLength="1" style={`--step:${t.step}`} />)}
+</svg>
+
+<style>
+  .croissant-art {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .croissant-art__fill {
+    fill: var(--croissant-fill, transparent);
+    stroke: none;
+  }
+  .croissant-art__line {
+    fill: none;
+    stroke: var(--croissant-ink, currentColor);
+    stroke-width: var(--croissant-stroke, 1.5);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+  .croissant-art__texture {
+    opacity: 0.45;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.anim-ready) .croissant-art--draw .croissant-art__line {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      transition: stroke-dashoffset 1.3s cubic-bezier(0.65, 0, 0.35, 1);
+      transition-delay: calc(var(--step) * 0.35s);
+    }
+    :global(.anim-ready) .croissant-art--draw .croissant-art__fill {
+      opacity: 0;
+      transition: opacity 1.2s ease 0.6s;
+    }
+    :global(.anim-ready) .croissant-art--draw:global(.is-in) .croissant-art__line {
+      stroke-dashoffset: 0;
+    }
+    :global(.anim-ready) .croissant-art--draw:global(.is-in) .croissant-art__fill {
+      opacity: 1;
+    }
+  }
+</style>

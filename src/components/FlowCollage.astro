@@ -1,0 +1,64 @@
+---
+/**
+ * feel – flow – grow – glow: versetzte Bildcollage.
+ * Desktop: Positionen 1:1 aus dem Original (relativ zu einer 856 px breiten Fläche).
+ * Mobil: zweispaltiges Raster ohne Überlappung (im Original überlappten die Bilder).
+ */
+import { flowImages } from '../content/site';
+import ThemedPicture from './ThemedPicture.astro';
+
+// Scroll-Bewegung wie im Original: feel ↑ (+ Unschärfe beim Verlassen), flow ruhig, grow ↓, glow ↓
+const motion = ['parallax-up blur-out', '', 'parallax-down', 'parallax-down'];
+---
+
+<div class="collage" role="list" aria-label="feel – flow – grow – glow">
+  {
+    flowImages.map((image, i) => (
+      <figure class:list={['collage__item', `collage__item--${i + 1}`, motion[i]]} role="listitem">
+        <div class={i === 1 ? 'bounce-left' : 'reveal'}>
+          <ThemedPicture image={image} widths={[320, 480, 640, 960]} sizes="(min-width: 64rem) 460px, 50vw" />
+        </div>
+      </figure>
+    ))
+  }
+</div>
+
+<style>
+  .collage {
+    position: relative;
+    width: min(100% - 2 * var(--gutter), 53.5rem);
+    margin: 0 auto;
+    aspect-ratio: 856 / 1076;
+  }
+  .collage__item {
+    position: absolute;
+  }
+  .collage__item :global(img) {
+    width: 100%;
+    aspect-ratio: 6 / 7;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+  /* top in % der Höhe (1076 px), left/width in % der Breite (856 px) */
+  .collage__item--1 { left: 1.2%; top: 3.9%; width: 32.8%; }
+  .collage__item--2 { left: 42.9%; top: 0; width: 53.4%; }
+  .collage__item--3 { left: 0; top: 51.3%; width: 52.5%; }
+  .collage__item--4 { left: 58.8%; top: 55.6%; width: 41.2%; }
+
+  @media (max-width: 47.99rem) {
+    .collage {
+      aspect-ratio: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+    .collage__item {
+      position: static;
+      width: auto;
+    }
+    .collage__item:nth-child(even) {
+      margin-top: 2.5rem;
+    }
+  }
+</style>

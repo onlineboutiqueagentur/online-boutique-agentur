@@ -1,0 +1,51 @@
+---
+/** Inhalt der Startseite. */
+import Hero from './Hero.astro';
+import Intro from './Intro.astro';
+import SectionHead from './SectionHead.astro';
+import FlowCollage from './FlowCollage.astro';
+import Services from './Services.astro';
+import Experience from './Experience.astro';
+import DesignType from './DesignType.astro';
+import Testimonials from './Testimonials.astro';
+import Insights from './Insights.astro';
+// import CroissantTeaser from './CroissantTeaser.astro'; // vorerst ausgeblendet
+import Contact from './Contact.astro';
+import Footer from './Footer.astro';
+import { harmony, headHeart } from '../content/site';
+
+---
+
+<Hero />
+<main id="inhalt" tabindex="-1">
+  <Intro />
+
+  <section class="block" aria-labelledby="harmonie-title">
+    <SectionHead id="harmonie-title" titleHtml={harmony.titleHtml} textHtml={harmony.textHtml} />
+    <div class="block__media">
+      <FlowCollage />
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="kopf-herz-title">
+    <SectionHead id="kopf-herz-title" titleHtml={headHeart.titleHtml} textHtml={headHeart.textHtml} tone="dark" line={false} />
+  </section>
+
+  <Services />
+  <Experience />
+  <DesignType />
+  <Testimonials />
+  <Insights />
+  {/* Croissant-Teaser vorerst ausgeblendet – zum Einblenden diese Zeile wieder aktivieren: <CroissantTeaser /> */}
+  <Contact />
+</main>
+<Footer />
+
+<style>
+  .block__media {
+    padding: clamp(3rem, 6vw, 4.5rem) 0 clamp(4rem, 10vw, 9rem);
+  }
+  main:focus {
+    outline: none;
+  }
+</style>

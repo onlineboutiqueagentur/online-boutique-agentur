@@ -1,0 +1,82 @@
+---
+import { intro } from '../content/site';
+import ThemedPicture from './ThemedPicture.astro';
+
+const { typewriter } = intro;
+const steps = typewriter.words.map((word) => ({ word }));
+---
+
+<section class="intro" id="boutiqueagentur" aria-labelledby="intro-title">
+  <div class="intro__media reveal">
+    <ThemedPicture image={intro.image} widths={[480, 720, 960, 1200]} sizes="(min-width: 48rem) 50vw, 100vw" class="intro__img" />
+  </div>
+
+  <div class="intro__text">
+    <h2 class="intro__title" id="intro-title">
+      <span class="sr-only">{intro.headingStatic}</span>
+      <span aria-hidden="true" data-typewriter={JSON.stringify(steps)}>
+        {typewriter.before} <span data-tw-word>{typewriter.words[1]}</span><span class="cursor">|</span><br />
+        {typewriter.after}
+      </span>
+    </h2>
+    <p class="intro__copy" set:html={intro.textHtml} />
+    <a class="btn intro__cta" href={intro.cta.href}>{intro.cta.label}</a>
+  </div>
+</section>
+
+<script>
+  import '../scripts/typewriter';
+</script>
+
+<style>
+  .intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+  .intro__media {
+    padding: 5% 0;
+  }
+  .intro__media :global(img) {
+    width: 100%;
+    aspect-ratio: 720 / 539;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+  .intro__text {
+    padding: 15% 22% 9% 9%;
+  }
+  .intro__title {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: var(--fs-typing);
+    line-height: 1.54;
+    margin-bottom: 1.25rem;
+  }
+  .intro__copy {
+    font-size: var(--fs-intro);
+    margin-right: -10%;
+  }
+  .intro__cta {
+    margin-top: 10%;
+  }
+
+  @media (max-width: 47.99rem) {
+    .intro {
+      grid-template-columns: 1fr;
+    }
+    .intro__text {
+      order: -1;
+      padding: 3.5rem var(--gutter) 2rem;
+    }
+    .intro__copy {
+      margin-right: 0;
+    }
+    .intro__cta {
+      margin-top: 2rem;
+    }
+    .intro__media {
+      padding: 0 0.75rem 2rem;
+    }
+  }
+</style>

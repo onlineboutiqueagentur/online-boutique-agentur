@@ -1,0 +1,135 @@
+---
+import { contact } from '../content/site';
+
+const { fields } = contact.form;
+---
+
+<section class="contact" id="kontakt" aria-labelledby="kontakt-title">
+  <div class="contact__media">
+    <video class="contact__video" muted loop playsinline preload="none" data-src={contact.video.src} aria-label={contact.video.label}></video>
+  </div>
+
+  <div class="contact__main">
+    <h2 class="heading heading--serif contact__title" id="kontakt-title" set:html={contact.titleHtml} />
+    <p class="lead-text">{contact.text}</p>
+
+    <form class="form" action="/api/contact" method="post" novalidate data-contact-form>
+      <div class="form__field">
+        <label for="f-name">{fields.name} <span aria-hidden="true">*</span></label>
+        <input id="f-name" name="name" type="text" autocomplete="name" required maxlength="120" aria-describedby="f-name-err" />
+        <p class="form__error" id="f-name-err" hidden>Bitte gib deinen Namen an.</p>
+      </div>
+      <div class="form__field">
+        <label for="f-company">{fields.company} <span aria-hidden="true">*</span></label>
+        <input id="f-company" name="company" type="text" autocomplete="organization" required maxlength="160" aria-describedby="f-company-err" />
+        <p class="form__error" id="f-company-err" hidden>Bitte gib deine Firma an.</p>
+      </div>
+      <div class="form__field">
+        <label for="f-email">{fields.email} <span aria-hidden="true">*</span></label>
+        <input id="f-email" name="email" type="email" autocomplete="email" required maxlength="200" aria-describedby="f-email-err" />
+        <p class="form__error" id="f-email-err" hidden>Bitte gib eine gültige E-Mail-Adresse an.</p>
+      </div>
+      <div class="form__field">
+        <label for="f-phone">{fields.phone}</label>
+        <div class="form__icon-input">
+          <svg viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M400 32H48A48 48 0 0 0 0 80v352a48 48 0 0 0 48 48h352a48 48 0 0 0 48-48V80a48 48 0 0 0-48-48zm-16.4 307.4-15 65A15 15 0 0 1 354 416C194 416 64 286.3 64 126a15.7 15.7 0 0 1 11.6-14.6l65-15a18.2 18.2 0 0 1 3.4-.4 16.3 16.3 0 0 1 13.8 9.1l30 70a17.9 17.9 0 0 1 1.2 5.9 16.5 16.5 0 0 1-5.5 11.6l-37.9 31a231.9 231.9 0 0 0 110.8 110.8l31-37.9a16.6 16.6 0 0 1 11.6-5.5 15.5 15.5 0 0 1 5.9 1.2l70 30a16.3 16.3 0 0 1 9.1 13.8 18.2 18.2 0 0 1-.4 3.4z"></path></svg>
+          <input id="f-phone" name="phone" type="tel" autocomplete="tel" maxlength="40" />
+        </div>
+      </div>
+      <div class="form__field">
+        <label for="f-message">{fields.message}</label>
+        <textarea id="f-message" name="message" rows="4" maxlength="5000"></textarea>
+      </div>
+
+      <!-- Spam-Schutz: Honeypot (für Menschen unsichtbar) + Zeitstempel -->
+      <div class="form__hp" aria-hidden="true">
+        <label for="f-website">Website</label>
+        <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+      <input type="hidden" name="ts" value="" data-ts />
+      <input type="hidden" name="design" value="" data-design-field />
+
+      <p class="form__privacy" set:html={contact.form.privacyHtml} />
+
+      <div class="form__actions">
+        <button class="btn form__submit" type="submit" data-label={contact.form.submit} data-sending={contact.form.sending}>
+          {contact.form.submit}
+        </button>
+      </div>
+
+      <div class="form__status" role="status" aria-live="polite" tabindex="-1" data-form-status>
+        <p class="form__msg form__msg--ok" hidden data-ok>{contact.form.success}</p>
+        <p class="form__msg form__msg--err" hidden data-err>{contact.form.error}</p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  import '../scripts/contact-form';
+
+  // Video erst laden, wenn es in die Nähe des Viewports kommt (spart ~4 MB beim Seitenaufruf)
+  const video = document.querySelector<HTMLVideoElement>('.contact__video');
+  if (video) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    new IntersectionObserver(
+      ([entry], obs) => {
+        if (!entry.isIntersecting) return;
+        obs.disconnect();
+        video.src = video.dataset.src ?? '';
+        if (reduced) {
+          video.controls = true;
+          video.preload = 'metadata';
+        } else {
+          video.autoplay = true;
+          video.play().catch(() => (video.controls = true));
+        }
+      },
+      { rootMargin: '400px' },
+    ).observe(video);
+  }
+</script>
+
+<style>
+  .contact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    width: min(100% - 2 * var(--gutter), 72rem);
+    margin: 0 auto;
+    padding: clamp(4rem, 8vw, 6.5rem) 0 3rem;
+  }
+  .contact__media {
+    display: flex;
+    justify-content: center;
+  }
+  .contact__video {
+    width: min(100%, 27.6rem);
+    aspect-ratio: 442 / 516;
+    object-fit: cover;
+    border-radius: var(--radius);
+    background: rgb(0 0 0 / 0.08);
+  }
+  .contact__title {
+    font-size: var(--fs-h2-lg);
+  }
+  :global(:root[data-design='louder']) .contact__title {
+    font-family: var(--f-bold);
+    font-size: var(--fs-h2);
+    letter-spacing: 2px;
+    text-transform: lowercase;
+    color: var(--c-heading);
+  }
+
+
+  @media (max-width: 47.99rem) {
+    .contact {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .contact__main {
+      order: -1;
+    }
+  }
+</style>

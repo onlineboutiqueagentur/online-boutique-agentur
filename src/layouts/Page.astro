@@ -1,0 +1,92 @@
+---
+/** Layout für Unterseiten (Impressum, Datenschutz, 404) – gleiche Designwelten, schlanker Kopf. */
+import Base from './Base.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  heading: string;
+  noindex?: boolean;
+}
+const { heading, ...meta } = Astro.props;
+---
+
+<Base {...meta}>
+  <header class="page-head" id="top">
+    <Navigation base="/" />
+    <a class="page-head__home" href="/">Online <em>Boutique</em> Agentur<sup aria-hidden="true">²</sup></a>
+  </header>
+  <main id="inhalt" class="page container--text" tabindex="-1">
+    <h1 class="page__title">{heading}</h1>
+    <div class="prose">
+      <slot />
+    </div>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .page-head {
+    --c-ink-hero: var(--c-ink);
+    padding-bottom: 2rem;
+    text-align: center;
+    border-bottom: 1px solid rgb(0 0 0 / 0.1);
+  }
+  .page-head__home {
+    display: inline-block;
+    margin-top: 1.5rem;
+    font-family: var(--f-display);
+    font-size: 1.5rem;
+    text-decoration: none;
+  }
+  :global(:root[data-design='louder']) .page-head__home {
+    font-family: var(--f-bold);
+    color: var(--c-accent);
+    font-size: 2rem;
+    letter-spacing: 1px;
+  }
+  :global(:root[data-design='louder']) .page-head__home em {
+    font-style: normal;
+  }
+  .page {
+    padding: 3.5rem 0 5rem;
+  }
+  .page__title {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: var(--fs-h2-lg);
+    letter-spacing: var(--ls-display);
+    margin-bottom: 2rem;
+  }
+  :global(:root[data-design='louder']) .page__title {
+    font-family: var(--f-bold);
+    font-size: var(--fs-h2);
+    text-transform: lowercase;
+    letter-spacing: 2px;
+    color: var(--c-heading);
+  }
+  .prose {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  .prose :global(h2) {
+    margin: 2.5rem 0 0.75rem;
+    font-family: var(--f-serif);
+    font-weight: var(--w-regular);
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+  .prose :global(p),
+  .prose :global(ul) {
+    margin-bottom: 1rem;
+  }
+  .prose :global(strong) {
+    font-weight: var(--w-bold);
+  }
+  .prose :global(.pre-line) {
+    white-space: pre-line;
+  }
+</style>
