@@ -170,35 +170,6 @@ const jsonLd = {
       </div>
     </section>
 
-    <!-- 7 · Das Frühstück -->
-    <section class="c-block" aria-labelledby="c-breakfast">
-      <SectionHead id="c-breakfast" titleHtml={c.breakfast.title} />
-      <div class="c-breakfast container--text">
-        <p class="c-facts">
-          {c.breakfast.facts.map((f, i) => <span class="reveal-up" style={`--i:${i}`}>{f}</span>)}
-        </p>
-        <figure class="c-photo c-photo--portrait reveal">
-          <Picture src={img.fruehstueck.src} alt={img.fruehstueck.alt} widths={[img.fruehstueck.src.width]} sizes="(min-width: 48rem) 20rem, 80vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
-        </figure>
-        <p class="lead-text" set:html={c.breakfast.textHtml} />
-        <ul role="list" class="c-chips" aria-label="Wo wir frühstücken können">
-          {c.form.formats.map((f) => <li>{f.label}</li>)}
-        </ul>
-        <p class="c-breakfast__not">{c.breakfast.notTitle}</p>
-        <ul role="list" class="c-instead">
-          {c.breakfast.instead.map((item) => <li>{item}</li>)}
-        </ul>
-      </div>
-    </section>
-
-    <!-- 8 · The little extra -->
-    <section class="c-extra container--text" aria-labelledby="c-extra">
-      <div class="v-line" aria-hidden="true"></div>
-      <h2 class="c-eyebrow c-extra__label" id="c-extra">{c.extra.eyebrow}</h2>
-      {c.extra.lines.map((line, i) => <p class="reveal-up" style={`--i:${i}`}>{line}</p>)}
-      <p class="c-extra__last reveal-up" style="--i:4">{c.extra.last}</p>
-    </section>
-
     <!-- 1 · Hero -->
     <section class="c-hero container" aria-labelledby="c-title">
       <div class="c-hero__art">
