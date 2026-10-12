@@ -13,8 +13,10 @@ interface Props {
   mini?: boolean;
   /** Ohne label rein dekorativ (aria-hidden) */
   label?: string;
+  /** Mit `draw`: erst zeichnen, wenn die Grafik so weit im Bild ist (Anteil der Bildschirmhöhe, Standard 0.9) */
+  revealAt?: number;
 }
-const { class: className, draw = false, mini = false, label } = Astro.props;
+const { class: className, draw = false, mini = false, label, revealAt } = Astro.props;
 
 const outline = 'M30 190 Q24.5 149.7 60 116 Q65.4 84.5 104 76 Q119.3 47.7 156 54 Q200 27.6 244 54 Q280.7 47.7 296 76 Q334.6 84.5 340 116 Q375.5 149.7 370 190 Q347.4 180.9 330 172 Q308.6 166.3 292 160 Q265.2 156.4 244 151 Q200 156.3 156 151 Q134.8 156.4 108 160 Q91.4 166.3 70 172 Q52.6 180.9 30 190 Z';
 const layers = [
@@ -78,6 +80,7 @@ const texture = [
   aria-label={label}
   aria-hidden={label ? undefined : 'true'}
   focusable="false"
+  data-reveal-at={revealAt}
 >
   <path class="croissant-art__fill" d={outline} />
   <path class="croissant-art__line" d={outline} pathLength="1" style="--step:0" />
