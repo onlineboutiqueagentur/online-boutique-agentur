@@ -58,6 +58,8 @@ export const entdecken = {
       'Du musst nicht alles selbst können. Und schon gar nicht alles alleine machen.',
       'Wir bringen Klarheit in deinen Markenauftritt, frische Ideen in dein Marketing und das gewisse Extra, das dein Unternehmen unverwechselbar macht. <b>Mit Erfahrung, einem guten Gespür für Marken und ganz viel Liebe fürs Detail.</b>',
     ],
+    cta: 'Erfahre mehr über uns.',
+    ctaHref: '/',
   },
 
   worlds: [
