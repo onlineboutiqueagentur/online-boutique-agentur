@@ -104,7 +104,6 @@ export const navigation = [
   { label: 'Leistungen', href: '#leistungen' },
   { label: 'Erfahrungen', href: '#erfahrungen' },
   { label: 'Kundenstimmen', href: '#kundenstimmen' },
-  { label: 'Das Croissant-Prinzip', href: '/croissant/' },
   { label: 'Kontakt', href: '#kontakt' },
 ] as const;
 
