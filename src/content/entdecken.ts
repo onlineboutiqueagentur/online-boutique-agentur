@@ -49,7 +49,6 @@ export const entdecken = {
       ['Du hast tausend Ideen im Kopf.', 'Aber keinen roten Faden für dein Marketing.', 'idea'],
       ['Du weißt, dass du etwas verändern möchtest.', 'Aber nicht so recht, wo du anfangen sollst.', 'compass'],
     ],
-    closing: 'Kommt dir bekannt vor? <em>Dann wird es vielleicht Zeit für ein kleines Extra.</em>',
   },
 
   solution: {

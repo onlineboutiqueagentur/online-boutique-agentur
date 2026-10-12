@@ -88,7 +88,6 @@ const jsonLd = {
           ))
         }
       </ul>
-      <p class="e-closing container--text reveal-up" set:html={e.problems.closing} />
     </section>
 
     <!-- 3 · Die Lösung -->
@@ -228,16 +227,17 @@ const jsonLd = {
 
   <Footer contact={false} />
 
-  <a class="e-sticky" href="#anfrage" aria-label={`${f.submit} – ${e.invite.meta}`} data-sticky-cta>
-    <span class="e-sticky__icon" aria-hidden="true"><CroissantArt mini /></span>
-    <span class="e-sticky__label" aria-hidden="true">Einladung</span>
+  <!-- Mobil: Einladung am unteren Rand wie auf der Croissant-Seite – erscheint nach dem Einstieg, verschwindet beim Formular -->
+  <a class="e-sticky btn btn--solid" href="#anfrage" data-sticky-cta>
+    <CroissantArt mini class="e-sticky__icon" />
+    {f.submit}
   </a>
 </Base>
 
 <script>
   import '../scripts/contact-form';
 
-  // Seitliche Einladung: sichtbar, sobald der Einstieg weg ist – aber nicht beim Formular selbst
+  // Einladung am unteren Rand: sichtbar, sobald der Einstieg weg ist – aber nicht beim Formular selbst
   const sticky = document.querySelector<HTMLElement>('[data-sticky-cta]');
   const hero = document.querySelector('.e-hero');
   const invite = document.getElementById('anfrage');
@@ -393,25 +393,6 @@ const jsonLd = {
   }
 
   /* ---------- 2 · Kommt dir das bekannt vor? ---------- */
-  .e-closing {
-    margin-top: clamp(2.5rem, 5vw, 3.5rem);
-    font-family: var(--f-display);
-    font-size: clamp(1.2rem, 1rem + 0.8vw, 1.6rem);
-    line-height: 1.4;
-    text-align: center;
-    text-wrap: balance;
-  }
-  :global(:root[data-design='louder']) .e-closing em {
-    font-family: var(--f-body);
-    font-style: normal;
-    font-weight: var(--w-regular);
-  }
-  :global(:root[data-design='louder']) .e-closing {
-    font-family: var(--f-bold);
-    text-transform: lowercase;
-    letter-spacing: 1px;
-  }
-
   /* ---------- 2 · Liste ---------- */
   .e-calm {
     display: grid;
@@ -494,54 +475,33 @@ const jsonLd = {
     letter-spacing: 1px;
   }
 
-  /* ---------- Seitliche Einladung (wie auf der Croissant-Seite) ---------- */
+  /* ---------- Einladung am unteren Rand (wie auf der Croissant-Seite, nur mobil) ---------- */
   .e-sticky {
     position: fixed;
-    top: 50%;
-    right: 0;
+    white-space: nowrap;
+    left: 50%;
+    bottom: 1rem;
     z-index: 30;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     gap: 0.6rem;
-    width: 3rem;
-    padding: 0.85rem 0 1rem;
-    border-radius: 12px 0 0 12px;
-    background: #111;
-    color: #fff;
-    text-decoration: none;
-    box-shadow: 0 8px 24px rgb(0 0 0 / 0.22);
+    translate: -50% 140%;
     opacity: 0;
-    pointer-events: none;
-    translate: 100% -50%;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
     transition:
       translate 0.4s var(--ease),
-      opacity 0.3s var(--ease),
-      width 0.3s var(--ease);
+      opacity 0.3s var(--ease);
+  }
+  .e-sticky :global(.e-sticky__icon) {
+    width: 1.5rem;
+    color: inherit;
+    --croissant-fill: transparent;
   }
   .e-sticky.is-visible {
+    translate: -50% 0;
     opacity: 1;
-    pointer-events: auto;
-    translate: 0 -50%;
   }
-  .e-sticky__icon :global(svg) {
-    display: block;
-    width: 1.6rem;
-    color: #fff;
-    transition: rotate 0.3s var(--ease);
-  }
-  .e-sticky__label {
-    writing-mode: vertical-rl;
-    rotate: 180deg;
-    font-size: 0.8125rem;
-    letter-spacing: 0.06em;
-  }
-  @media (hover: hover) {
-    .e-sticky:hover {
-      width: 3.4rem;
-    }
-    .e-sticky:hover .e-sticky__icon :global(svg) {
-      rotate: -12deg;
+  @media (min-width: 48rem) {
+    .e-sticky {
+      display: none;
     }
   }
 
