@@ -74,30 +74,9 @@ const jsonLd = {
   </header>
 
   <main id="inhalt" tabindex="-1" class="entdecken">
-    <!-- 2 · Kommt dir das bekannt vor? -->
+    <!-- 2 · Kommt dir das bekannt vor? (ruhig, mit feinen Symbolen) -->
     <section class="e-block" id="bekannt" aria-labelledby="e-problems">
-      <p class="e-variant-label container">Variante 1 · Kärtchen</p>
       <SectionHead id="e-problems" titleHtml={e.problems.title} textHtml={e.problems.text} />
-      <ul role="list" class="e-problems container">
-        {
-          e.problems.items.map(([first, second, sym], i) => (
-            <li class="e-problems__item reveal-up" style={`--i:${i % 3}`}>
-              <span class="e-problems__mark" aria-hidden="true" set:html={icon(sym)} />
-              <p>
-                {first} <em>{second}</em>
-              </p>
-            </li>
-          ))
-        }
-      </ul>
-      <p class="e-closing container--text reveal-up" set:html={e.problems.closing} />
-    </section>
-
-
-    <!-- 2c · Kommt dir das bekannt vor?, Variante 3: ruhig, nur Typografie -->
-    <section class="e-block" aria-labelledby="e-problems3">
-      <p class="e-variant-label container">Variante 3 · Ruhig, nur Text</p>
-      <SectionHead id="e-problems3" titleHtml={e.problems.title} textHtml={e.problems.text} />
       <ul role="list" class="e-calm container--text">
         {
           e.problems.items.map(([first, second, sym]) => (
@@ -414,41 +393,6 @@ const jsonLd = {
   }
 
   /* ---------- 2 · Kommt dir das bekannt vor? ---------- */
-  .e-problems {
-    display: grid;
-    gap: 1rem;
-    margin-top: clamp(2rem, 4vw, 3rem);
-  }
-  .e-problems__item {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 1rem;
-    align-items: start;
-    padding: 1.5rem 1.5rem 1.6rem;
-    background: var(--c-card);
-    border-radius: var(--radius);
-  }
-  .e-problems__mark {
-    display: grid;
-    place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    border: 1px solid currentColor;
-    border-radius: 50%;
-  }
-  .e-problems__mark :global(svg) {
-    width: 1.4rem;
-  }
-  .e-problems__item p {
-    font-size: 1rem;
-    line-height: 1.55;
-  }
-  .e-problems__item em {
-    display: block;
-    margin-top: 0.15rem;
-    font-family: var(--f-display);
-    font-size: 1.0625rem;
-  }
   .e-closing {
     margin-top: clamp(2.5rem, 5vw, 3.5rem);
     font-family: var(--f-display);
@@ -457,25 +401,6 @@ const jsonLd = {
     text-align: center;
     text-wrap: balance;
   }
-  @media (min-width: 48rem) {
-    .e-problems {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.25rem;
-    }
-  }
-  @media (min-width: 64rem) {
-    /* 5 Kärtchen: 3 oben, 2 zentriert darunter */
-    .e-problems {
-      grid-template-columns: repeat(6, 1fr);
-    }
-    .e-problems__item {
-      grid-column: span 2;
-    }
-    .e-problems__item:nth-child(4) {
-      grid-column: 2 / span 2;
-    }
-  }
-  :global(:root[data-design='louder']) .e-problems__item em,
   :global(:root[data-design='louder']) .e-closing em {
     font-family: var(--f-body);
     font-style: normal;
@@ -487,17 +412,7 @@ const jsonLd = {
     letter-spacing: 1px;
   }
 
-  /* ---------- Vorschau: Varianten-Label (wird nach der Auswahl entfernt) ---------- */
-  .e-variant-label {
-    margin-bottom: 1.25rem;
-    font-size: 0.75rem;
-    font-weight: var(--w-regular);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--c-ink-soft);
-  }
-
-  /* ---------- 2c · Kommt dir das bekannt vor?, Variante 3 ---------- */
+  /* ---------- 2 · Liste ---------- */
   .e-calm {
     display: grid;
     gap: clamp(1.75rem, 3.5vw, 2.5rem);
