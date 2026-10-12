@@ -63,7 +63,8 @@ export const entdecken = {
     loveHref: '/#kundenstimmen',
   },
 
-  worldsTitle: 'Keine Sorge.<br />Wir bringen dich (wieder) ins Schwärmen, <em>für deine eigene Marke.</em>',
+  worldsTitle: 'Keine Sorge.<br />Wir bringen dich (wieder) ins Schwärmen,<br /><em>für deine eigene Marke.</em>',
+  worldsText: 'Wir machen aus deiner Marke wieder etwas, das du am liebsten der ganzen Welt zeigen möchtest.',
 
   worlds: [
     {
