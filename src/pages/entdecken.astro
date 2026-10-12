@@ -65,6 +65,7 @@ const jsonLd = {
   <main id="inhalt" tabindex="-1" class="entdecken">
     <!-- 2 · Kommt dir das bekannt vor? -->
     <section class="e-block" id="bekannt" aria-labelledby="e-problems">
+      <p class="e-variant-label container">Variante 1 · Kärtchen</p>
       <SectionHead id="e-problems" titleHtml={e.problems.title} textHtml={e.problems.text} />
       <ul role="list" class="e-problems container">
         {
@@ -79,6 +80,28 @@ const jsonLd = {
         }
       </ul>
       <p class="e-closing container--text reveal-up" set:html={e.problems.closing} />
+    </section>
+
+    <!-- 2b · Kommt dir das bekannt vor?, Variante 2: dunkles Band, Aussagen als große Liste -->
+    <section class="e-dark" aria-labelledby="e-problems2">
+      <p class="e-variant-label container">Variante 2 · Dunkles Band mit großer Liste</p>
+      <div class="container--text e-dark__head">
+        <h2 class="heading e-dark__title" id="e-problems2" set:html={e.problems.title} />
+        <p class="lead-text">{e.problems.text}</p>
+      </div>
+      <ol role="list" class="e-dark__list container--text">
+        {
+          e.problems.items.map(([first, second], i) => (
+            <li class="e-dark__item reveal-up">
+              <span class="e-dark__no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <p>
+                {first} <em>{second}</em>
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="e-dark__closing container--text reveal-up" set:html={e.problems.closing} />
     </section>
 
     <!-- 3 · Die Lösung -->
@@ -411,6 +434,82 @@ const jsonLd = {
     font-family: var(--f-bold);
     text-transform: lowercase;
     letter-spacing: 1px;
+  }
+
+  /* ---------- Vorschau: Varianten-Label (wird nach der Auswahl entfernt) ---------- */
+  .e-variant-label {
+    margin-bottom: 1.25rem;
+    font-size: 0.75rem;
+    font-weight: var(--w-regular);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--c-ink-soft);
+  }
+
+  /* ---------- 2b · Kommt dir das bekannt vor?, Variante 2 ---------- */
+  .e-dark {
+    margin-bottom: clamp(3rem, 7vw, 5rem);
+    padding: clamp(2rem, 5vw, 3rem) 0 clamp(4rem, 9vw, 6.5rem);
+    background: #000;
+    color: #fff;
+  }
+  .e-dark .e-variant-label {
+    color: rgb(255 255 255 / 0.6);
+  }
+  .e-dark__head {
+    padding-top: clamp(2rem, 5vw, 3.5rem);
+    text-align: center;
+  }
+  .e-dark__title {
+    color: #fff;
+    font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.6rem);
+  }
+  .e-dark__list {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    border-top: 1px solid rgb(255 255 255 / 0.25);
+  }
+  .e-dark__item {
+    display: grid;
+    grid-template-columns: 2.75rem 1fr;
+    gap: 1rem;
+    align-items: baseline;
+    padding: 1.4rem 0;
+    border-bottom: 1px solid rgb(255 255 255 / 0.25);
+  }
+  .e-dark__no {
+    font-size: 0.8125rem;
+    font-weight: var(--w-regular);
+    letter-spacing: 0.1em;
+    color: var(--c-accent);
+  }
+  .e-dark__item p {
+    font-family: var(--f-display);
+    font-size: clamp(1.15rem, 1rem + 0.7vw, 1.55rem);
+    line-height: 1.4;
+  }
+  .e-dark__item em {
+    color: var(--c-accent);
+  }
+  .e-dark__closing {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    font-family: var(--f-display);
+    font-size: clamp(1.2rem, 1rem + 0.8vw, 1.6rem);
+    line-height: 1.4;
+    text-align: center;
+    text-wrap: balance;
+  }
+  :global(:root[data-design='louder']) .e-dark__title,
+  :global(:root[data-design='louder']) .e-dark__item p,
+  :global(:root[data-design='louder']) .e-dark__closing {
+    font-family: var(--f-bold);
+    text-transform: lowercase;
+    letter-spacing: 1px;
+  }
+  :global(:root[data-design='louder']) .e-dark__title {
+    color: var(--c-accent);
+  }
+  :global(:root[data-design='louder']) .e-dark :global(em) {
+    font-style: normal;
   }
 
   /* ---------- 3 · Lösung ---------- */
