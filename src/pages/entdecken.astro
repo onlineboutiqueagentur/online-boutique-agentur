@@ -523,6 +523,7 @@ const jsonLd = {
   }
   .e-row__media {
     overflow: hidden;
+    width: min(100%, 22rem);
     border-radius: var(--radius);
   }
   .e-row__media :global(img) {
@@ -565,14 +566,18 @@ const jsonLd = {
   }
   @media (min-width: 48rem) {
     .e-row {
-      grid-template-columns: 1fr 1.1fr;
+      grid-template-columns: 0.75fr 1.1fr;
       gap: clamp(2.5rem, 6vw, 5rem);
     }
     .e-row--flip {
-      grid-template-columns: 1.1fr 1fr;
+      grid-template-columns: 1.1fr 0.75fr;
+    }
+    .e-row__media {
+      justify-self: end;
     }
     .e-row--flip .e-row__media {
       order: 2;
+      justify-self: start;
     }
   }
   :global(:root[data-design='louder']) .e-row__no {
