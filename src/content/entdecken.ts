@@ -5,10 +5,15 @@
 
 import heroImg from '../assets/images/shared/pia-nina-online-marketing-agentur-oberoesterreich.jpg';
 import heroImgMobile from '../assets/images/shared/pia-nina-online-marketing-agentur-oberoesterreich-mobil.jpg';
+import worldImg1 from '../assets/images/minimal/grow-weisse-bluete.jpg';
+import worldImg2 from '../assets/images/minimal/flow-fliessender-stoff.jpg';
+import worldImg3 from '../assets/images/minimal/feel-haende-im-licht.jpg';
 import teamImg from '../assets/images/minimal/pia-nina-zwillinge-boutique-agentur-schwarzweiss.jpg';
 
 export const entdeckenImages = {
   hero: { src: heroImg, mobile: heroImgMobile, alt: '' },
+  /** Bilder zu den drei Themenwelten (Variante 2) */
+  worlds: [worldImg1, worldImg2, worldImg3],
   team: { src: teamImg, alt: 'Pia und Nina, die Zwillingsschwestern hinter der Online Boutique Agentur' },
 } as const;
 
@@ -79,7 +84,7 @@ export const entdecken = {
       'Ein frischer Blick. Eine neue Idee. Oder zwei kreative Köpfe, die genau das Potenzial sehen, das in deinem Unternehmen steckt.',
       'Und weil gute Ideen am besten bei einem guten Frühstück entstehen, laden wir dich auf ein Croissant ein.',
     ],
-    cta: 'Ein Croissant. Viele Möglichkeiten.',
+    cta: 'Ein Croissant. Viele Möglichkeiten. Jetzt anfragen!',
     href: '/croissant/',
   },
 } as const;

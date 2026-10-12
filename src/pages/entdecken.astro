@@ -95,6 +95,7 @@ const jsonLd = {
     <!-- 4 · Drei Themenwelten -->
     <section class="e-block" aria-label="Unsere Leistungen">
       <div class="v-line" aria-hidden="true"></div>
+      <p class="e-variant-label container">Variante 1 · Drei Karten</p>
       <ol role="list" class="e-worlds container">
         {
           e.worlds.map((w, i) => (
@@ -110,6 +111,30 @@ const jsonLd = {
                   </>
                 ))}
               </p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <!-- 4b · Themenwelten, Variante 2: große Nummer, Bild und Text im Wechsel -->
+    <section class="e-block" aria-label="Unsere Leistungen (Variante 2)">
+      <p class="e-variant-label container">Variante 2 · Bild und Text im Wechsel</p>
+      <ol role="list" class="e-rows container">
+        {
+          e.worlds.map((w, i) => (
+            <li class:list={['e-row', { 'e-row--flip': i % 2 === 1 }]}>
+              <figure class="e-row__media reveal">
+                <Picture src={img.worlds[i]} alt="" widths={[480, 720, 960]} sizes="(min-width: 48rem) 26rem, 90vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
+              </figure>
+              <div class="e-row__text reveal-up">
+                <span class="e-row__no" aria-hidden="true">{w.no}</span>
+                <h2 class="e-row__title">{w.title}</h2>
+                <p>{w.text}</p>
+                <ul role="list" class="e-row__tags">
+                  {w.tags.map((t) => <li>{t}</li>)}
+                </ul>
+              </div>
             </li>
           ))
         }
@@ -134,7 +159,7 @@ const jsonLd = {
     </section>
   </main>
 
-  <Footer />
+  <Footer contact={false} />
 </Base>
 
 <style>
@@ -432,6 +457,101 @@ const jsonLd = {
     letter-spacing: 1px;
   }
 
+
+  /* ---------- Vorschau: Varianten-Label (wird nach der Auswahl entfernt) ---------- */
+  .e-variant-label {
+    margin-bottom: 1.25rem;
+    font-size: 0.75rem;
+    font-weight: var(--w-regular);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--c-ink-soft);
+  }
+
+  /* ---------- 4b · Themenwelten, Variante 2 ---------- */
+  .e-rows {
+    display: grid;
+    gap: clamp(3rem, 7vw, 5.5rem);
+    padding-top: 1rem;
+  }
+  .e-row {
+    display: grid;
+    gap: 1.75rem;
+    align-items: center;
+  }
+  .e-row__media {
+    overflow: hidden;
+    border-radius: var(--radius);
+  }
+  .e-row__media :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+  .e-row__text {
+    display: grid;
+    gap: 1rem;
+    font-size: 1.0625rem;
+  }
+  .e-row__no {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+    line-height: 0.9;
+    color: var(--c-accent);
+  }
+  .e-row__title {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+    line-height: 1.25;
+    letter-spacing: var(--ls-display);
+    text-wrap: balance;
+  }
+  .e-row__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .e-row__tags li {
+    padding: 0.35rem 0.9rem;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    font-weight: var(--w-regular);
+  }
+  @media (min-width: 48rem) {
+    .e-row {
+      grid-template-columns: 1fr 1.1fr;
+      gap: clamp(2.5rem, 6vw, 5rem);
+    }
+    .e-row--flip {
+      grid-template-columns: 1.1fr 1fr;
+    }
+    .e-row--flip .e-row__media {
+      order: 2;
+    }
+    .e-row__media :global(img) {
+      aspect-ratio: 5 / 6;
+    }
+  }
+  :global(:root[data-design='louder']) .e-row__no {
+    font-family: var(--f-bold);
+    font-style: normal;
+    color: #000;
+  }
+  :global(:root[data-design='louder']) .e-row__title {
+    font-family: var(--f-bold);
+    text-transform: lowercase;
+    letter-spacing: 1px;
+    color: var(--c-heading);
+  }
+  :global(:root[data-design='louder']) .e-row__tags li {
+    border-radius: 0;
+    background: var(--c-accent);
+    border-color: var(--c-accent);
+  }
 
   /* ---------- 5 · Croissant-Prinzip ---------- */
   .e-final {
