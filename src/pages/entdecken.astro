@@ -143,7 +143,7 @@ const jsonLd = {
           e.worlds.map((w, i) => (
             <li class:list={['e-row', { 'e-row--flip': i % 2 === 1 }]}>
               <figure class="e-row__media reveal">
-                <Picture src={img.worlds[i]} alt="" widths={[480, 720, 960]} sizes="(min-width: 48rem) 26rem, 90vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
+                <Picture src={img.worlds[i].src} alt={img.worlds[i].alt} widths={[480, 720, 960]} sizes="(min-width: 48rem) 26rem, 90vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
               </figure>
               <div class="e-row__text reveal-up">
                 <span class="e-row__no" aria-hidden="true">{w.no}</span>
@@ -609,7 +609,7 @@ const jsonLd = {
   }
   .e-row__media :global(img) {
     width: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 4 / 5;
     object-fit: cover;
   }
   .e-row__text {
@@ -655,9 +655,6 @@ const jsonLd = {
     }
     .e-row--flip .e-row__media {
       order: 2;
-    }
-    .e-row__media :global(img) {
-      aspect-ratio: 5 / 6;
     }
   }
   :global(:root[data-design='louder']) .e-row__no {

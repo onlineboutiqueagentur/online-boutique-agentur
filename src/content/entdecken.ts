@@ -5,15 +5,19 @@
 
 import heroImg from '../assets/images/shared/pia-nina-online-marketing-agentur-oberoesterreich.jpg';
 import heroImgMobile from '../assets/images/shared/pia-nina-online-marketing-agentur-oberoesterreich-mobil.jpg';
-import worldImg1 from '../assets/images/minimal/grow-weisse-bluete.jpg';
-import worldImg2 from '../assets/images/minimal/flow-fliessender-stoff.jpg';
-import worldImg3 from '../assets/images/minimal/feel-haende-im-licht.jpg';
+import worldImg1 from '../assets/images/entdecken/leistung-webdesign-laptop-schreibtisch.jpg';
+import worldImg2 from '../assets/images/entdecken/leistung-social-media-smartphone-feed.jpg';
+import worldImg3 from '../assets/images/entdecken/leistung-marketingberatung-notizbuch.jpg';
 import teamImg from '../assets/images/minimal/pia-nina-zwillinge-boutique-agentur-schwarzweiss.jpg';
 
 export const entdeckenImages = {
   hero: { src: heroImg, mobile: heroImgMobile, alt: '' },
   /** Bilder zu den drei Themenwelten (Variante 2) */
-  worlds: [worldImg1, worldImg2, worldImg3],
+  worlds: [
+    { src: worldImg1, alt: 'Laptop auf einem Holztisch im Sonnenlicht, darauf eine elegante Website einer Moderatorin' },
+    { src: worldImg2, alt: 'Smartphone mit einem stimmigen Instagram-Feed in warmen Beigetönen' },
+    { src: worldImg3, alt: 'Aufgeschlagenes Notizbuch mit einer Mindmap und goldenem Stift auf einem sonnigen Schreibtisch' },
+  ],
   team: { src: teamImg, alt: 'Pia und Nina, die Zwillingsschwestern hinter der Online Boutique Agentur' },
 } as const;
 
