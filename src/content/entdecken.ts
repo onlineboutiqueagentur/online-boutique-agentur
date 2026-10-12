@@ -103,7 +103,7 @@ export const entdecken = {
       '<b>Und was das alles mit einem Croissant zu tun hat?<br />Mehr, als du vielleicht denkst.</b>',
     ],
     cta: 'Ein Croissant. Viele Möglichkeiten.',
-    href: '#anfrage',
+    href: '/croissant/',
     principle: 'Was hinter unserem Croissant-Prinzip steckt',
     principleHref: '/croissant/',
   },
