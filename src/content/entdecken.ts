@@ -43,7 +43,7 @@ export const entdecken = {
     text: 'Schmetterlinge im Bauch oder eher ein kleines Bauchgefühl, dass da noch mehr geht? Vielleicht erkennst du dich hier wieder.',
     /** [erste Zeile, zweite Zeile, Symbol] */
     items: [
-      ['Deine Website ist online.', 'Aber so richtig stolz bist du nicht darauf.', 'website'],
+      ['Deine Website ist online.', 'Aber die ganz große Liebe ist es irgendwie nicht.', 'website'],
       ['Dein Unternehmen hat sich weiterentwickelt.', 'Dein Markenauftritt irgendwie nicht.', 'growth'],
       ['Du machst richtig gute Arbeit.', 'Aber nach außen sieht man davon viel zu wenig.', 'eye'],
       ['Du hast tausend Ideen im Kopf.', 'Aber keinen roten Faden für dein Marketing.', 'idea'],
