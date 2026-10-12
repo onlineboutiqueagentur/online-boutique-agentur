@@ -53,7 +53,7 @@ export const entdecken = {
   },
 
   solution: {
-    title: 'Du kümmerst dich um dein Business. <em>Wir um den Rest.</em>',
+    title: 'Du kümmerst dich um dein Business.<br /><em>Wir um den Rest.</em>',
     paragraphs: [
       'Du musst nicht alles selbst können. Und schon gar nicht alles alleine machen.',
       'Wir bringen Klarheit in deinen Markenauftritt, frische Ideen in dein Marketing und das gewisse Extra, das dein Unternehmen unverwechselbar macht. <b>Mit Erfahrung, einem guten Gespür für Marken und ganz viel Liebe fürs Detail.</b>',
