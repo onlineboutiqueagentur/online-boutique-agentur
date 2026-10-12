@@ -11,6 +11,8 @@ interface Props {
   base?: string;
 }
 const { base = '' } = Astro.props;
+// Eigene Seiten (z. B. /croissant/) direkt verlinken, Anker auf die Startseite
+const link = (href: string) => (href.startsWith('/') ? href : `${base}${href}`);
 ---
 
 <div class="nav-bar">
@@ -19,7 +21,7 @@ const { base = '' } = Astro.props;
       {
         navigation.map((item) => (
           <li>
-            <a href={`${base}${item.href}`}>{item.label}</a>
+            <a href={link(item.href)}>{item.label}</a>
           </li>
         ))
       }
@@ -45,7 +47,7 @@ const { base = '' } = Astro.props;
         {
           navigation.map((item) => (
             <li>
-              <a href={`${base}${item.href}`} data-close-menu>
+              <a href={link(item.href)} data-close-menu>
                 {item.label}
               </a>
             </li>
