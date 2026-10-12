@@ -94,34 +94,10 @@ const jsonLd = {
       </div>
     </section>
 
-    <!-- 4 · Drei Themenwelten -->
+
+    <!-- 4 · Drei Themenwelten: große Nummer, Bild und Text im Wechsel -->
     <section class="e-block" aria-label="Unsere Leistungen">
       <div class="v-line" aria-hidden="true"></div>
-      <p class="e-variant-label container">Variante 1 · Drei Karten</p>
-      <ol role="list" class="e-worlds container">
-        {
-          e.worlds.map((w, i) => (
-            <li class="e-world reveal-up" style={`--i:${i}`}>
-              <span class="e-world__no" aria-hidden="true">{w.no}</span>
-              <h2 class="e-world__title">{w.title}</h2>
-              <p class="e-world__text">{w.text}</p>
-              <p class="e-world__tags">
-                {w.tags.map((t, k) => (
-                  <>
-                    {k > 0 && <span aria-hidden="true"> · </span>}
-                    <span>{t}</span>
-                  </>
-                ))}
-              </p>
-            </li>
-          ))
-        }
-      </ol>
-    </section>
-
-    <!-- 4b · Themenwelten, Variante 2: große Nummer, Bild und Text im Wechsel -->
-    <section class="e-block" aria-label="Unsere Leistungen (Variante 2)">
-      <p class="e-variant-label container">Variante 2 · Bild und Text im Wechsel</p>
       <ol role="list" class="e-rows container">
         {
           e.worlds.map((w, i) => (
@@ -453,6 +429,9 @@ const jsonLd = {
     gap: 1rem;
     font-size: 1.0625rem;
   }
+  .e-solution__text :global(b) {
+    font-weight: var(--w-bold);
+  }
   .e-solution__first {
     font-family: var(--f-display);
     font-size: clamp(1.2rem, 1rem + 0.7vw, 1.5rem);
@@ -471,76 +450,6 @@ const jsonLd = {
   }
 
   /* ---------- 4 · Themenwelten ---------- */
-  .e-worlds {
-    display: grid;
-    gap: 1.25rem;
-  }
-  .e-world {
-    display: grid;
-    align-content: start;
-    gap: 1rem;
-    padding: clamp(1.75rem, 3vw, 2.5rem);
-    background: var(--c-card);
-    border-radius: var(--radius);
-  }
-  .e-world__no {
-    font-family: var(--f-display);
-    font-style: italic;
-    font-size: 2.5rem;
-    line-height: 1;
-    color: var(--c-accent);
-  }
-  .e-world__title {
-    font-family: var(--f-display);
-    font-weight: var(--w-regular);
-    font-size: clamp(1.3rem, 1.1rem + 0.6vw, 1.55rem);
-    line-height: 1.3;
-    letter-spacing: -0.5px;
-    text-wrap: balance;
-  }
-  .e-world__text {
-    font-size: 1rem;
-  }
-  .e-world__tags {
-    margin-top: auto;
-    padding-top: 1rem;
-    border-top: 1px solid rgb(0 0 0 / 0.15);
-    font-size: 0.8125rem;
-    font-weight: var(--w-regular);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  @media (min-width: 64rem) {
-    .e-worlds {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    .e-world {
-      grid-template-rows: auto auto 1fr auto;
-    }
-  }
-  :global(:root[data-design='louder']) .e-world__no {
-    font-family: var(--f-bold);
-    font-style: normal;
-    color: #000;
-  }
-  :global(:root[data-design='louder']) .e-world__title {
-    font-family: var(--f-bold);
-    text-transform: lowercase;
-    letter-spacing: 1px;
-  }
-
-
-  /* ---------- Vorschau: Varianten-Label (wird nach der Auswahl entfernt) ---------- */
-  .e-variant-label {
-    margin-bottom: 1.25rem;
-    font-size: 0.75rem;
-    font-weight: var(--w-regular);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--c-ink-soft);
-  }
-
-  /* ---------- 4b · Themenwelten, Variante 2 ---------- */
   .e-rows {
     display: grid;
     gap: clamp(3rem, 7vw, 5.5rem);
