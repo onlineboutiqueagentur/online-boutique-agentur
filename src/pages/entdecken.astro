@@ -167,7 +167,7 @@ const jsonLd = {
         <CroissantArt draw revealAt={0.7} class="e-final__art" label="Feine Linienzeichnung eines Croissants" />
         <h2 class="heading e-final__title" id="e-croissant" set:html={e.croissant.title} />
         <div class="e-final__text">
-          {e.croissant.paragraphs.map((p) => <p>{p}</p>)}
+          {e.croissant.paragraphs.map((p) => <p set:html={p} />)}
         </div>
         <a class="btn btn--solid e-cta" href={e.croissant.href}>
           <CroissantArt mini class="e-cta__icon" />
@@ -686,6 +686,9 @@ const jsonLd = {
   }
   .e-final__inner :global(.e-final__art) {
     width: min(55%, 13rem);
+  }
+  .e-final__text :global(b) {
+    font-weight: var(--w-bold);
   }
   .e-final__text {
     display: grid;
