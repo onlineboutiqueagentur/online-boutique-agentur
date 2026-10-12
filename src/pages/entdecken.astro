@@ -1,0 +1,579 @@
+---
+/**
+ * /entdecken – Landingpage für Social-Media-Werbung (Ziel: neue Kundinnen und Kunden).
+ * Aufbau: Einstieg · „Kommt dir das bekannt vor?“ · Lösung · drei Themenwelten ·
+ * Vorher–nachher · Croissant-Prinzip (Button zur Croissant-Seite).
+ * Gestaltung mit den bestehenden Design-Elementen – funktioniert in beiden Designwelten.
+ */
+import Base from '../layouts/Base.astro';
+import Navigation from '../components/Navigation.astro';
+import SectionHead from '../components/SectionHead.astro';
+import CroissantArt from '../components/CroissantArt.astro';
+import Footer from '../components/Footer.astro';
+import { Picture, getImage } from 'astro:assets';
+import { agency } from '../content/site';
+import { entdecken as e, entdeckenImages as img, entdeckenSeo } from '../content/entdecken';
+
+// Header-Bild: Querformat ab Tablet, Hochformat auf Smartphones (wie die Startseite)
+const MOBILE = '(max-width: 47.99rem)';
+const [mAvif, mWebp, dAvif, dWebp, dJpg] = await Promise.all([
+  getImage({ src: img.hero.mobile, widths: [480, 750, 1080], format: 'avif' }),
+  getImage({ src: img.hero.mobile, widths: [480, 750, 1080], format: 'webp' }),
+  getImage({ src: img.hero.src, widths: [960, 1280, 1600, 1920], format: 'avif' }),
+  getImage({ src: img.hero.src, widths: [960, 1280, 1600, 1920], format: 'webp' }),
+  getImage({ src: img.hero.src, widths: [960, 1280, 1920], format: 'jpg', quality: 78 }),
+]);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${agency.url}/entdecken/#seite`,
+  url: `${agency.url}/entdecken/`,
+  name: entdeckenSeo.title,
+  description: entdeckenSeo.description,
+  inLanguage: 'de-AT',
+  isPartOf: { '@id': `${agency.url}/#website` },
+  about: { '@id': `${agency.url}/#organisation` },
+};
+---
+
+<Base title={entdeckenSeo.title} description={entdeckenSeo.description} path={entdeckenSeo.path} extraJsonLd={jsonLd} noindex>
+  <!-- 1 · Einstieg -->
+  <header class="e-hero" id="top">
+    <div class="e-hero__media">
+      <picture>
+        <source media={MOBILE} type="image/avif" srcset={mAvif.srcSet.attribute} sizes="100vw" />
+        <source media={MOBILE} type="image/webp" srcset={mWebp.srcSet.attribute} sizes="100vw" />
+        <source type="image/avif" srcset={dAvif.srcSet.attribute} sizes="100vw" />
+        <source type="image/webp" srcset={dWebp.srcSet.attribute} sizes="100vw" />
+        <img src={dJpg.src} srcset={dJpg.srcSet.attribute} sizes="100vw" width={img.hero.src.width} height={img.hero.src.height} alt={img.hero.alt} fetchpriority="high" loading="eager" decoding="async" />
+      </picture>
+    </div>
+
+    <Navigation base="/" />
+
+    <div class="e-hero__content parallax-hero">
+      <a class="e-hero__brand" href="/">Online <em>Boutique</em> Agentur<sup aria-hidden="true">²</sup></a>
+      <h1 class="e-hero__title">{e.hero.title}<br /><em>{e.hero.titleSecond}</em></h1>
+      <p class="e-hero__sub">{e.hero.text}</p>
+      <a class="btn e-hero__btn" href="#bekannt">{e.hero.cta}</a>
+    </div>
+  </header>
+
+  <main id="inhalt" tabindex="-1" class="entdecken">
+    <!-- 2 · Kommt dir das bekannt vor? -->
+    <section class="e-block" id="bekannt" aria-labelledby="e-problems">
+      <SectionHead id="e-problems" titleHtml={e.problems.title} textHtml={e.problems.text} />
+      <ul role="list" class="e-problems container">
+        {
+          e.problems.items.map(([first, second], i) => (
+            <li class="e-problems__item reveal-up" style={`--i:${i % 3}`}>
+              <span class="e-problems__mark" aria-hidden="true">?</span>
+              <p>
+                {first} <em>{second}</em>
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="e-closing container--text reveal-up" set:html={e.problems.closing} />
+    </section>
+
+    <!-- 3 · Die Lösung -->
+    <section class="e-block" aria-labelledby="e-solution">
+      <SectionHead id="e-solution" titleHtml={e.solution.title} />
+      <div class="e-solution container">
+        <figure class="e-solution__media reveal">
+          <Picture src={img.team.src} alt={img.team.alt} widths={[640, 960, 1280]} sizes="(min-width: 48rem) 30rem, 90vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
+        </figure>
+        <div class="e-solution__text">
+          {e.solution.paragraphs.map((p, i) => <p class:list={{ 'e-solution__first': i === 0 }}>{p}</p>)}
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 · Drei Themenwelten -->
+    <section class="e-block" aria-label="Unsere Leistungen">
+      <div class="v-line" aria-hidden="true"></div>
+      <ol role="list" class="e-worlds container">
+        {
+          e.worlds.map((w, i) => (
+            <li class="e-world reveal-up" style={`--i:${i}`}>
+              <span class="e-world__no" aria-hidden="true">{w.no}</span>
+              <h2 class="e-world__title">{w.title}</h2>
+              <p class="e-world__text">{w.text}</p>
+              <p class="e-world__tags">
+                {w.tags.map((t, k) => (
+                  <>
+                    {k > 0 && <span aria-hidden="true"> · </span>}
+                    <span>{t}</span>
+                  </>
+                ))}
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <!-- 5 · Vorher – nachher -->
+    <section class="e-block" aria-labelledby="e-change">
+      <SectionHead id="e-change" titleHtml={e.change.title} />
+      <ul role="list" class="e-change container">
+        {
+          e.change.items.map((c, i) => (
+            <li class="e-change__tile reveal-up" style={`--i:${i}`}>
+              <div class="e-change__before">
+                <span class="e-change__label">{e.change.before}</span>
+                <p>{c.before}</p>
+              </div>
+              <span class="e-change__arrow" aria-hidden="true">↓</span>
+              <div class="e-change__after">
+                <span class="e-change__label">{e.change.after}</span>
+                <p>{c.after}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <!-- 6 · Croissant-Prinzip -->
+    <section class="e-final" aria-labelledby="e-croissant">
+      <div class="v-line" aria-hidden="true"></div>
+      <div class="container--text e-final__inner">
+        <CroissantArt draw class="e-final__art" label="Feine Linienzeichnung eines Croissants" />
+        <h2 class="heading e-final__title" id="e-croissant" set:html={e.croissant.title} />
+        <div class="e-final__text">
+          {e.croissant.paragraphs.map((p) => <p>{p}</p>)}
+        </div>
+        <a class="btn btn--solid e-cta" href={e.croissant.href}>
+          <CroissantArt mini class="e-cta__icon" />
+          {e.croissant.cta}
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  .entdecken:focus {
+    outline: none;
+  }
+  .e-block {
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+  .entdecken :global(.croissant-art) {
+    color: var(--c-ink);
+  }
+  :global(:root[data-design='louder']) .entdecken :global(.croissant-art) {
+    color: #000;
+    --croissant-fill: var(--c-accent);
+  }
+  .reveal-up {
+    transition-delay: calc(var(--i, 0) * 0.12s);
+  }
+
+  /* ---------- 1 · Einstieg (wie der Header der Startseite) ---------- */
+  .e-hero {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: max(37.5rem, 100svh);
+    color: #fff;
+    background: #ddd8d1;
+    isolation: isolate;
+    clip-path: inset(0);
+  }
+  .e-hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+  .e-hero__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 20%;
+  }
+  @media (min-width: 64rem) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .e-hero__media {
+      position: fixed;
+      height: 100vh;
+    }
+  }
+  .e-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to top, rgb(0 0 0 / 0.5), rgb(0 0 0 / 0.15) 60%, rgb(0 0 0 / 0.1));
+  }
+  .e-hero :global(.nav__list),
+  .e-hero :global(.nav-toggle),
+  .e-hero__content {
+    text-shadow: 0 1px 2px rgb(0 0 0 / 0.25), 0 0 24px rgb(0 0 0 / 0.28);
+  }
+  .e-hero :global(.nav__list a),
+  .e-hero :global(.nav-toggle) {
+    color: #fff;
+  }
+  .e-hero__content {
+    align-self: end;
+    display: grid;
+    justify-items: center;
+    gap: 1.25rem;
+    width: min(100% - 2 * var(--gutter), 50rem);
+    margin-inline: auto;
+    padding-bottom: clamp(4rem, 14vh, 9rem);
+    text-align: center;
+  }
+  .e-hero__brand {
+    font-family: var(--f-display);
+    font-size: 1.05rem;
+    text-decoration: none;
+  }
+  .e-hero__title {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: var(--fs-hero);
+    line-height: 1.12;
+    letter-spacing: var(--ls-display);
+    text-wrap: balance;
+  }
+  .e-hero__title em {
+    font-style: italic;
+  }
+  .e-hero__sub {
+    max-width: 38rem;
+    font-weight: var(--w-regular);
+    font-size: var(--fs-hero-sub);
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+  .e-hero__btn {
+    margin-top: 0.5rem;
+    border-color: #fff;
+    color: #fff;
+    text-shadow: none;
+  }
+  .e-hero__btn:hover {
+    background: #fff;
+    color: #000;
+  }
+  :global(:root[data-design='louder']) .e-hero__brand {
+    font-family: var(--f-bold);
+    color: var(--c-accent);
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+  }
+  :global(:root[data-design='louder']) .e-hero__brand em,
+  :global(:root[data-design='louder']) .e-hero__title em {
+    font-style: normal;
+  }
+  :global(:root[data-design='louder']) .e-hero__title {
+    font-family: var(--f-bold);
+    font-size: clamp(2.6rem, 1.6rem + 4vw, 4.75rem);
+    letter-spacing: 1px;
+    line-height: 1.05;
+    text-transform: lowercase;
+  }
+  :global(:root[data-design='louder']) .e-hero__title em {
+    color: var(--c-accent);
+  }
+  :global(:root[data-design='louder']) .e-hero__btn {
+    background: var(--c-accent);
+    border-color: var(--c-accent);
+    color: #000;
+  }
+  :global(:root[data-design='louder']) .e-hero__btn:hover {
+    background: #000;
+    border-color: #000;
+    color: var(--c-accent);
+  }
+
+  /* ---------- 2 · Kommt dir das bekannt vor? ---------- */
+  .e-problems {
+    display: grid;
+    gap: 1rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+  .e-problems__item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    align-items: start;
+    padding: 1.5rem 1.5rem 1.6rem;
+    background: var(--c-card);
+    border-radius: var(--radius);
+  }
+  .e-problems__mark {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    font-family: var(--f-display);
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+  .e-problems__item p {
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+  .e-problems__item em {
+    display: block;
+    margin-top: 0.15rem;
+    font-family: var(--f-display);
+    font-size: 1.0625rem;
+  }
+  .e-closing {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    font-family: var(--f-display);
+    font-size: clamp(1.2rem, 1rem + 0.8vw, 1.6rem);
+    line-height: 1.4;
+    text-align: center;
+    text-wrap: balance;
+  }
+  @media (min-width: 48rem) {
+    .e-problems {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+  }
+  @media (min-width: 64rem) {
+    .e-problems {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  :global(:root[data-design='louder']) .e-problems__item em,
+  :global(:root[data-design='louder']) .e-closing em {
+    font-family: var(--f-body);
+    font-style: normal;
+    font-weight: var(--w-regular);
+  }
+  :global(:root[data-design='louder']) .e-closing {
+    font-family: var(--f-bold);
+    text-transform: lowercase;
+    letter-spacing: 1px;
+  }
+
+  /* ---------- 3 · Lösung ---------- */
+  .e-solution {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+  .e-solution__media :global(img) {
+    width: 100%;
+    border-radius: var(--radius);
+  }
+  .e-solution__text {
+    display: grid;
+    gap: 1rem;
+    font-size: 1.0625rem;
+  }
+  .e-solution__first {
+    font-family: var(--f-display);
+    font-size: clamp(1.2rem, 1rem + 0.7vw, 1.5rem);
+    line-height: 1.4;
+  }
+  @media (min-width: 48rem) {
+    .e-solution {
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2rem, 6vw, 5rem);
+    }
+  }
+  :global(:root[data-design='louder']) .e-solution__first {
+    font-family: var(--f-bold);
+    text-transform: lowercase;
+    letter-spacing: 1px;
+  }
+
+  /* ---------- 4 · Themenwelten ---------- */
+  .e-worlds {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .e-world {
+    display: grid;
+    align-content: start;
+    gap: 1rem;
+    padding: clamp(1.75rem, 3vw, 2.5rem);
+    background: var(--c-card);
+    border-radius: var(--radius);
+  }
+  .e-world__no {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 2.5rem;
+    line-height: 1;
+    color: var(--c-accent);
+  }
+  .e-world__title {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: clamp(1.3rem, 1.1rem + 0.6vw, 1.55rem);
+    line-height: 1.3;
+    letter-spacing: -0.5px;
+    text-wrap: balance;
+  }
+  .e-world__text {
+    font-size: 1rem;
+  }
+  .e-world__tags {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid rgb(0 0 0 / 0.15);
+    font-size: 0.8125rem;
+    font-weight: var(--w-regular);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  @media (min-width: 64rem) {
+    .e-worlds {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .e-world {
+      grid-template-rows: auto auto 1fr auto;
+    }
+  }
+  :global(:root[data-design='louder']) .e-world__no {
+    font-family: var(--f-bold);
+    font-style: normal;
+    color: #000;
+  }
+  :global(:root[data-design='louder']) .e-world__title {
+    font-family: var(--f-bold);
+    text-transform: lowercase;
+    letter-spacing: 1px;
+  }
+
+  /* ---------- 5 · Vorher – nachher ---------- */
+  .e-change {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+  .e-change__tile {
+    display: grid;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--c-card);
+  }
+  .e-change__before,
+  .e-change__after {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1.5rem 1.75rem;
+  }
+  .e-change__before {
+    color: var(--c-ink-soft);
+    background: var(--c-switch-bg);
+  }
+  .e-change__before p {
+    font-size: 1rem;
+    opacity: 0.8;
+  }
+  .e-change__after {
+    padding-bottom: 1.9rem;
+  }
+  .e-change__after p {
+    font-family: var(--f-display);
+    font-size: clamp(1.15rem, 1rem + 0.5vw, 1.35rem);
+    line-height: 1.4;
+  }
+  .e-change__label {
+    font-size: 0.75rem;
+    font-weight: var(--w-regular);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .e-change__after .e-change__label {
+    color: var(--c-accent);
+  }
+  .e-change__arrow {
+    justify-self: center;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-block: -1.125rem;
+    border-radius: 50%;
+    background: var(--c-ink);
+    color: var(--c-bg);
+    font-size: 1rem;
+    z-index: 1;
+  }
+  @media (min-width: 64rem) {
+    .e-change {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .e-change__tile {
+      grid-template-rows: 1fr auto 1.3fr;
+    }
+  }
+  :global(:root[data-design='louder']) .e-change__before {
+    background: #fff;
+  }
+  :global(:root[data-design='louder']) .e-change__after .e-change__label {
+    color: #000;
+  }
+  :global(:root[data-design='louder']) .e-change__after p {
+    font-family: var(--f-bold);
+    text-transform: lowercase;
+    letter-spacing: 1px;
+  }
+
+  /* ---------- 6 · Croissant-Prinzip ---------- */
+  .e-final {
+    padding-bottom: clamp(4rem, 9vw, 6.5rem);
+  }
+  .e-final__inner {
+    display: grid;
+    justify-items: center;
+    gap: 1.5rem;
+    text-align: center;
+  }
+  .e-final__inner :global(.e-final__art) {
+    width: min(55%, 13rem);
+  }
+  .e-final__text {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 38rem;
+    font-size: 1.0625rem;
+    text-wrap: pretty;
+  }
+  :global(:root[data-design='louder']) .e-final__title {
+    font-family: var(--f-bold);
+    font-size: var(--fs-h2);
+    letter-spacing: 2px;
+    text-transform: lowercase;
+    color: var(--c-heading);
+  }
+  :global(:root[data-design='louder']) .e-final__title :global(em) {
+    font-style: normal;
+  }
+  .e-cta {
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+    padding-inline: 1.5rem;
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+  }
+  .e-cta :global(.e-cta__icon) {
+    width: 1.6rem;
+    color: inherit;
+    --croissant-fill: transparent;
+    --croissant-stroke: 1.4;
+    transition: transform 0.4s var(--ease);
+  }
+  .e-cta:hover :global(.e-cta__icon) {
+    transform: rotate(-12deg) scale(1.08);
+  }
+</style>
