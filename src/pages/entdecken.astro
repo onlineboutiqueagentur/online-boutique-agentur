@@ -69,7 +69,7 @@ const jsonLd = {
       <a class="e-hero__brand" href="/">Online <em>Boutique</em> Agentur<sup aria-hidden="true">²</sup></a>
       <h1 class="e-hero__title">{e.hero.title}<br /><em>{e.hero.titleSecond}</em></h1>
       <p class="e-hero__sub">{e.hero.text}</p>
-      <a class="btn e-hero__btn" href="#statement">{e.hero.cta}</a>
+      <a class="btn e-hero__btn" href="#leistungen">{e.hero.cta}</a>
     </div>
   </header>
 
@@ -103,7 +103,7 @@ const jsonLd = {
     </section>
 
     <!-- 4 · Drei Themenwelten: große Nummer, Bild und Text im Wechsel -->
-    <section class="e-block e-block--big" aria-labelledby="e-worlds">
+    <section class="e-block e-block--big" id="leistungen" aria-labelledby="e-worlds">
       <SectionHead id="e-worlds" titleHtml={e.worldsTitle} textHtml={e.worldsText} />
       <ol role="list" class="e-rows container">
         {
