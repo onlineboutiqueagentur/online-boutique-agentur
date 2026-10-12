@@ -102,22 +102,6 @@ const jsonLd = {
       </ul>
     </section>
 
-    <!-- 3 · Die Lösung -->
-    <section class="e-block" aria-labelledby="e-solution">
-      <SectionHead id="e-solution" titleHtml={e.solution.title} />
-      <div class="e-solution container">
-        <figure class="e-solution__media reveal">
-          <Picture src={img.team.src} alt={img.team.alt} widths={[640, 960, 1280]} sizes="(min-width: 48rem) 30rem, 90vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
-        </figure>
-        <div class="e-solution__text">
-          {e.solution.paragraphs.map((p, i) => <p class:list={{ 'e-solution__first': i === 0 }} set:html={p} />)}
-          <a class="btn btn--solid e-solution__btn" href={e.solution.ctaHref}>{e.solution.cta}</a>
-          <a class="e-principle e-solution__link" href={e.solution.loveHref}>{e.solution.love} →</a>
-        </div>
-      </div>
-    </section>
-
-
     <!-- 4 · Drei Themenwelten: große Nummer, Bild und Text im Wechsel -->
     <section class="e-block" aria-label="Unsere Leistungen">
       <div class="v-line" aria-hidden="true"></div>
@@ -140,6 +124,22 @@ const jsonLd = {
           ))
         }
       </ol>
+    </section>
+
+
+    <!-- 3 · Die Lösung -->
+    <section class="e-block" aria-labelledby="e-solution">
+      <SectionHead id="e-solution" titleHtml={e.solution.title} />
+      <div class="e-solution container">
+        <figure class="e-solution__media reveal">
+          <Picture src={img.team.src} alt={img.team.alt} widths={[640, 960, 1280]} sizes="(min-width: 48rem) 30rem, 90vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
+        </figure>
+        <div class="e-solution__text">
+          {e.solution.paragraphs.map((p, i) => <p class:list={{ 'e-solution__first': i === 0 }} set:html={p} />)}
+          <a class="btn btn--solid e-solution__btn" href={e.solution.ctaHref}>{e.solution.cta}</a>
+          <a class="e-principle e-solution__link" href={e.solution.loveHref}>{e.solution.love} →</a>
+        </div>
+      </div>
     </section>
 
 
