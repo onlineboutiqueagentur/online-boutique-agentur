@@ -82,6 +82,13 @@ export const entdecken = {
   ],
 
 
+  /** Statement im Stil der Startseite (Linie, Überschrift, Text) */
+  love: {
+    title: 'Du darfst in deine eigene Marke <em>verliebt</em> sein.',
+    textHtml:
+      'Und zwar so richtig. In ihren Auftritt. Ihre Geschichte. In jedes kleine Detail. Und vor allem in das Gefühl, das sie auslöst.<br />Denn genau darum geht es uns: Marken zu gestalten, die nicht nur <b>gut aussehen</b>, sondern sich auch <b>richtig gut anfühlen</b>.',
+  },
+
   croissant: {
     title: 'Vielleicht fehlt deiner Marke nur <em>das gewisse Extra.</em>',
     paragraphs: [
