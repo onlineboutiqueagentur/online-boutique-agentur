@@ -85,9 +85,8 @@ export const entdecken = {
     paragraphs: [
       'Manchmal braucht es gar nicht viel, um aus gut richtig gut zu machen.',
       'Ein frischer Blick. Eine neue Idee. Oder zwei kreative Köpfe, die genau das Potenzial sehen, das in deinem Unternehmen steckt.',
-      'Und weil gute Ideen am besten bei einem guten Frühstück entstehen, laden wir dich auf ein Croissant ein.',
     ],
-    cta: 'Ein Croissant. Viele Möglichkeiten. Jetzt anfragen!',
+    cta: 'Ein Croissant. Viele Möglichkeiten.',
     href: '#anfrage',
     principle: 'Was hinter unserem Croissant-Prinzip steckt',
     principleHref: '/croissant/',
