@@ -71,16 +71,6 @@ export const entdecken = {
     },
   ],
 
-  change: {
-    title: 'Von „Irgendwie passt’s nicht“ zu <em>„Genau so soll es sein!“</em>',
-    before: 'Vorher',
-    after: 'Nachher',
-    items: [
-      { before: '„Ich sollte endlich wieder etwas posten.“', after: '„Ich weiß genau, was ich erzählen möchte.“' },
-      { before: '„Meine Website zeige ich lieber nicht her.“', after: '„Schau mal, das ist meine Website!“' },
-      { before: '„Irgendwie passt nichts richtig zusammen.“', after: '„Endlich fühlt sich alles nach meiner Marke an.“' },
-    ],
-  },
 
   croissant: {
     title: 'Vielleicht fehlt deiner Marke nur <em>das gewisse Extra.</em>',
