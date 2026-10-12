@@ -16,6 +16,17 @@ import { entdecken as e, entdeckenImages as img, entdeckenSeo } from '../content
 
 const f = e.invite.form;
 
+// Feine Linien-Symbole für „Kommt dir das bekannt vor?“ (24er-Raster, Strichstärke wie die Croissant-Linien)
+const icons: Record<string, string> = {
+  website: '<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M3 9h18"/><circle cx="6" cy="6.75" r=".4"/><circle cx="8" cy="6.75" r=".4"/><path d="M7 13h6M7 16h4"/>',
+  growth: '<path d="M12 20v-9"/><path d="M12 11c0-3.5 2.5-6 6.5-6 0 3.5-2.5 6-6.5 6Z"/><path d="M12 14c0-2.8-2-4.8-5.5-4.8 0 2.8 2 4.8 5.5 4.8Z"/><path d="M8 20h8"/>',
+  eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/>',
+  idea: '<path d="M9 17.5h6M10 20.5h4"/><path d="M12 3.5a6 6 0 0 0-3.6 10.8c.6.5 1 1.3 1 2.1v1.1h5.2v-1.1c0-.8.4-1.6 1-2.1A6 6 0 0 0 12 3.5Z"/>',
+  compass: '<circle cx="12" cy="12" r="8.5"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"/>',
+};
+const icon = (name: string) =>
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${icons[name]}</svg>`;
+
 // Header-Bild: Querformat ab Tablet, Hochformat auf Smartphones (wie die Startseite)
 const MOBILE = '(max-width: 47.99rem)';
 const [mAvif, mWebp, dAvif, dWebp, dJpg] = await Promise.all([
@@ -69,9 +80,9 @@ const jsonLd = {
       <SectionHead id="e-problems" titleHtml={e.problems.title} textHtml={e.problems.text} />
       <ul role="list" class="e-problems container">
         {
-          e.problems.items.map(([first, second], i) => (
+          e.problems.items.map(([first, second, sym], i) => (
             <li class="e-problems__item reveal-up" style={`--i:${i % 3}`}>
-              <span class="e-problems__mark" aria-hidden="true">?</span>
+              <span class="e-problems__mark" aria-hidden="true" set:html={icon(sym)} />
               <p>
                 {first} <em>{second}</em>
               </p>
@@ -89,8 +100,9 @@ const jsonLd = {
       <SectionHead id="e-problems3" titleHtml={e.problems.title} textHtml={e.problems.text} />
       <ul role="list" class="e-calm container--text">
         {
-          e.problems.items.map(([first, second]) => (
+          e.problems.items.map(([first, second, sym]) => (
             <li class="e-calm__item reveal-up">
+              <span class="e-calm__icon" aria-hidden="true" set:html={icon(sym)} />
               <span>{first}</span>
               <em>{second}</em>
             </li>
@@ -102,6 +114,7 @@ const jsonLd = {
 
     <!-- 3 · Die Lösung -->
     <section class="e-block" aria-labelledby="e-solution">
+      <p class="e-variant-label container">Variante 1 · Bild neben Text</p>
       <SectionHead id="e-solution" titleHtml={e.solution.title} />
       <div class="e-solution container">
         <figure class="e-solution__media reveal">
@@ -113,6 +126,27 @@ const jsonLd = {
       </div>
     </section>
 
+
+    <!-- 3 · Lösung, Variante 2: Text auf dem Teamfoto -->
+    <section class="e-block" aria-labelledby="e-solution2">
+      <p class="e-variant-label container">Variante 2 · Text auf dem Foto</p>
+      <div class="e-sol2 container reveal">
+        <div class="e-sol2__media" aria-hidden="true"><Picture src={img.team.src} alt={img.team.alt} widths={[960, 1280, 1920]} sizes="(min-width: 75rem) 72rem, 100vw" formats={['avif', 'webp']} loading="lazy" decoding="async" /></div>
+        <div class="e-sol2__content">
+          <h2 class="heading e-sol2__title" id="e-solution2" set:html={e.solution.title} />
+          {e.solution.paragraphs.map((p, i) => <p class:list={{ 'e-sol2__first': i === 0 }} set:html={p} />)}
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · Lösung, Variante 3: ruhig, zentriert, ohne Bild -->
+    <section class="e-block" aria-labelledby="e-solution3">
+      <p class="e-variant-label container">Variante 3 · Ruhig, nur Text</p>
+      <SectionHead id="e-solution3" titleHtml={e.solution.title} />
+      <div class="e-sol3 container--text">
+        {e.solution.paragraphs.map((p, i) => <p class:list={['reveal-up', { 'e-sol3__first': i === 0 }]} style={`--i:${i}`} set:html={p} />)}
+      </div>
+    </section>
 
     <!-- 4 · Drei Themenwelten: große Nummer, Bild und Text im Wechsel -->
     <section class="e-block" aria-label="Unsere Leistungen">
@@ -234,10 +268,33 @@ const jsonLd = {
   </main>
 
   <Footer contact={false} />
+
+  <a class="e-sticky" href="#anfrage" aria-label={`${f.submit} – ${e.invite.meta}`} data-sticky-cta>
+    <span class="e-sticky__icon" aria-hidden="true"><CroissantArt mini /></span>
+    <span class="e-sticky__label" aria-hidden="true">Einladung</span>
+  </a>
 </Base>
 
 <script>
   import '../scripts/contact-form';
+
+  // Seitliche Einladung: sichtbar, sobald der Einstieg weg ist – aber nicht beim Formular selbst
+  const sticky = document.querySelector<HTMLElement>('[data-sticky-cta]');
+  const hero = document.querySelector('.e-hero');
+  const invite = document.getElementById('anfrage');
+  if (sticky && hero && invite && 'IntersectionObserver' in window) {
+    let heroVisible = true;
+    let inviteVisible = false;
+    const update = () => sticky.classList.toggle('is-visible', !heroVisible && !inviteVisible);
+    new IntersectionObserver(([entry]) => {
+      heroVisible = entry.isIntersecting;
+      update();
+    }).observe(hero);
+    new IntersectionObserver(([entry]) => {
+      inviteVisible = entry.isIntersecting;
+      update();
+    }).observe(invite);
+  }
 </script>
 
 <style>
@@ -394,13 +451,13 @@ const jsonLd = {
   .e-problems__mark {
     display: grid;
     place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
     border: 1px solid currentColor;
     border-radius: 50%;
-    font-family: var(--f-display);
-    font-size: 1.1rem;
-    line-height: 1;
+  }
+  .e-problems__mark :global(svg) {
+    width: 1.4rem;
   }
   .e-problems__item p {
     font-size: 1rem;
@@ -427,8 +484,15 @@ const jsonLd = {
     }
   }
   @media (min-width: 64rem) {
+    /* 5 Kärtchen: 3 oben, 2 zentriert darunter */
     .e-problems {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(6, 1fr);
+    }
+    .e-problems__item {
+      grid-column: span 2;
+    }
+    .e-problems__item:nth-child(4) {
+      grid-column: 2 / span 2;
     }
   }
   :global(:root[data-design='louder']) .e-problems__item em,
@@ -466,6 +530,17 @@ const jsonLd = {
   }
   .e-calm__item span {
     font-size: 1rem;
+  }
+  .e-calm__icon {
+    justify-self: center;
+    margin-bottom: 0.6rem;
+  }
+  .e-calm__icon :global(svg) {
+    display: block;
+    width: 1.9rem;
+  }
+  :global(:root[data-design='louder']) .e-calm__icon {
+    color: #000;
   }
   .e-calm__item em {
     font-family: var(--f-display);
@@ -514,6 +589,159 @@ const jsonLd = {
     font-family: var(--f-bold);
     text-transform: lowercase;
     letter-spacing: 1px;
+  }
+
+  /* Lösung, Variante 2 */
+  .e-sol2 {
+    position: relative;
+    display: grid;
+    min-height: clamp(30rem, 70vh, 42rem);
+    padding: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    color: #fff;
+  }
+  .e-sol2__media,
+  .e-sol2__content {
+    grid-area: 1 / 1;
+  }
+  .e-sol2__media :global(picture) {
+    display: contents;
+  }
+  .e-sol2__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 30%;
+  }
+  .e-sol2__content {
+    position: relative;
+    align-self: end;
+    display: grid;
+    gap: 1rem;
+    padding: clamp(2rem, 5vw, 4rem);
+    padding-top: clamp(8rem, 20vw, 12rem);
+    background: linear-gradient(to top, rgb(0 0 0 / 0.82) 0%, rgb(0 0 0 / 0.6) 55%, rgb(0 0 0 / 0) 100%);
+    font-size: 1.0625rem;
+  }
+  /* Smartphone: Foto oben, Text auf dunklem Grund darunter (Gesichter bleiben frei) */
+  @media (max-width: 47.99rem) {
+    .e-sol2 {
+      min-height: 0;
+      background: #111;
+    }
+    .e-sol2__media {
+      position: relative;
+      grid-area: 1 / 1;
+      aspect-ratio: 4 / 3.4;
+    }
+    .e-sol2__content {
+      grid-area: 2 / 1;
+      padding-top: 0.5rem;
+      background: #111;
+    }
+    .e-sol2__media::after {
+      content: '';
+      position: absolute;
+      inset: auto 0 0;
+      height: 35%;
+      background: linear-gradient(to top, #111, rgb(17 17 17 / 0));
+    }
+  }
+  .e-sol2__content > * {
+    max-width: 40rem;
+  }
+  .e-sol2__title {
+    color: #fff;
+    text-align: left;
+  }
+  .e-sol2__content :global(b) {
+    font-weight: var(--w-bold);
+  }
+  .e-sol2__first {
+    font-family: var(--f-display);
+    font-size: clamp(1.15rem, 1rem + 0.6vw, 1.4rem);
+    line-height: 1.4;
+  }
+  :global(:root[data-design='louder']) .e-sol2__title {
+    font-family: var(--f-bold);
+    font-size: var(--fs-h2);
+    letter-spacing: 2px;
+    text-transform: lowercase;
+    color: var(--c-accent);
+  }
+
+  /* Lösung, Variante 3 */
+  .e-sol3 {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: clamp(1.5rem, 3vw, 2.5rem);
+    text-align: center;
+    font-size: 1.0625rem;
+  }
+  .e-sol3 :global(b) {
+    font-weight: var(--w-bold);
+  }
+  .e-sol3__first {
+    font-family: var(--f-display);
+    font-size: clamp(1.3rem, 1.05rem + 1vw, 1.8rem);
+    line-height: 1.4;
+  }
+  :global(:root[data-design='louder']) .e-sol3__first {
+    font-family: var(--f-bold);
+    text-transform: lowercase;
+    letter-spacing: 1px;
+  }
+
+  /* ---------- Seitliche Einladung (wie auf der Croissant-Seite) ---------- */
+  .e-sticky {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    width: 3rem;
+    padding: 0.85rem 0 1rem;
+    border-radius: 12px 0 0 12px;
+    background: #111;
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.22);
+    opacity: 0;
+    pointer-events: none;
+    translate: 100% -50%;
+    transition:
+      translate 0.4s var(--ease),
+      opacity 0.3s var(--ease),
+      width 0.3s var(--ease);
+  }
+  .e-sticky.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    translate: 0 -50%;
+  }
+  .e-sticky__icon :global(svg) {
+    display: block;
+    width: 1.6rem;
+    color: #fff;
+    transition: rotate 0.3s var(--ease);
+  }
+  .e-sticky__label {
+    writing-mode: vertical-rl;
+    rotate: 180deg;
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+  }
+  @media (hover: hover) {
+    .e-sticky:hover {
+      width: 3.4rem;
+    }
+    .e-sticky:hover .e-sticky__icon :global(svg) {
+      rotate: -12deg;
+    }
   }
 
   /* ---------- 4 · Themenwelten ---------- */

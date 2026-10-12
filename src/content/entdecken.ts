@@ -41,13 +41,13 @@ export const entdecken = {
   problems: {
     title: 'Hand aufs Herz. <em>Kommt dir das bekannt vor?</em>',
     text: 'Manchmal spürt man einfach, dass da noch mehr geht. Vielleicht erkennst du dich ja wieder.',
+    /** [erste Zeile, zweite Zeile, Symbol] */
     items: [
-      ['Deine Website ist online.', 'Aber so richtig stolz bist du nicht darauf.'],
-      ['Du möchtest auf Social Media sichtbarer werden.', 'Aber was sollst du eigentlich posten?'],
-      ['Dein Unternehmen hat sich weiterentwickelt.', 'Dein Markenauftritt irgendwie nicht.'],
-      ['Du machst richtig gute Arbeit.', 'Aber nach außen sieht man davon viel zu wenig.'],
-      ['Du hast tausend Ideen im Kopf.', 'Aber keinen roten Faden für dein Marketing.'],
-      ['Du weißt, dass du etwas verändern möchtest.', 'Aber nicht so recht, wo du anfangen sollst.'],
+      ['Deine Website ist online.', 'Aber so richtig stolz bist du nicht darauf.', 'website'],
+      ['Dein Unternehmen hat sich weiterentwickelt.', 'Dein Markenauftritt irgendwie nicht.', 'growth'],
+      ['Du machst richtig gute Arbeit.', 'Aber nach außen sieht man davon viel zu wenig.', 'eye'],
+      ['Du hast tausend Ideen im Kopf.', 'Aber keinen roten Faden für dein Marketing.', 'idea'],
+      ['Du weißt, dass du etwas verändern möchtest.', 'Aber nicht so recht, wo du anfangen sollst.', 'compass'],
     ],
     closing: 'Kommt dir bekannt vor? <em>Dann wird es vielleicht Zeit für ein kleines Extra.</em>',
   },
