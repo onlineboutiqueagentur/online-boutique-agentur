@@ -121,7 +121,7 @@ const jsonLd = {
         </figure>
         <div class="e-solution__text">
           {e.solution.paragraphs.map((p, i) => <p class:list={{ 'e-solution__first': i === 0 }} set:html={p} />)}
-          <a class="btn e-solution__btn" href={e.solution.ctaHref}>{e.solution.cta}</a>
+          <a class="btn btn--solid e-solution__btn" href={e.solution.ctaHref}>{e.solution.cta}</a>
         </div>
       </div>
     </section>
