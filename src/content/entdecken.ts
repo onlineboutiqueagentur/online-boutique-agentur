@@ -34,7 +34,7 @@ export const entdecken = {
   hero: {
     title: 'Deine Marke kann mehr.',
     titleSecond: 'Zeigen wir es der Welt.',
-    text: 'Du liebst, was du tust. Aber zeigt dein Außenauftritt auch, wie viel in deinem Unternehmen steckt? Wir machen Marken sichtbar, Websites besonders und Marketing persönlich.',
+    text: 'Du liebst, was du tust. Aber zeigt dein Außenauftritt auch, wie viel in deinem Unternehmen steckt? Wir machen deine Marke sichtbar, deine Website besonders und dein Marketing persönlich.',
     cta: 'Entdecke, was möglich ist.',
   },
 
