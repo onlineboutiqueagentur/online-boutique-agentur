@@ -40,7 +40,7 @@ export const entdecken = {
 
   problems: {
     title: 'Hand aufs Herz. <em>Spürst du dieses Kribbeln noch?</em>',
-    text: 'Manchmal spürt man einfach, dass da noch mehr geht. Vielleicht erkennst du dich ja wieder.',
+    text: 'Schmetterlinge im Bauch oder eher ein kleines Bauchgefühl, dass da noch mehr geht? Vielleicht erkennst du dich hier wieder.',
     /** [erste Zeile, zweite Zeile, Symbol] */
     items: [
       ['Deine Website ist online.', 'Aber so richtig stolz bist du nicht darauf.', 'website'],
