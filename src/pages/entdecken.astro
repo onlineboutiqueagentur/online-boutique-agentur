@@ -89,7 +89,7 @@ const jsonLd = {
           <Picture src={img.team.src} alt={img.team.alt} widths={[640, 960, 1280]} sizes="(min-width: 48rem) 30rem, 90vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
         </figure>
         <div class="e-solution__text">
-          {e.solution.paragraphs.map((p, i) => <p class:list={{ 'e-solution__first': i === 0 }}>{p}</p>)}
+          {e.solution.paragraphs.map((p, i) => <p class:list={{ 'e-solution__first': i === 0 }} set:html={p} />)}
         </div>
       </div>
     </section>
