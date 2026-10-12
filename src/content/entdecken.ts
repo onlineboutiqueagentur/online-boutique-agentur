@@ -39,7 +39,7 @@ export const entdecken = {
   },
 
   problems: {
-    title: 'Hand aufs Herz. <em>Kommt dir das bekannt vor?</em>',
+    title: 'Hand aufs Herz. <em>Spürst du dieses Kribbeln noch?</em>',
     text: 'Manchmal spürt man einfach, dass da noch mehr geht. Vielleicht erkennst du dich ja wieder.',
     /** [erste Zeile, zweite Zeile, Symbol] */
     items: [
