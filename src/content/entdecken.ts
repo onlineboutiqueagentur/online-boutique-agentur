@@ -105,7 +105,7 @@ export const entdecken = {
   /** Kontaktanfrage: „Lass uns gemeinsam frühstücken.“ – übernommen von der Croissant-Seite (Versand wie die Croissant-Einladung, Format „virtuell“) */
   invite: {
     title: 'Lass uns gemeinsam frühstücken.',
-    text: 'Nehmen wir uns 30 Minuten Zeit für ein virtuelles Frühstück. Wir lernen uns kennen, deine Marke und alles, was sie besonders macht. Wir stellen Fragen, hören zu und schauen gemeinsam, wo noch ein bisschen mehr drinsteckt. Ganz entspannt und ohne Verpflichtungen. Wir freuen uns auf dich!',
+    text: 'Du spürst, es wird Zeit für ein kleines Extra? Dann nehmen wir uns 30 Minuten Zeit für ein virtuelles Frühstück. Wir lernen uns kennen, deine Marke und alles, was sie besonders macht. Wir stellen Fragen, hören zu und schauen gemeinsam, wo noch ein bisschen mehr drinsteckt. Ganz entspannt und ohne Verpflichtungen. Wir freuen uns auf dich!',
     meta: '30 Minuten · kostenlos · virtuell',
     form: {
       title: 'Schön, dass du dabei bist.',
