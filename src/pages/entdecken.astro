@@ -180,12 +180,11 @@ const jsonLd = {
     <section class="e-invite" id="anfrage" aria-labelledby="e-invite">
       <div class="v-line" aria-hidden="true"></div>
       <div class="container--text e-invite__head">
-        <p class="e-invite__eyebrow">{e.invite.eyebrow}</p>
-        <h2 class="heading" id="e-invite" set:html={e.invite.title} />
-        <p class="e-invite__facts">
-          {e.invite.facts.map((f, i) => <span class="reveal-up" style={`--i:${i}`}>{f}</span>)}
-        </p>
-        <p class="lead-text" set:html={e.invite.textHtml} />
+        <figure class="e-team reveal">
+          <Picture src={img.invite.src} alt={img.invite.alt} widths={[520, 1040]} sizes="16rem" formats={['avif', 'webp']} loading="lazy" decoding="async" />
+        </figure>
+        <h2 class="heading" id="e-invite">{e.invite.title}</h2>
+        <p class="lead-text">{e.invite.text}</p>
       </div>
 
       <form class="form e-form" action="/api/contact" method="post" novalidate data-contact-form>
@@ -741,24 +740,23 @@ const jsonLd = {
     justify-items: center;
     text-align: center;
   }
-  .e-invite__eyebrow {
-    margin-bottom: 0.75rem;
-    font-family: var(--f-display);
-    font-style: italic;
-    color: var(--c-ink-soft);
+  .e-invite__head .lead-text {
+    max-width: 40rem;
   }
-  .e-invite__facts {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.25rem 0.9rem;
-    margin-top: 1.5rem;
-    font-family: var(--f-display);
-    font-style: italic;
-    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+  .e-team {
+    width: 11rem;
+    aspect-ratio: 1;
+    margin: 0 auto 1.75rem;
+    border-radius: 50%;
+    overflow: hidden;
   }
-  .e-invite__facts span {
-    transition-delay: calc(var(--i) * 0.15s);
+  .e-team :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 63% 30%;
+    transform: scale(1.45);
+    transform-origin: 63% 32%;
   }
   .e-form {
     width: min(100% - 2 * var(--gutter), 34rem);
@@ -787,13 +785,6 @@ const jsonLd = {
     white-space: pre-line;
     text-align: center;
     font-size: 1.0625rem;
-  }
-  :global(:root[data-design='louder']) .e-invite__eyebrow,
-  :global(:root[data-design='louder']) .e-invite__facts {
-    font-family: var(--f-bold);
-    font-style: normal;
-    text-transform: lowercase;
-    letter-spacing: 1px;
   }
   :global(:root[data-design='louder']) .e-invite .heading {
     font-family: var(--f-bold);

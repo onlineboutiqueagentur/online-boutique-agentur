@@ -8,6 +8,7 @@ import heroImgMobile from '../assets/images/shared/pia-nina-online-marketing-age
 import worldImg1 from '../assets/images/entdecken/leistung-webdesign-laptop-schreibtisch.jpg';
 import worldImg2 from '../assets/images/entdecken/leistung-social-media-smartphone-feed.jpg';
 import worldImg3 from '../assets/images/entdecken/leistung-marketingberatung-notizbuch.jpg';
+import inviteImg from '../assets/images/shared/pia-nina-online-marketing-agentur-oberoesterreich.jpg';
 import teamImg from '../assets/images/minimal/pia-nina-zwillinge-boutique-agentur-schwarzweiss.jpg';
 
 export const entdeckenImages = {
@@ -18,6 +19,7 @@ export const entdeckenImages = {
     { src: worldImg2, alt: 'Smartphone mit einem stimmigen Instagram-Feed in warmen Beigetönen' },
     { src: worldImg3, alt: 'Aufgeschlagenes Notizbuch mit einer Mindmap und goldenem Stift auf einem sonnigen Schreibtisch' },
   ],
+  invite: { src: inviteImg, alt: 'Nina und Pia, die Gründerinnen der Online Boutique Agentur, lachend in hellen Blazern vor einem Leinenvorhang' },
   team: { src: teamImg, alt: 'Pia und Nina, die Zwillingsschwestern hinter der Online Boutique Agentur' },
 } as const;
 
@@ -93,16 +95,14 @@ export const entdecken = {
     principleHref: '/croissant/',
   },
 
-  /** Kontaktanfrage: Einladung zum virtuellen Frühstück (Versand wie die Croissant-Einladung, Format „virtuell“) */
+  /** Kontaktanfrage: „Lass uns gemeinsam frühstücken.“ – übernommen von der Croissant-Seite (Versand wie die Croissant-Einladung, Format „virtuell“) */
   invite: {
-    eyebrow: 'Die Einladung',
-    title: 'Lass uns gemeinsam frühstücken. <em>Ganz unkompliziert virtuell.</em>',
-    facts: ['30 Minuten.', 'Kaffee.', 'Croissant.', 'Ein gutes Gespräch über deine Marke.'],
-    textHtml: 'Wir laden dich zu einem kostenlosen 30-Minuten-Frühstück ein, virtuell und von dort, wo du gerade bist. Kein Verkaufspitch. Keine Verpflichtung. Nur ein frischer Blick auf deine Marke.',
+    title: 'Lass uns gemeinsam frühstücken.',
+    text: 'Nehmen wir uns 30 Minuten Zeit für ein virtuelles Frühstück. Wir lernen uns kennen, deine Marke und alles, was sie besonders macht. Wir stellen Fragen, hören zu und schauen gemeinsam, wo noch ein bisschen mehr drinsteckt. Ganz entspannt und ohne Verpflichtungen. Wir freuen uns auf dich!',
     meta: '30 Minuten · kostenlos · virtuell',
     form: {
       title: 'Schön, dass du dabei bist.',
-      text: 'Verrate uns kurz, wer du bist. Wir melden uns mit einem Terminvorschlag.',
+      text: 'Verrate uns kurz, wer du bist. Wir melden uns gerne mit einem Terminvorschlag.',
       fields: {
         name: 'Dein Name',
         company: 'Marke / Unternehmen',
@@ -114,8 +114,8 @@ export const entdecken = {
       },
       submit: 'Einladung annehmen',
       sending: 'Kaffee wird aufgesetzt …',
-      success: 'Wunderbar, wir freuen uns auf dich!\nWir melden uns ganz bald mit einem Terminvorschlag.\nNina & Pia',
-      error: 'Ups, da ist etwas schiefgelaufen. Probier es bitte gleich noch einmal oder schreib uns direkt an hello@online-boutique-agentur.at.',
+      success: 'Wunderbar – wir freuen uns auf dich!\nWir melden uns ganz bald mit einem Terminvorschlag.\nNina & Pia',
+      error: 'Ups – da ist etwas schiefgelaufen. Probier es bitte gleich noch einmal oder schreib uns direkt an hello@online-boutique-agentur.at.',
     },
   },
 } as const;
