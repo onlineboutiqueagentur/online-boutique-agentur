@@ -60,6 +60,8 @@ export const entdecken = {
     ],
     cta: 'Erfahre mehr über uns.',
     ctaHref: '/',
+    love: 'Wofür uns unsere Kunden:innen lieben.',
+    loveHref: '/#kundenstimmen',
   },
 
   worlds: [
