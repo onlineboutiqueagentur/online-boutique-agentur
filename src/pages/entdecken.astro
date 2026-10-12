@@ -69,11 +69,23 @@ const jsonLd = {
       <a class="e-hero__brand" href="/">Online <em>Boutique</em> Agentur<sup aria-hidden="true">²</sup></a>
       <h1 class="e-hero__title">{e.hero.title}<br /><em>{e.hero.titleSecond}</em></h1>
       <p class="e-hero__sub">{e.hero.text}</p>
-      <a class="btn e-hero__btn" href="#bekannt">{e.hero.cta}</a>
+      <a class="btn e-hero__btn" href="#statement">{e.hero.cta}</a>
     </div>
   </header>
 
   <main id="inhalt" tabindex="-1" class="entdecken">
+    <!-- 2 · Statement direkt nach dem Einstieg -->
+    <section class="e-block" id="statement" aria-labelledby="e-love">
+      <div class="v-line" aria-hidden="true"></div>
+      <figure class="e-quote container--text reveal-up">
+        <span class="e-quote__mark" aria-hidden="true">“</span>
+        <blockquote>
+          <h2 class="e-quote__title" id="e-love" set:html={e.love.title} />
+          <p class="e-quote__text" set:html={e.love.textHtml} />
+        </blockquote>
+      </figure>
+    </section>
+
     <!-- 2 · Kommt dir das bekannt vor? (ruhig, mit feinen Symbolen) -->
     <section class="e-block" id="bekannt" aria-labelledby="e-problems">
       <SectionHead id="e-problems" titleHtml={e.problems.title} textHtml={e.problems.text} />
@@ -130,18 +142,6 @@ const jsonLd = {
       </ol>
     </section>
 
-
-    <!-- 4b · Statement -->
-    <section class="e-block" aria-labelledby="e-love">
-      <div class="v-line" aria-hidden="true"></div>
-      <figure class="e-quote container--text reveal-up">
-        <span class="e-quote__mark" aria-hidden="true">“</span>
-        <blockquote>
-          <h2 class="e-quote__title" id="e-love" set:html={e.love.title} />
-          <p class="e-quote__text" set:html={e.love.textHtml} />
-        </blockquote>
-      </figure>
-    </section>
 
     <!-- 5 · Croissant-Prinzip -->
     <section class="e-final" aria-labelledby="e-croissant">
