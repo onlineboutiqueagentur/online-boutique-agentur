@@ -103,8 +103,8 @@ const jsonLd = {
     </section>
 
     <!-- 4 · Drei Themenwelten: große Nummer, Bild und Text im Wechsel -->
-    <section class="e-block" aria-label="Unsere Leistungen">
-      <div class="v-line" aria-hidden="true"></div>
+    <section class="e-block" aria-labelledby="e-worlds">
+      <SectionHead id="e-worlds" titleHtml={e.worldsTitle} />
       <ol role="list" class="e-rows container">
         {
           e.worlds.map((w, i) => (
@@ -509,7 +509,7 @@ const jsonLd = {
   .e-rows {
     display: grid;
     gap: clamp(3rem, 7vw, 5.5rem);
-    padding-top: 1rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
   }
   .e-row {
     display: grid;
