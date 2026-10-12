@@ -15,9 +15,9 @@ export const entdeckenImages = {
   hero: { src: heroImg, mobile: heroImgMobile, alt: '' },
   /** Bilder zu den drei Themenwelten (Variante 2) */
   worlds: [
-    { src: worldImg1, alt: 'Laptop auf einem Holztisch im Sonnenlicht, darauf eine elegante Website einer Moderatorin' },
-    { src: worldImg2, alt: 'Smartphone mit einem stimmigen Instagram-Feed in warmen Beigetönen' },
-    { src: worldImg3, alt: 'Aufgeschlagenes Notizbuch mit einer Mindmap und goldenem Stift auf einem sonnigen Schreibtisch' },
+    { src: worldImg1, alt: 'Laptop auf einem Travertin-Block im Sonnenlicht, darauf eine elegante Website einer Moderatorin' },
+    { src: worldImg2, alt: 'Smartphone auf einem Travertin-Ständer mit einem stimmigen Instagram-Feed in warmen Beigetönen' },
+    { src: worldImg3, alt: 'Aufgeschlagenes Notizbuch mit einer Marken-Mindmap, goldenem Stift und Fotos auf einem sonnigen Schreibtisch' },
   ],
   invite: { src: inviteImg, alt: 'Nina und Pia, die Gründerinnen der Online Boutique Agentur, lachend in hellen Blazern vor einem Leinenvorhang' },
   team: { src: teamImg, alt: 'Pia und Nina, die Zwillingsschwestern hinter der Online Boutique Agentur' },
