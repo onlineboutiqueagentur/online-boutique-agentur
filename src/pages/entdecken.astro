@@ -148,7 +148,6 @@ const jsonLd = {
           <h2 class="e-quote__title" id="e-love" set:html={e.love.title} />
           <p class="e-quote__text" set:html={e.love.textHtml} />
         </blockquote>
-        <span class="e-quote__end" aria-hidden="true"></span>
       </figure>
     </section>
 
@@ -634,12 +633,6 @@ const jsonLd = {
     margin: 1.5rem auto 0;
     font-size: 1.0625rem;
     text-wrap: pretty;
-  }
-  .e-quote__end {
-    width: 3rem;
-    height: 1px;
-    margin-top: 2rem;
-    background: currentColor;
   }
   :global(:root[data-design='louder']) .e-quote__title {
     font-family: var(--f-bold);
