@@ -104,6 +104,23 @@ const jsonLd = {
       <p class="e-dark__closing container--text reveal-up" set:html={e.problems.closing} />
     </section>
 
+    <!-- 2c · Kommt dir das bekannt vor?, Variante 3: ruhig, nur Typografie -->
+    <section class="e-block" aria-labelledby="e-problems3">
+      <p class="e-variant-label container">Variante 3 · Ruhig, nur Text</p>
+      <SectionHead id="e-problems3" titleHtml={e.problems.title} textHtml={e.problems.text} />
+      <ul role="list" class="e-calm container--text">
+        {
+          e.problems.items.map(([first, second]) => (
+            <li class="e-calm__item reveal-up">
+              <span>{first}</span>
+              <em>{second}</em>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="e-closing container--text reveal-up" set:html={e.problems.closing} />
+    </section>
+
     <!-- 3 · Die Lösung -->
     <section class="e-block" aria-labelledby="e-solution">
       <SectionHead id="e-solution" titleHtml={e.solution.title} />
@@ -510,6 +527,33 @@ const jsonLd = {
   }
   :global(:root[data-design='louder']) .e-dark :global(em) {
     font-style: normal;
+  }
+
+  /* ---------- 2c · Kommt dir das bekannt vor?, Variante 3 ---------- */
+  .e-calm {
+    display: grid;
+    gap: clamp(1.75rem, 3.5vw, 2.5rem);
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    text-align: center;
+  }
+  .e-calm__item {
+    display: grid;
+    gap: 0.2rem;
+  }
+  .e-calm__item span {
+    font-size: 1rem;
+  }
+  .e-calm__item em {
+    font-family: var(--f-display);
+    font-size: clamp(1.15rem, 1rem + 0.5vw, 1.4rem);
+    line-height: 1.4;
+    text-wrap: balance;
+  }
+  :global(:root[data-design='louder']) .e-calm__item em {
+    font-family: var(--f-bold);
+    font-style: normal;
+    text-transform: lowercase;
+    letter-spacing: 1px;
   }
 
   /* ---------- 3 · Lösung ---------- */
