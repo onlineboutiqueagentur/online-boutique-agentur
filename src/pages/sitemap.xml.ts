@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 
 // Nur indexierbare Seiten. Beide Designwelten teilen sich dieselbe URL.
+// /angebot/… (persönliche Angebote) nie in die Sitemap.
 // /croissant/ vorerst nicht in der Sitemap (Seite ist auf noindex, nur per Direktlink/QR erreichbar)
 const pages = ['/', '/impressum/', '/datenschutz/'];
 

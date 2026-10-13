@@ -89,6 +89,7 @@ import '../../styles/base.css';
         quelle?: string;
         format?: string;
         wunschtermin?: string;
+        angebot?: string;
       }
 
       const $ = <T extends HTMLElement>(sel: string, root: ParentNode = document) => root.querySelector<T>(sel)!;
@@ -134,12 +135,14 @@ import '../../styles/base.css';
           $('.anfrage__name', li).textContent = `${a.name} · ${a.firma}`;
           const croissant = a.quelle === 'croissant';
           const formate: Record<string, string> = { 'bei-uns': 'bei uns in Pasching', 'bei-mir': 'beim Kunden', virtuell: 'virtuell' };
-          const designName = croissant ? null : a.design === 'louder' ? 'Louder' : a.design === 'minimal' ? 'Minimal' : null;
+          const angebot = a.quelle === 'angebot';
+          const designName = croissant || angebot ? null : a.design === 'louder' ? 'Louder' : a.design === 'minimal' ? 'Minimal' : null;
           $('.anfrage__meta', li).textContent = datum.format(new Date(a.eingang)) + (designName ? ` · Design: ${designName}` : '');
           if (croissant) {
             $('.anfrage__meta', li).textContent +=
               ' · 🥐 Frühstück' + (a.format ? ` (${formate[a.format] ?? a.format})` : '') + (a.wunschtermin ? ` · Wann: ${a.wunschtermin}` : '');
           }
+          if (angebot) $('.anfrage__meta', li).textContent += ` · ✨ Angebot angenommen (${a.angebot ?? '–'})`;
           const badge = $('.anfrage__badge', li);
           badge.textContent = a.gelesen ? 'gelesen' : 'neu';
           if (a.mail === 'fehlgeschlagen') {

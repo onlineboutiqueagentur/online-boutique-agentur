@@ -26,6 +26,8 @@ const RATE_LIMIT = 5; // Anfragen pro Stunde und Absender
 const LIMITS = { name: 120, firma: 160, email: 200, telefon: 40, nachricht: 5000, wunschtermin: 200 } as const;
 /** Croissant-Einladung: erlaubte Antworten auf „Wo frühstücken wir?“ */
 const FORMATE: Record<string, string> = { 'bei-uns': 'Bei euch in Pasching', 'bei-mir': 'Beim Kunden', virtuell: 'Virtuell' };
+/** Angebotsseiten: Kennung aus der URL (/angebot/<slug>/) */
+const ANGEBOT_RE = /^[a-z0-9-]{1,80}$/;
 const EMAIL_RE = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[a-z]{2,}$/i;
 const DEFAULT_ORIGINS = ['https://www.online-boutique-agentur.at', 'https://online-boutique-agentur.at'];
 
@@ -58,14 +60,19 @@ const clean = (value: FormDataEntryValue | null, max: number) =>
 
 async function sendMail(env: Env, a: Anfrage, adminUrl: string): Promise<boolean> {
   const croissant = a.quelle === 'croissant';
+  const angebot = a.quelle === 'angebot';
   const zeilen = [
-    croissant ? '🥐 Frühstücks-Einladung angenommen – über www.online-boutique-agentur.at/croissant' : 'Neue Anfrage über www.online-boutique-agentur.at',
+    croissant
+      ? '🥐 Frühstücks-Einladung angenommen – über www.online-boutique-agentur.at/croissant'
+      : angebot
+        ? `✨ Angebot angenommen – www.online-boutique-agentur.at/angebot/${a.angebot}/`
+        : 'Neue Anfrage über www.online-boutique-agentur.at',
     '',
     `Name: ${a.name}`,
     `Firma: ${a.firma}`,
     `E-Mail: ${a.email}`,
     a.telefon ? `Tel.: ${a.telefon}` : null,
-    croissant ? null : `Design: ${a.design === 'louder' ? 'Louder' : a.design === 'minimal' ? 'Minimal' : 'unbekannt'}`,
+    croissant || angebot ? null : `Design: ${a.design === 'louder' ? 'Louder' : a.design === 'minimal' ? 'Minimal' : 'unbekannt'}`,
     croissant ? `Wo frühstücken wir: ${FORMATE[a.format ?? ''] ?? '–'}` : null,
     croissant ? `Wann passt es: ${a.wunschtermin || '–'}` : null,
     '',
@@ -77,7 +84,11 @@ async function sendMail(env: Env, a: Anfrage, adminUrl: string): Promise<boolean
   ].filter((z): z is string => z !== null);
 
   const to = env.MAIL_TO!.split(',').map((s) => s.trim()).filter(Boolean);
-  const subject = croissant ? `🥐 Frühstücks-Einladung: ${a.name} · ${a.firma}` : `Neue Anfrage: ${a.name} · ${a.firma}`;
+  const subject = croissant
+    ? `🥐 Frühstücks-Einladung: ${a.name} · ${a.firma}`
+    : angebot
+      ? `✨ Angebot angenommen: ${a.name} · ${a.firma}`
+      : `Neue Anfrage: ${a.name} · ${a.firma}`;
 
   // Bevorzugt: Versand über das eigene Postfach bei World4You
   if (env.SMTP_USER && env.SMTP_PASSWORD) {
@@ -176,7 +187,9 @@ export const onRequestPost = async ({ request, env }: Context): Promise<Response
           format: FORMATE[String(form.get('format'))] ? String(form.get('format')) : undefined,
           wunschtermin: clean(form.get('when'), LIMITS.wunschtermin),
         }
-      : { quelle: 'website' as const }),
+      : form.get('quelle') === 'angebot' && ANGEBOT_RE.test(String(form.get('angebot')))
+        ? { quelle: 'angebot' as const, angebot: String(form.get('angebot')) }
+        : { quelle: 'website' as const }),
     mail: 'nicht eingerichtet',
   };
 
