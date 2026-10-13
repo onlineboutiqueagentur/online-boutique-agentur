@@ -16,8 +16,10 @@ export interface Anfrage {
   nachricht: string;
   /** Designwelt beim Absenden: minimal, louder oder unbekannt (z. B. ohne JavaScript) */
   design?: 'minimal' | 'louder' | 'unbekannt';
-  /** Herkunft: normales Kontaktformular oder Croissant-Einladung (/croissant) */
-  quelle?: 'website' | 'croissant';
+  /** Herkunft: normales Kontaktformular, Croissant-Einladung (/croissant) oder angenommenes Angebot (/angebot/…) */
+  quelle?: 'website' | 'croissant' | 'angebot';
+  /** Nur Angebot: Kennung (slug) des angenommenen Angebots */
+  angebot?: string;
   /** Nur Croissant-Einladung: Wo frühstücken wir? / Wann passt es? */
   format?: string;
   wunschtermin?: string;
