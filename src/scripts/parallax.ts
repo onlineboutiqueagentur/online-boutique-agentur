@@ -5,7 +5,8 @@
  *  .blur-out       wird unscharf (bis 14 px), sobald die Unterkante über die Bildschirmmitte steigt
  *  .parallax-hero  gleitet beim Wegscrollen bis −100 px nach oben und wird leicht unscharf (3 px)
  *
- * Läuft in allen Browsern, nur ab Tablet-Breite und nicht bei "Bewegung reduzieren".
+ * Läuft in allen Browsern, nicht bei "Bewegung reduzieren". Ab Tablet-Breite für alle Elemente,
+ * am Handy nur für Elemente mit .parallax-mobile (z. B. feel – flow – grow) und mit kürzerem Weg.
  * Nutzt die CSS-Eigenschaft `translate` (kollidiert nicht mit Reveal-Animationen).
  */
 
@@ -14,9 +15,14 @@ const BLUR_MAX = 14;
 const HERO_DIST = 100;
 const HERO_BLUR = 3;
 
+const MOBILE_DIST = 28;
 const enabledQuery = window.matchMedia('(min-width: 48rem) and (prefers-reduced-motion: no-preference)');
-const items = [...document.querySelectorAll<HTMLElement>('.parallax-up, .parallax-down')];
-const heroes = [...document.querySelectorAll<HTMLElement>('.parallax-hero')];
+const mobileQuery = window.matchMedia('(max-width: 47.99rem) and (prefers-reduced-motion: no-preference)');
+const allItems = [...document.querySelectorAll<HTMLElement>('.parallax-up, .parallax-down')];
+const allHeroes = [...document.querySelectorAll<HTMLElement>('.parallax-hero')];
+let items: HTMLElement[] = [];
+let heroes: HTMLElement[] = [];
+let dist = DIST;
 const visible = new Set<HTMLElement>();
 let ticking = false;
 
@@ -33,7 +39,7 @@ function update() {
     const top = rect.top - applied;
     const progress = clamp((vh - top) / (vh + rect.height));
     const dir = el.classList.contains('parallax-down') ? -1 : 1;
-    const dy = dir * (DIST - 2 * DIST * progress);
+    const dy = dir * (dist - 2 * dist * progress);
     el.dataset.dy = String(dy);
     el.style.translate = `0 ${dy.toFixed(1)}px`;
 
@@ -71,7 +77,7 @@ const observer = new IntersectionObserver(
 );
 
 function reset() {
-  [...items, ...heroes].forEach((el) => {
+  [...allItems, ...allHeroes].forEach((el) => {
     el.style.translate = '';
     el.style.filter = '';
     delete el.dataset.dy;
@@ -79,21 +85,38 @@ function reset() {
 }
 
 function setEnabled(on: boolean) {
+  observer.disconnect();
+  visible.clear();
+  reset();
   if (on) {
     items.forEach((el) => observer.observe(el));
     window.addEventListener('scroll', requestUpdate, { passive: true });
     window.addEventListener('resize', requestUpdate, { passive: true });
     requestUpdate();
   } else {
-    observer.disconnect();
-    visible.clear();
     window.removeEventListener('scroll', requestUpdate);
     window.removeEventListener('resize', requestUpdate);
-    reset();
   }
 }
 
-setEnabled(enabledQuery.matches);
-enabledQuery.addEventListener('change', (e) => setEnabled(e.matches));
+function applyMode() {
+  if (enabledQuery.matches) {
+    items = allItems;
+    heroes = allHeroes;
+    dist = DIST;
+  } else if (mobileQuery.matches) {
+    items = allItems.filter((el) => el.classList.contains('parallax-mobile'));
+    heroes = [];
+    dist = MOBILE_DIST;
+  } else {
+    items = [];
+    heroes = [];
+  }
+  setEnabled(items.length > 0 || heroes.length > 0);
+}
+
+applyMode();
+enabledQuery.addEventListener('change', applyMode);
+mobileQuery.addEventListener('change', applyMode);
 
 export {};

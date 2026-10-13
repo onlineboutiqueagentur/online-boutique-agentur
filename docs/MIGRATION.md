@@ -1,5 +1,13 @@
 # Migration von eternalflame.at → online-boutique-agentur.at
 
+> **Umgesetzt am 08.10.2026:**
+> - WordPress-Plugin „Redirection“ auf eternalflame.at: `/online-boutique-agentur/` → `https://www.online-boutique-agentur.at/`,
+>   `/online-boutique-agentur-louder/` → `https://www.online-boutique-agentur.at/?design=louder` (301).
+>   Die bestehenden Regeln `/agentur/` und `/agentur-fancy/` zeigen weiter auf die alten Seiten und landen so über einen Zwischenschritt richtig.
+> - **`/impressum-agentur/` wird NICHT weitergeleitet** – es ist der einzige Impressum-Link im Eternal-Flame-Footer (Shop-Impressum).
+> - Google Search Console: Property `https://www.online-boutique-agentur.at/` (URL-Präfix), bestätigt per Meta-Tag in
+>   `src/components/Seo.astro` (nicht entfernen!), Sitemap eingereicht, Indexierung der Startseite beantragt.
+
 Ziel: Die alten Agentur-URLs leiten dauerhaft (301) auf die neue Domain weiter. Die Louder-Seite
 wird **nicht** als eigene URL weitergeführt, sondern öffnet die neue Seite direkt im Louder-Design.
 

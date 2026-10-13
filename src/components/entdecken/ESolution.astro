@@ -1,0 +1,125 @@
+---
+/** „Du kümmerst dich um dein Business. Wir um den Rest.“ – Bild + Text (Landingpage /entdecken/). */
+import { Picture } from 'astro:assets';
+import SectionHead from '../SectionHead.astro';
+import { entdecken } from '../../content/entdecken';
+interface Props {
+  /** true: Text-Variante für die neue Startseite */
+  home?: boolean;
+}
+const { home = false } = Astro.props;
+const s = entdecken.solution;
+const tw = entdecken.solutionHome.typewriter;
+const textHtml = home ? entdecken.solutionHome.textHtml : s.textHtml;
+---
+
+<section class:list={['e-block', { 'e-block--home': home }]} aria-labelledby="e-solution" data-solution-home={home ? '' : undefined}>
+  <SectionHead id="e-solution" titleHtml={s.titleHtml} />
+  <div class="e-solution container">
+    <figure class="e-solution__media reveal">
+      <Picture src={s.image} alt={s.alt} widths={[600, 960, 1200]} sizes="(min-width: 48rem) 30rem, 90vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
+    </figure>
+    <div class="e-solution__text">
+      {
+        home ? (
+          <h3 class="e-solution__first e-solution__typing">
+            <span class="sr-only">{entdecken.solutionHome.headingStatic}</span>
+            <span aria-hidden="true" data-typewriter={JSON.stringify(tw.words.map((word) => ({ word })))}>
+              {tw.before}
+              <br />
+              {tw.beforeLine2} <span data-tw-word>{tw.words[0]}</span><span class="cursor">|</span>
+            </span>
+          </h3>
+        ) : (
+          <p class="e-solution__first">{s.first}</p>
+        )
+      }
+      <p set:html={textHtml} />
+      <a class="btn btn--solid e-solution__btn" href={s.cta.href}>{s.cta.label}</a>
+      <a class="e-principle e-solution__link" href={s.link.href}>{s.link.label}</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  import '../../scripts/typewriter';
+
+  // Neue Startseite: Davor stehen die gepinnten Leistungen. Der letzte Punkt sitzt mittig auf der
+  // Bühne, darunter bliebe viel Leerraum – die Sektion rückt um genau diesen Leerraum nach oben.
+  const solution = document.querySelector<HTMLElement>('[data-solution-home]');
+  const stage = document.querySelector<HTMLElement>('.is-pinned .e-rows');
+  if (solution && stage) {
+    const sync = () => {
+      const last = stage.lastElementChild as HTMLElement;
+      const space = Math.max(0, (stage.clientHeight - last.offsetHeight) / 2);
+      solution.style.marginTop = -Math.round(space) + 'px';
+    };
+    sync();
+    window.addEventListener('resize', sync, { passive: true });
+  }
+</script>
+
+<style>
+  .e-block {
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+  .e-solution {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+  .e-block--home {
+    position: relative;
+    z-index: 1;
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+  }
+  .e-block--home .e-solution {
+    margin-top: clamp(6rem, 12vw, 10rem);
+  }
+  .e-solution__media :global(img) {
+    width: 100%;
+    border-radius: var(--radius);
+  }
+  .e-solution__text {
+    display: grid;
+    gap: 1rem;
+    font-size: 1.0625rem;
+  }
+  .e-solution__text :global(b) {
+    font-weight: var(--w-bold);
+  }
+  .e-solution__first {
+    font-family: var(--f-display);
+    font-size: clamp(1.2rem, 1rem + 0.7vw, 1.5rem);
+    line-height: 1.4;
+  }
+  .e-solution__btn {
+    justify-self: start;
+    margin-top: 0.75rem;
+  }
+  .e-principle {
+    justify-self: start;
+    margin-top: 0.25rem;
+    border-bottom: 1px solid;
+    font-size: 0.9375rem;
+    font-weight: var(--w-regular);
+    text-decoration: none;
+  }
+  .e-solution__typing {
+    font-weight: var(--w-regular);
+    font-size: var(--fs-typing);
+    line-height: 1.25;
+  }
+  @media (min-width: 48rem) {
+    .e-solution {
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2rem, 6vw, 5rem);
+    }
+  }
+  :global(:root[data-design='louder']) .e-solution__first {
+    font-family: var(--f-bold);
+    letter-spacing: 1px;
+    text-transform: lowercase;
+  }
+</style>

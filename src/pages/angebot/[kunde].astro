@@ -10,7 +10,7 @@ import Base from '../../layouts/Base.astro';
 import SectionHead from '../../components/SectionHead.astro';
 import Footer from '../../components/Footer.astro';
 import { Picture } from 'astro:assets';
-import { agency } from '../../content/site';
+import { agency, intro } from '../../content/site';
 import { angebot as t, angebote, angebotImages as img, preise as standardPreise, euro, type Angebot } from '../../content/angebot';
 
 export function getStaticPaths() {
@@ -24,7 +24,9 @@ const gesamt = p.onepager + zusatzSumme;
 const datum = (iso: string) =>
   new Date(`${iso}T12:00:00`).toLocaleDateString('de-AT', { day: 'numeric', month: 'long', year: 'numeric' });
 const empfohlen = new Set(a.empfohlen ?? []);
-const { fields } = t.final.form;
+// Überschrift im Team-Abschnitt: „Wir lieben/leben Boutique Agentur.“ wie auf der Startseite (Schreibmaschine)
+const tw = intro.typewriter;
+const twSteps = tw.words.map((word) => ({ word }));
 
 const title = `Dein Angebot, ${a.anrede} | Online Boutique Agentur`;
 const description = `The Onepage Concept für ${a.firma} – dein persönliches Website-Angebot von Pia & Nina.`;
@@ -193,7 +195,13 @@ const path = `/angebot/${a.slug}/`;
         </figure>
         <div class="a-team__text">
           <p class="a-eyebrow">{t.team.eyebrow}</p>
-          <h2 class="heading a-h2" id="a-team" set:html={t.team.title} />
+          <h2 class="heading a-h2 a-team__title" id="a-team">
+            <span class="sr-only">{intro.headingStatic}</span>
+            <span aria-hidden="true" data-typewriter={JSON.stringify(twSteps)}>
+              {tw.before} <span data-tw-word>{tw.words[1]}</span><span class="cursor">|</span><br />
+              {tw.after}
+            </span>
+          </h2>
           {t.team.paragraphs.map((html) => <p set:html={html} />)}
           <blockquote class="a-team__quote"><p>„{t.team.quote}“</p></blockquote>
         </div>
@@ -211,31 +219,10 @@ const path = `/angebot/${a.slug}/`;
 
       <form class="form a-form" action="/api/contact" method="post" novalidate data-contact-form>
         <div class="a-form__fields" data-form-fields>
-          <p class="a-form__intro"><strong>{t.final.form.title}</strong> {t.eyebrow} · {euro(gesamt)}</p>
-          <div class="form__field">
-            <label for="a-name">{fields.name} <span aria-hidden="true">*</span></label>
-            <input id="a-name" name="name" type="text" autocomplete="name" required maxlength="120" aria-describedby="a-name-err" />
-            <p class="form__error" id="a-name-err" hidden>Verrätst du uns deinen Namen?</p>
-          </div>
-          <div class="form__field">
-            <label for="a-company">{fields.company} <span aria-hidden="true">*</span></label>
-            <input id="a-company" name="company" type="text" autocomplete="organization" required maxlength="160" value={a.firma} aria-describedby="a-company-err" />
-            <p class="form__error" id="a-company-err" hidden>Wie heißt deine Marke oder dein Unternehmen?</p>
-          </div>
-          <div class="form__field">
-            <label for="a-email">{fields.email} <span aria-hidden="true">*</span></label>
-            <input id="a-email" name="email" type="email" autocomplete="email" required maxlength="200" aria-describedby="a-email-err" />
-            <p class="form__error" id="a-email-err" hidden>Bitte gib eine gültige E-Mail-Adresse an.</p>
-          </div>
-          <div class="form__field">
-            <label for="a-phone">{fields.phone}</label>
-            <input id="a-phone" name="phone" type="tel" autocomplete="tel" maxlength="40" />
-          </div>
-          <div class="form__field">
-            <label for="a-message">{fields.message}</label>
-            <textarea id="a-message" name="message" rows="3" maxlength="5000"></textarea>
-          </div>
-
+          <input type="hidden" name="name" value={a.name} />
+          <input type="hidden" name="company" value={a.firma} />
+          <input type="hidden" name="email" value={a.email} />
+          <input type="hidden" name="message" value={`${t.eyebrow} · ${euro(gesamt)} · ${a.zusatzSeiten} Zusatzseite(n)`} />
           <div class="form__hp" aria-hidden="true">
             <label for="a-website">Website</label>
             <input id="a-website" name="website" type="text" tabindex="-1" autocomplete="off" />
@@ -244,11 +231,10 @@ const path = `/angebot/${a.slug}/`;
           <input type="hidden" name="quelle" value="angebot" />
           <input type="hidden" name="angebot" value={a.slug} />
           <input type="hidden" name="design" value="" data-design-field />
-
-          <p class="form__privacy">Mit dem Absenden werden deine Angaben zur Bearbeitung deiner Anfrage verwendet. Mehr dazu in der <a href="/datenschutz/">Datenschutzerklärung</a>.</p>
-          <div class="form__actions">
+          <div class="form__actions a-form__actions">
             <button class="btn btn--solid a-form__btn" type="submit" data-label={t.final.form.submit} data-sending={t.final.form.sending}>{t.final.form.submit}</button>
           </div>
+          <p class="a-form__note">{t.eyebrow} · {euro(gesamt)}</p>
         </div>
 
         <div class="form__status" role="status" aria-live="polite" tabindex="-1" data-form-status>
@@ -274,7 +260,7 @@ const path = `/angebot/${a.slug}/`;
     </section>
   </main>
 
-  <Footer />
+  <Footer contact={false} />
 
   <!-- Mobil: Annehmen-Button am unteren Rand – erscheint nach dem Einstieg, verschwindet beim Formular -->
   <a class="a-sticky btn btn--solid" href="#annehmen" data-sticky-cta>{t.final.form.title}</a>
@@ -282,6 +268,7 @@ const path = `/angebot/${a.slug}/`;
 
 <script>
   import '../../scripts/contact-form';
+  import '../../scripts/typewriter';
 
   document.querySelectorAll<HTMLButtonElement>('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));
 
@@ -747,6 +734,10 @@ const path = `/angebot/${a.slug}/`;
     display: grid;
     gap: 0.9rem;
   }
+  .a-team__title {
+    font-size: var(--fs-typing);
+    line-height: 1.54;
+  }
   .a-team__quote p {
     font-family: var(--f-display);
     font-style: italic;
@@ -777,18 +768,17 @@ const path = `/angebot/${a.slug}/`;
     display: grid;
     gap: 0.85rem;
   }
-  .a-form__intro {
-    margin-bottom: 0.5rem;
-    text-align: center;
+  .a-form__actions {
+    justify-content: center;
   }
-  .a-form__intro strong {
-    display: block;
-    font-family: var(--f-display);
-    font-weight: var(--w-regular);
-    font-size: 1.25rem;
+  .a-form__note {
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--c-ink-soft);
   }
   .a-form__btn {
-    padding-inline: 1.75rem;
+    min-height: 52px;
+    padding-inline: 2.5rem;
     font-size: 0.875rem;
     letter-spacing: 0.04em;
   }
@@ -890,6 +880,18 @@ const path = `/angebot/${a.slug}/`;
     .a-price-block,
     .a-team {
       break-before: page;
+    }
+    /* Schreibmaschine im PDF als ruhiger Text */
+    .a-team__title [aria-hidden] {
+      display: none;
+    }
+    .a-team__title :global(.sr-only) {
+      position: static !important;
+      width: auto;
+      height: auto;
+      margin: 0;
+      clip-path: none;
+      white-space: normal;
     }
     .a-print-contact {
       display: block;

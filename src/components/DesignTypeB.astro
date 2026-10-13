@@ -1,0 +1,71 @@
+---
+/**
+ * Variante B von „Welcher Design-Typ bist du?“ (Test-Startseite /startseite-neu/):
+ * ohne Vorschaubild, einspaltig und zentriert – Überschrift, Claim, Text, Twin-Toggle.
+ */
+import { designType } from '../content/site';
+import DesignSwitch from './DesignSwitch.astro';
+---
+
+<section class="design-type-b" id="design-typ" aria-labelledby="design-typ-title">
+  <div class="design-type-b__inner container--text">
+    <h2 class="design-type-b__title flash" id="design-typ-title">{designType.title}</h2>
+    <p class="design-type-b__claim">{designType.claim}</p>
+    <div class="design-type-b__text">
+      {designType.paragraphs.map((p) => <p>{p}</p>)}
+    </div>
+    <DesignSwitch variant="toggle" class="design-type-b__switch" />
+  </div>
+</section>
+
+<style>
+  .design-type-b {
+    margin-block: clamp(3.5rem, 8vw, 7rem);
+    padding-block: clamp(3.5rem, 8vw, 6rem);
+    background: var(--c-design-type-bg);
+    transition: background-color var(--t-med) var(--ease);
+  }
+  .design-type-b__inner {
+    display: grid;
+    gap: 1.4rem;
+    justify-items: center;
+    text-align: center;
+  }
+  .design-type-b__title {
+    max-width: 12em;
+    font-family: var(--f-bold);
+    font-weight: var(--w-regular);
+    font-size: var(--fs-design-type);
+    line-height: 1.2;
+    letter-spacing: 2px;
+    text-transform: lowercase;
+  }
+  .design-type-b__claim {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: clamp(1.2rem, 1rem + 0.7vw, 1.5rem);
+    line-height: 1.4;
+  }
+  .design-type-b__text {
+    display: grid;
+    gap: 1rem;
+    max-width: 36rem;
+    font-size: 1.125rem;
+    line-height: 1.54;
+    text-wrap: pretty;
+  }
+  .design-type-b__inner :global(.design-type-b__switch) {
+    margin-top: 1rem;
+  }
+  :global(:root[data-design='louder']) .design-type-b__claim {
+    font-family: var(--f-bold);
+    font-style: normal;
+    letter-spacing: 1px;
+    text-transform: lowercase;
+  }
+  @media (max-width: 47.99rem) {
+    .design-type-b__text {
+      font-size: 1rem;
+    }
+  }
+</style>

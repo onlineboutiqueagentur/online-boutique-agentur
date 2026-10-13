@@ -76,3 +76,15 @@ Siehe [DNS-WORLD4YOU.md](DNS-WORLD4YOU.md). Erst nach erfolgreichem Test der `*.
 
 Cloudflare Pages Free: unbegrenzte Requests für statische Inhalte, 100.000 Function-Aufrufe/Tag
 (für ein Kontaktformular mehr als genug). Domain/E-Mail weiterhin bei World4You.
+
+## Produktions-Branch = `live` (seit 12.10.2026)
+
+Live geht nur, was mit `--branch live` hochgeladen wird:
+
+```bash
+npm run build && npx wrangler pages deploy dist --project-name online-boutique-agentur --branch live --commit-dirty=true
+```
+
+Uploads mit anderem Branch-Namen (auch `main`) werden automatisch nur Vorschauen
+(`https://<hash>.online-boutique-agentur.pages.dev`). Hintergrund: Ein zweiter Rechner hatte mehrfach
+einen veralteten Stand mit `--branch main` live geschaltet.

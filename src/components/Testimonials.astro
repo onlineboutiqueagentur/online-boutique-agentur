@@ -11,7 +11,7 @@ const minimalTitle = typeof testimonials.titleHtml === 'string' ? testimonials.t
 
 <section class="testimonials" id="kundenstimmen" aria-labelledby="kundenstimmen-title">
   <div class="testimonials__head">
-    <h2 class="heading heading--serif testimonials__title" id="kundenstimmen-title">
+    <h2 class="heading testimonials__title" id="kundenstimmen-title">
       <span class="only-minimal" set:html={minimalTitle} />
       <span class="only-louder flash flash--fast" set:html={louderTitle} />
     </h2>
@@ -56,8 +56,9 @@ const minimalTitle = typeof testimonials.titleHtml === 'string' ? testimonials.t
   .testimonials {
     padding: 4.5rem 0;
   }
+  /* Minimal: gleiche Schrift und Größe wie „Unsere Erfahrung/Expertise.“ */
   .testimonials__title {
-    font-size: 1.75rem;
+    font-size: var(--fs-typing);
   }
   .testimonials__grid {
     display: grid;
@@ -66,21 +67,17 @@ const minimalTitle = typeof testimonials.titleHtml === 'string' ? testimonials.t
     align-items: start;
     padding-top: 4rem;
   }
-  .testimonial figure {
-    overflow: hidden;
-    border-radius: var(--radius);
-    background: var(--c-card);
-    transition: background-color var(--t-med) var(--ease);
-  }
+  /* Karten ohne eigene Fläche: Hintergrund der Seite, Bild mit runden Ecken, Text frei darunter */
   .testimonial :global(.testimonial__img) {
     width: 100%;
     aspect-ratio: 3 / 2;
     object-fit: cover;
+    border-radius: var(--radius);
   }
   .testimonial__body {
     display: grid;
     gap: 1.4rem;
-    padding: 20px 40px 40px;
+    padding: 24px 8px 0;
     text-align: center;
   }
   .testimonial figcaption {
@@ -107,6 +104,11 @@ const minimalTitle = typeof testimonials.titleHtml === 'string' ? testimonials.t
     text-decoration: underline;
   }
 
+  /* Minimal: Kacheln stehen ruhig (kein Scroll-Parallax) */
+  :global(:root[data-design='minimal']) .testimonial {
+    translate: none !important;
+  }
+
   /* louder */
   :global(:root[data-design='louder']) .testimonials__title,
   .testimonials__echo {
@@ -125,7 +127,7 @@ const minimalTitle = typeof testimonials.titleHtml === 'string' ? testimonials.t
       max-width: 28rem;
     }
     .testimonial__body {
-      padding: 20px 28px 32px;
+      padding: 20px 4px 0;
     }
   }
 </style>

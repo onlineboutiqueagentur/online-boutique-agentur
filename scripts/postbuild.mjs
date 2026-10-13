@@ -36,14 +36,18 @@ const tracking = /ga4MeasurementId:\s*'G-/.test(site);
 const ga = tracking ? ' https://www.googletagmanager.com' : '';
 const gaConnect = tracking ? ' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com' : '';
 
+// Cloudflare Web Analytics (cookielos): Beacon-Skript + Messpunkt erlauben
+const cfa = ' https://static.cloudflareinsights.com';
+const cfaConnect = ' https://cloudflareinsights.com';
+
 const csp = [
   "default-src 'self'",
-  `script-src 'self' ${[...hashes].join(' ')}${ga}`,
+  `script-src 'self' ${[...hashes].join(' ')}${ga}${cfa}`,
   "style-src 'self' 'unsafe-inline'",
   `img-src 'self' data:${tracking ? ' https://*.google-analytics.com https://www.googletagmanager.com' : ''}`,
   "font-src 'self'",
   "media-src 'self'",
-  `connect-src 'self'${gaConnect}`,
+  `connect-src 'self'${gaConnect}${cfaConnect}`,
   "form-action 'self'",
   "frame-ancestors 'none'",
   "base-uri 'self'",

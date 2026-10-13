@@ -23,7 +23,7 @@ import { sendSmtp } from '../../lib/smtp';
 const MIN_FILL_MS = 2500; // schneller ausgefüllt = sehr wahrscheinlich ein Bot
 const MAX_AGE_MS = 1000 * 60 * 60 * 24; // Formular älter als 24 h → neu laden
 const RATE_LIMIT = 5; // Anfragen pro Stunde und Absender
-const LIMITS = { name: 120, firma: 160, email: 200, telefon: 40, nachricht: 5000, wunschtermin: 200 } as const;
+const LIMITS = { name: 120, firma: 160, email: 200, telefon: 40, nachricht: 5000, wunschtermin: 200, webseite: 200, quiz: 1500 } as const;
 /** Croissant-Einladung: erlaubte Antworten auf „Wo frühstücken wir?“ */
 const FORMATE: Record<string, string> = { 'bei-uns': 'Bei euch in Pasching', 'bei-mir': 'Beim Kunden', virtuell: 'Virtuell' };
 /** Angebotsseiten: Kennung aus der URL (/angebot/<slug>/) */
@@ -72,9 +72,11 @@ async function sendMail(env: Env, a: Anfrage, adminUrl: string): Promise<boolean
     `Firma: ${a.firma}`,
     `E-Mail: ${a.email}`,
     a.telefon ? `Tel.: ${a.telefon}` : null,
+    a.webseite ? `Website: ${a.webseite}` : null,
     croissant || angebot ? null : `Design: ${a.design === 'louder' ? 'Louder' : a.design === 'minimal' ? 'Minimal' : 'unbekannt'}`,
-    croissant ? `Wo frühstücken wir: ${FORMATE[a.format ?? ''] ?? '–'}` : null,
+    croissant && a.format ? `Wo frühstücken wir: ${FORMATE[a.format] ?? a.format}` : null,
     croissant ? `Wann passt es: ${a.wunschtermin || '–'}` : null,
+    croissant && a.quiz ? `\nIm Quiz angetippt:\n${a.quiz.split('\n').map((z) => `• ${z}`).join('\n')}` : null,
     '',
     a.nachricht || '(keine Notizen)',
     '',
@@ -186,6 +188,8 @@ export const onRequestPost = async ({ request, env }: Context): Promise<Response
           quelle: 'croissant' as const,
           format: FORMATE[String(form.get('format'))] ? String(form.get('format')) : undefined,
           wunschtermin: clean(form.get('when'), LIMITS.wunschtermin),
+          webseite: clean(form.get('webseite'), LIMITS.webseite) || undefined,
+          quiz: clean(form.get('quiz'), LIMITS.quiz).replace(/\r/g, '') || undefined,
         }
       : form.get('quelle') === 'angebot' && ANGEBOT_RE.test(String(form.get('angebot')))
         ? { quelle: 'angebot' as const, angebot: String(form.get('angebot')) }

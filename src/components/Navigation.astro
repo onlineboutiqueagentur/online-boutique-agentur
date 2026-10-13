@@ -9,19 +9,28 @@ import { navigation } from '../content/site';
 interface Props {
   /** Auf Unterseiten zeigen Anker auf die Startseite */
   base?: string;
+  /** Erster Menüpunkt als Schriftzug-Logo „Online Boutique Agentur²“ (Test-Startseite) */
+  logo?: boolean;
 }
-const { base = '' } = Astro.props;
-// Eigene Seiten (z. B. /croissant/) direkt verlinken, Anker auf die Startseite
-const link = (href: string) => (href.startsWith('/') ? href : `${base}${href}`);
+const { base = '', logo = false } = Astro.props;
+const isLogo = (i: number) => logo && i === 0;
 ---
 
 <div class="nav-bar">
   <nav class="nav" aria-label="Hauptnavigation">
     <ul role="list" class="nav__list">
       {
-        navigation.map((item) => (
+        navigation.map((item, i) => (
           <li>
-            <a href={link(item.href)}>{item.label}</a>
+            <a href={item.href.startsWith('/') ? item.href : `${base}${item.href}`} class:list={{ 'nav-logo': isLogo(i) }}>
+              {isLogo(i) ? (
+                <>
+                  Online <em>Boutique</em> Agentur<sup aria-hidden="true">2</sup>
+                </>
+              ) : (
+                item.label
+              )}
+            </a>
           </li>
         ))
       }
@@ -45,10 +54,16 @@ const link = (href: string) => (href.startsWith('/') ? href : `${base}${href}`);
     <nav aria-label="Mobile Navigation">
       <ul role="list" class="mobile-menu__list">
         {
-          navigation.map((item) => (
+          navigation.map((item, i) => (
             <li>
-              <a href={link(item.href)} data-close-menu>
-                {item.label}
+              <a href={item.href.startsWith('/') ? item.href : `${base}${item.href}`} data-close-menu>
+                {isLogo(i) ? (
+                  <>
+                    Online <em>Boutique</em> Agentur<sup aria-hidden="true">2</sup>
+                  </>
+                ) : (
+                  item.label
+                )}
               </a>
             </li>
           ))
@@ -95,6 +110,28 @@ const link = (href: string) => (href.startsWith('/') ? href : `${base}${href}`);
   }
   .nav__list a:hover {
     background-size: 100% 1px;
+  }
+
+  /* Schriftzug-Logo als erster Menüpunkt */
+  .nav__list a.nav-logo {
+    font-family: var(--f-display);
+    font-size: 1.125rem;
+  }
+  .nav__list a.nav-logo em {
+    font-style: italic;
+  }
+  :global(:root[data-design='louder']) .nav__list a.nav-logo {
+    font-family: var(--f-bold);
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+  }
+  :global(:root[data-design='louder']) .nav__list a.nav-logo em {
+    font-style: normal;
+  }
+  .nav-logo sup,
+  .mobile-menu__list sup {
+    font-size: 0.6em;
+    vertical-align: 0.75em;
   }
 
   .nav-toggle {
@@ -145,14 +182,14 @@ const link = (href: string) => (href.startsWith('/') ? href : `${base}${href}`);
     display: block;
     padding: 0.6rem 0;
     font-family: var(--f-display);
-    font-size: 1.75rem;
+    font-size: 1.125rem;
     text-decoration: none;
     border-bottom: 1px solid rgb(0 0 0 / 0.12);
   }
   :global(:root[data-design='louder']) .mobile-menu__list a {
     font-family: var(--f-bold);
     text-transform: lowercase;
-    font-size: 2.25rem;
+    font-size: 1.4rem;
   }
   @media (prefers-reduced-motion: no-preference) {
     .mobile-menu:popover-open {
@@ -163,8 +200,9 @@ const link = (href: string) => (href.startsWith('/') ? href : `${base}${href}`);
     from { opacity: 0; transform: translateY(-12px); }
   }
 
+  /* Louder: Navigationspunkte mittig (wie Minimal) */
   :global(:root[data-design='louder']) .nav-bar {
-    justify-content: flex-end;
+    justify-content: center;
     width: min(100% - 2 * var(--gutter), 72rem);
     margin-inline: auto;
     padding-inline: 0;
@@ -176,6 +214,10 @@ const link = (href: string) => (href.startsWith('/') ? href : `${base}${href}`);
     }
     .nav-toggle {
       display: inline-flex;
+    }
+    /* mobil bleibt der „Menü“-Button wie bisher rechts */
+    :global(:root[data-design='louder']) .nav-bar {
+      justify-content: flex-end;
     }
     .nav-bar,
     :global(:root[data-design='louder']) .nav-bar {

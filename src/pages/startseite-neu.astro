@@ -1,0 +1,51 @@
+---
+/**
+ * /startseite-neu/ – TEST-Startseite (13.10.2026): Header der Startseite + Abschnitte der Landingpage
+ * /entdecken/ + Abschnitte der Startseite. Nicht verlinkt, nicht in der Sitemap, noindex.
+ * Passt sie, wird sie gegen die bestehende Startseite (src/components/Home.astro) getauscht.
+ */
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import EStatement from '../components/entdecken/EStatement.astro';
+import EProblems from '../components/entdecken/EProblems.astro';
+import EWorlds from '../components/entdecken/EWorlds.astro';
+import ESolution from '../components/entdecken/ESolution.astro';
+import CroissantTeaser from '../components/CroissantTeaser.astro';
+import DesignType from '../components/DesignType.astro';
+import DesignTypeB from '../components/DesignTypeB.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Contact from '../components/Contact.astro';
+import Thoughts from '../components/Thoughts.astro';
+import StickyInvite from '../components/StickyInvite.astro';
+import Footer from '../components/Footer.astro';
+import BgSwitcher from '../components/BgSwitcher.astro';
+import { seo } from '../content/site';
+import { croissantTeaser } from '../content/croissant';
+---
+
+<Base title={seo.title} description={seo.description} path="/startseite-neu/" noindex>
+  <!-- 1 · Header der Startseite -->
+  <Hero text="entdecken" />
+  <main id="inhalt" tabindex="-1" class="home-neu">
+    <!-- 2–5 · Abschnitte der Landingpage /entdecken/ -->
+    <EStatement />
+    <EProblems />
+    <EWorlds pinned />
+    <ESolution home />
+    <!-- 6–10 · Abschnitte der Startseite -->
+    <CroissantTeaser />
+    <DesignTypeB />
+    <Testimonials />
+    <Contact />
+    <Thoughts />
+  </main>
+  <StickyInvite href="/croissant/" label={croissantTeaser.sticky.label} meta={croissantTeaser.sticky.meta} hideNear={['.hero', '.teaser', '#kontakt']} />
+  <BgSwitcher />
+  <Footer contact={false} />
+</Base>
+
+<style>
+  .home-neu:focus {
+    outline: none;
+  }
+</style>

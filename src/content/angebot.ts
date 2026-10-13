@@ -37,8 +37,11 @@ export interface Angebot {
   slug: string;
   /** Wie wir die Person ansprechen: „Hallo Lisa“ */
   anrede: string;
-  /** Firmen- oder Markenname (wird ins Formular übernommen) */
+  /** Firmen- oder Markenname */
   firma: string;
+  /** Vor- und Nachname + E-Mail: kommen beim Klick auf „Angebot annehmen“ in deine Mail */
+  name: string;
+  email: string;
   /** Persönliche Zeilen nach der Begrüßung (HTML erlaubt). Leer = Standardtext. */
   grussHtml?: string;
   /** Anzahl zusätzlicher Inhaltsseiten (0 = reiner Onepager) */
@@ -60,6 +63,8 @@ export const angebote: Angebot[] = [
     slug: 'beispiel',
     anrede: 'Lisa',
     firma: 'Studio Beispiel',
+    name: 'Lisa Beispiel',
+    email: 'lisa@beispiel.at',
     grussHtml:
       'schön, dass wir uns kennenlernen durften! Wie versprochen haben wir dir hier alles zusammengestellt, was dein neuer Webauftritt braucht. <b>Nimm dir einen Kaffee, scroll in Ruhe durch</b> und melde dich, wenn du Fragen hast.',
     zusatzSeiten: 1,
@@ -172,9 +177,8 @@ export const angebot = {
 
   team: {
     eyebrow: 'Good to know about us',
-    title: 'Wir sind Pia & Nina. <em>Zwei Köpfe. Ein Herz. Eine Online-DNA.</em>',
     paragraphs: [
-      'Wir sind Onlinemarketerinnen aus Leidenschaft und ergänzen uns perfekt in dem, was wir lieben: Design, Strategie und Storytelling. Wir kreieren Konzepte mit Seele. Websites, die nicht nur gut aussehen, sondern sich auch gut anfühlen.',
+      '<b>Wir sind Pia & Nina. Zwei Köpfe. Ein Herz. Eine Online-DNA.</b> Wir sind Onlinemarketerinnen aus Leidenschaft und ergänzen uns perfekt in dem, was wir lieben: Design, Strategie und Storytelling. Wir kreieren Konzepte mit Seele. Websites, die nicht nur gut aussehen, sondern sich auch gut anfühlen.',
       'Dabei bringen wir jede Menge Know-how aus E-Commerce, Webdesign, Content & Performance Marketing und Social Media mit – dazu jahrelange Agenturerfahrung. Als Gründerinnen unseres eigenen Herzensprojekts wissen wir genau, was Selbstständige und Gründer:innen brauchen: <b>Klarheit, Persönlichkeit und einen stimmigen Auftritt – vom ersten Klick bis zum letzten Scroll.</b>',
     ],
     quote: 'Wir ticken gleich – und denken unterschiedlich. Und genau das macht uns als Team so stark: wie Lois & Clark, Gin & Tonic und Copy & Paste.',
@@ -183,11 +187,10 @@ export const angebot = {
   final: {
     quote: 'Can’t wait to bring your brand into the spotlight together.',
     title: 'Bereit für deinen <em>großen Auftritt?</em>',
-    text: 'Sag einfach Ja – wir melden uns mit einem Termin für den Kick-off Call. Noch Fragen? Ruf uns an oder schreib uns, ganz unkompliziert.',
+    text: 'Ein Klick genügt – wir melden uns mit einem Termin für den Kick-off Call. Noch Fragen? Ruf uns an oder schreib uns, ganz unkompliziert.',
     form: {
       title: 'Angebot annehmen',
-      fields: { name: 'Dein Name', company: 'Firma / Marke', email: 'E-Mail', phone: 'Telefon (optional)', message: 'Noch etwas, das wir wissen sollten? (optional)' },
-      submit: 'Ja, wir legen los!',
+      submit: 'Angebot annehmen',
       sending: 'Wird gesendet …',
       success: 'Wie schön – wir freuen uns riesig!\nWir melden uns ganz bald mit einem Termin für den Kick-off.\nPia & Nina',
       error: 'Da ist leider etwas schiefgelaufen. Bitte versuch es nochmal oder schreib uns direkt.',

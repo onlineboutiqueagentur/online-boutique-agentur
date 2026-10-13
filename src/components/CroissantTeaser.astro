@@ -4,23 +4,51 @@
  * sondern macht nur neugierig und führt auf /croissant/.
  * Bestehende Design-Elemente; in beiden Designwelten.
  */
+import { Picture } from 'astro:assets';
 import CroissantArt from './CroissantArt.astro';
 import { croissantTeaser as t } from '../content/croissant';
+import croissantPhoto from '../assets/images/croissant/croissant-goldener-croissant-sonnenlicht.jpg';
+
+interface Props {
+  /** Test-Startseite: Zeichnung baut sich malerisch auf und verwandelt sich danach in ein echtes Croissant */
+  morph?: boolean;
+}
+const { morph = false } = Astro.props;
 ---
 
-<section class="teaser" aria-labelledby="croissant-teaser-title">
+<section class:list={['teaser', { 'teaser--morph': morph }]} aria-labelledby="croissant-teaser-title">
   <div class="v-line" aria-hidden="true"></div>
   <div class="teaser__inner container">
     <a class="teaser__art" href={t.href} tabindex="-1" aria-hidden="true">
       <CroissantArt draw />
+      {
+        morph && (
+          <>
+            <svg class="teaser__defs" aria-hidden="true" focusable="false">
+              <filter id="teaser-watercolor" x="-10%" y="-10%" width="120%" height="120%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="7" />
+                <feDisplacementMap in="SourceGraphic" scale="9" />
+                <feGaussianBlur stdDeviation="1.6" />
+              </filter>
+            </svg>
+            <div class="teaser__photo">
+              <Picture src={croissantPhoto} alt="" widths={[640, 960, 1280]} sizes="(min-width: 48rem) 26rem, 85vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
+            </div>
+          </>
+        )
+      }
     </a>
     <div class="teaser__text">
       <p class="teaser__eyebrow">{t.eyebrow}</p>
       <h2 class="teaser__title" id="croissant-teaser-title">{t.title}</h2>
-      <p class="teaser__copy" set:html={t.textHtml} />
-      <a class="btn teaser__cta" href={t.href}>
-        {t.cta} <span aria-hidden="true">→</span>
-      </a>
+      <p class="teaser__copy">{t.text}</p>
+      <p class="teaser__spoiler">{t.spoiler}</p>
+      <div class="teaser__action">
+        <a class="btn btn--solid teaser__cta" href={t.href}>
+          <CroissantArt mini class="teaser__icon" />
+          {t.cta} <span class="teaser__arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
     </div>
   </div>
 </section>
@@ -31,12 +59,12 @@ import { croissantTeaser as t } from '../content/croissant';
   }
   .teaser__inner {
     display: grid;
-    gap: 2rem;
-    align-items: center;
+    gap: clamp(0.75rem, 1.5vw, 1.25rem);
+    justify-items: center;
   }
   .teaser__art {
     display: block;
-    width: min(80%, 22rem);
+    width: min(60%, 18rem);
     margin-inline: auto;
     color: var(--c-ink);
     transition: transform 0.8s var(--ease);
@@ -46,17 +74,21 @@ import { croissantTeaser as t } from '../content/croissant';
   }
   :global(:root[data-design='louder']) .teaser__art {
     color: #000;
-    --croissant-fill: var(--c-accent);
   }
+  /* einspaltig und zentriert – wie die Gusto-Sektion auf der Croissant-Seite */
   .teaser__text {
     display: grid;
     gap: 1rem;
-    justify-items: start;
+    justify-items: center;
+    text-align: center;
   }
+  /* kleine Subline in Versalien – wie „Eine gute Marke erkennt man nicht nur.“ auf der Croissant-Seite */
   .teaser__eyebrow {
-    font-family: var(--f-display);
-    font-style: italic;
-    color: var(--c-ink-soft);
+    font-family: var(--f-body);
+    font-size: 0.8125rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--c-ink);
   }
   .teaser__title {
     font-family: var(--f-display);
@@ -67,27 +99,43 @@ import { croissantTeaser as t } from '../content/croissant';
     max-width: 22ch;
     text-wrap: balance;
   }
-  .teaser__copy :global(em) {
-    font-family: var(--f-display);
-    font-style: italic;
+
+  .teaser__action {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: center;
+    margin-top: 0.5rem;
   }
   .teaser__cta {
-    margin-top: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
+    gap: 0.6rem;
   }
-  .teaser__cta span {
+  .teaser__cta :global(.teaser__icon) {
+    width: 1.5rem;
+    color: inherit;
+    --croissant-fill: transparent;
+  }
+  .teaser__arrow {
     transition: transform var(--t-fast) var(--ease);
   }
-  .teaser__cta:hover span {
+  .teaser__cta:hover .teaser__arrow {
     transform: translateX(4px);
+  }
+  .teaser__copy {
+    max-width: 36rem;
+    line-height: 1.7;
+  }
+  .teaser__spoiler {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 1.0625rem;
+  }
+  :global(:root[data-design='louder']) .teaser__spoiler {
+    font-family: var(--f-body);
+    font-style: normal;
+    font-weight: 600;
   }
 
   :global(:root[data-design='louder']) .teaser__eyebrow {
-    font-family: var(--f-bold);
-    font-style: normal;
-    text-transform: lowercase;
-    letter-spacing: 1px;
     color: #000;
   }
   :global(:root[data-design='louder']) .teaser__title {
@@ -98,14 +146,65 @@ import { croissantTeaser as t } from '../content/croissant';
     color: var(--c-heading);
   }
 
-  @media (min-width: 48rem) {
-    .teaser__inner {
-      grid-template-columns: 1fr 1.1fr;
-      gap: clamp(2rem, 6vw, 5rem);
-      width: min(100% - 2 * var(--gutter), 62rem);
+  /* ---------- Verwandlung: Zeichnung → malerische Fläche → echtes Croissant (Test-Startseite) ---------- */
+  .teaser--morph {
+    overflow-x: clip;
+  }
+  .teaser--morph .teaser__art {
+    position: relative;
+  }
+  .teaser__defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+  }
+  .teaser--morph .teaser__art :global(.croissant-art__fill) {
+    fill: rgb(214 162 92 / 0.38);
+    filter: url(#teaser-watercolor);
+  }
+  .teaser__photo {
+    position: absolute;
+    inset: -26% -26% -6%;
+    pointer-events: none;
+    /* weich auslaufende Ränder statt Bildkante */
+    mask-image: radial-gradient(closest-side, #000 58%, transparent 100%);
+  }
+  .teaser__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 55% 48%;
+    transform: scale(1.35);
+  }
+  /* ohne Animation: gleich das Foto */
+  .teaser--morph .teaser__art :global(.croissant-art) {
+    visibility: hidden;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.anim-ready) .teaser--morph .teaser__art :global(.croissant-art) {
+      visibility: visible;
     }
-    .teaser__art {
-      width: 100%;
+    :global(.anim-ready) .teaser--morph .teaser__photo {
+      opacity: 0;
+      filter: blur(14px);
+      transform: scale(0.96);
+    }
+    /* Zeichnung fertig (~3 s) → Farbe → Foto blendet weich auf, die Linien verschwinden */
+    :global(.anim-ready) .teaser--morph .teaser__art:has(:global(.is-in)) .teaser__photo {
+      opacity: 1;
+      filter: blur(0);
+      transform: none;
+      transition:
+        opacity 1.8s ease-in-out 3.6s,
+        filter 2.2s ease-out 3.6s,
+        transform 2.4s var(--ease) 3.6s;
+    }
+    :global(.anim-ready) .teaser--morph .teaser__art :global(.croissant-art.is-in) {
+      opacity: 0;
+      transition: opacity 1.4s ease-in-out 4.4s;
+    }
+    :global(.anim-ready) .teaser--morph .teaser__art :global(.croissant-art.is-in .croissant-art__fill) {
+      transition: opacity 1.4s ease 2.4s;
     }
   }
 </style>

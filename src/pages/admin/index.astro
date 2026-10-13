@@ -89,6 +89,8 @@ import '../../styles/base.css';
         quelle?: string;
         format?: string;
         wunschtermin?: string;
+        webseite?: string;
+        quiz?: string;
         angebot?: string;
       }
 
@@ -140,7 +142,7 @@ import '../../styles/base.css';
           $('.anfrage__meta', li).textContent = datum.format(new Date(a.eingang)) + (designName ? ` · Design: ${designName}` : '');
           if (croissant) {
             $('.anfrage__meta', li).textContent +=
-              ' · 🥐 Frühstück' + (a.format ? ` (${formate[a.format] ?? a.format})` : '') + (a.wunschtermin ? ` · Wann: ${a.wunschtermin}` : '');
+              ' · 🥐 Frühstück' + (a.format ? ` (${formate[a.format] ?? a.format})` : '') + (a.wunschtermin ? ` · Wann: ${a.wunschtermin}` : '') + (a.webseite ? ` · Website: ${a.webseite}` : '');
           }
           if (angebot) $('.anfrage__meta', li).textContent += ` · ✨ Angebot angenommen (${a.angebot ?? '–'})`;
           const badge = $('.anfrage__badge', li);
@@ -160,9 +162,11 @@ import '../../styles/base.css';
           } else tel.remove();
 
           const text = $('.anfrage__text', li);
-          text.textContent = a.nachricht || '(keine Notizen)';
+          // Croissant-Quiz: angetippte Aussagen unter den Notizen anzeigen
+          const quiz = a.quiz ? '\n\nIm Quiz angetippt:\n' + a.quiz.split('\n').map((z) => '• ' + z).join('\n') : '';
+          text.textContent = (a.nachricht || '(keine Notizen)') + quiz;
           const more = $<HTMLButtonElement>('.anfrage__more', li);
-          if (a.nachricht.length > 280) {
+          if (a.nachricht.length + quiz.length > 280) {
             text.classList.add('is-kurz');
             more.hidden = false;
             more.addEventListener('click', () => {
@@ -221,6 +225,12 @@ import '../../styles/base.css';
           alle = data.anfragen;
           login.hidden = true;
           app.hidden = false;
+          // Wer im CRM angemeldet ist, wird auf der Website nicht mitgezählt (siehe scripts/analytics.ts)
+          try {
+            localStorage.setItem('oba-intern', '1');
+          } catch {
+            // ignorieren
+          }
           render();
         } catch (e) {
           if (!login.hidden) return;

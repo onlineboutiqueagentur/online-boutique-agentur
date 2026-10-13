@@ -1,0 +1,67 @@
+---
+/** „Du darfst in deine eigene Marke verliebt sein.“ – großes Zitat-Statement (Landingpage /entdecken/). */
+import { entdecken } from '../../content/entdecken';
+const s = entdecken.statement;
+---
+
+<section class="e-block" id="statement" aria-labelledby="e-love">
+  <div class="v-line" aria-hidden="true"></div>
+  <figure class="e-quote container--text reveal-up">
+    <span class="e-quote__mark" aria-hidden="true">“</span>
+    <blockquote>
+      <h2 class="e-quote__title" id="e-love" set:html={s.titleHtml} />
+      <p class="e-quote__text" set:html={s.textHtml} />
+    </blockquote>
+  </figure>
+</section>
+
+<style>
+  .e-block {
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+  .e-quote {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+  .e-quote__mark {
+    height: 0.5em;
+    font-family: var(--f-display);
+    font-size: clamp(6rem, 4rem + 6vw, 9rem);
+    line-height: 1;
+    color: var(--c-ink);
+  }
+  :global(:root[data-design='louder']) .e-quote__mark {
+    color: #000;
+  }
+  .e-quote blockquote {
+    margin: 0;
+  }
+  .e-quote__title {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.6rem);
+    line-height: 1.25;
+    letter-spacing: var(--ls-display);
+    text-wrap: balance;
+  }
+  .e-quote__title :global(em) {
+    font-style: italic;
+  }
+  .e-quote__text {
+    max-width: 40rem;
+    margin: 1.5rem auto 0;
+    font-size: 1.0625rem;
+    text-wrap: pretty;
+  }
+  :global(:root[data-design='louder']) .e-quote__title {
+    font-family: var(--f-bold);
+    font-size: var(--fs-h2);
+    letter-spacing: 2px;
+    text-transform: lowercase;
+    color: var(--c-heading);
+  }
+  :global(:root[data-design='louder']) .e-quote__title :global(em) {
+    font-style: normal;
+  }
+</style>

@@ -23,6 +23,10 @@ export interface Anfrage {
   /** Nur Croissant-Einladung: Wo frühstücken wir? / Wann passt es? */
   format?: string;
   wunschtermin?: string;
+  /** Nur Croissant-Einladung: Website der Marke (optional) */
+  webseite?: string;
+  /** Nur Croissant-Einladung: im Quiz angetippte Aussagen (eine pro Zeile) */
+  quiz?: string;
   mail: 'gesendet' | 'fehlgeschlagen' | 'nicht eingerichtet';
 }
 

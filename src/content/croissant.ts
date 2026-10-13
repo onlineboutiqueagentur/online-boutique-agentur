@@ -8,9 +8,15 @@ import cafeImg from '../assets/images/croissant/croissant-cafe-la-vie-est-belle.
 import zutatenImg from '../assets/images/croissant/croissant-zutaten-einer-marke.jpg';
 import verpackungImg from '../assets/images/croissant/boutique-croissant-verpackung.jpg';
 import fruehstueckImg from '../assets/images/croissant/franzoesisches-fruehstueck-kaffee-croissant.jpg';
+import headerImg from '../assets/images/croissant/croissant-goldener-croissant-sonnenlicht.jpg';
 
 /** Bilder der Croissant-Seite (Zwischenlösung aus dem Moodboard – später durch echte Fotos ersetzen). */
 export const croissantImages = {
+  /** Header-Bild (breit, dekorativ) */
+  header: {
+    src: headerImg,
+    alt: '',
+  },
   cafe: {
     src: cafeImg,
     alt: 'Cappuccino und Croissant auf einem Marmortisch in einem Straßencafé, dazu der Schriftzug „la vie est belle“',
@@ -40,10 +46,16 @@ export const croissantSeo = {
 /** Startseiten-Teaser – kurz, macht nur neugierig. */
 export const croissantTeaser = {
   eyebrow: 'The Boutique Croissant',
-  title: 'Manchmal beginnt eine gute Zusammenarbeit mit einem kleinen Extra.',
-  textHtml: 'Ein Croissant vielleicht.<br /> Für Marken, bei denen wir das Gefühl haben: <em>Das könnte richtig gut passen.</em>',
-  cta: 'The Boutique Croissant',
+  title: 'Kennst du schon unser Croissant-Prinzip?',
+  text: 'Was ein Croissant mit deiner Marke zu tun hat – und warum genau das deinen Unternehmensauftritt entscheidend verändern kann.',
+  spoiler: 'Achtung kleiner Spoiler: Eine Frühstückseinladung ist inklusive.',
+  cta: 'Entdecke unser Croissant-Prinzip',
   href: '/croissant/',
+  /** Texte der runden schwebenden Einladung (Start- und Kontaktseite) */
+  sticky: {
+    label: 'Eine Einladung für dich',
+    meta: '30 Minuten · kostenlos · virtuell',
+  },
 } as const;
 
 export const croissant = {
@@ -56,17 +68,19 @@ export const croissant = {
       titleSecond: 'Jetzt weißt du auch warum.',
     },
     web: {
-      title: 'Noch kein Croissant bekommen?',
-      titleSecond: 'Vielleicht wird es Zeit für ein Frühstück.',
+      title: 'Du hast Gusto auf ein Croissant bekommen?',
     },
-    text: 'Wir glauben, dass gute Zusammenarbeit mit einem guten Gefühl beginnt. Und manchmal mit einem ziemlich guten Croissant.',
+    textHtml: 'Wir laden dich zu einem kostenlosen 30-Minuten-Gespräch ein – ein <em>ganz unkompliziertes, virtuelles Frühstück</em>.',
+    tagline: '30 Minuten. Ein paar Fragen. Ein frischer Blick auf deine Marke.',
     scroll: 'Warum ein Croissant?',
   },
 
   /** Einstieg nach dem Hero (Text von Nina & Pia, unverändert). Das 🥐 wird als kleine Zeichnung dargestellt. */
   why1: {
     titleBefore: 'Warum ein',
-    titleAfter: 'deinen Unternehmensauftritt verändern kann.',
+    /** Zeile 1 endet nach „deinen“, Zeile 2 ist der Rest – die Headline steht immer auf zwei Zeilen */
+    titleAfter: 'deinen',
+    titleSecondLine: 'Unternehmensauftritt verändern kann.',
     titleText: 'Warum ein Croissant deinen Unternehmensauftritt verändern kann.',
     subHtml: 'Über kleine Genussmomente,<br /> große Gefühle und den Unterschied,<br /> den das gewisse Extra ausmacht.',
   },
@@ -122,20 +136,32 @@ export const croissant = {
       'Deine Geschichte. Deine Persönlichkeit. Deine Erfahrung. Und das, was du mit Leidenschaft tust. All das sind die Zutaten, die deine Marke besonders machen. <b>Und das soll man auf den ersten Blick spüren.</b>',
     ask: 'Was fühlst du, wenn du an deine Marke denkst?',
     questions: [
-      'Du weißt, dass du richtig gut bist – aber irgendwie sieht man das deiner Marke nicht an?',
-      'Findest du andere Marken richtig cool – und fragst dich, warum deine nicht so wirkt?',
-      'Ist deine Website eigentlich ganz schön – aber irgendwie nicht mehr so richtig du?',
-      'Hast du schon hundertmal gedacht: Meine Website müsste ich wirklich mal überarbeiten?',
-      'Sitzt du vor Instagram und bist dir einfach unsicher, was du posten sollst?',
-      'Wünscht du dir manchmal einfach jemanden, der sagt: Komm, wir machen das jetzt richtig schön?',
+      'Ich weiß, dass ich richtig gut bin – aber irgendwie sieht man das meiner Marke nicht an.',
+      'Ich finde andere Marken richtig cool – und frage mich, warum meine nicht so wirkt.',
+      'Meine Website ist eigentlich ganz schön – aber irgendwie nicht mehr so richtig ich.',
+      'Ich habe schon hundertmal gedacht: Meine Website müsste ich wirklich mal überarbeiten.',
+      'Ich sitze vor Instagram und bin mir einfach unsicher, was ich posten soll.',
+      'Ich wünsche mir manchmal einfach jemanden, der sagt: Komm, wir machen das jetzt richtig schön.',
     ],
     hint: 'Tipp an, was auf dich zutrifft',
     empty: 'Deine Antwort erscheint hier.',
     /** Antwort je nach Anzahl der angeklickten Fragen (ab … Fragen) */
     answers: [
-      { from: 1, text: 'Schon ein kleines Ja zeigt: Da steckt mehr in deiner Marke. Lass uns bei einem Croissant darüber reden, was ihr noch fehlt.' },
-      { from: 3, text: 'Du spürst es also auch. Deine Marke kann mehr – und genau dafür sind wir da. Komm auf einen Kaffee vorbei, wir schauen sie uns gemeinsam an.' },
-      { from: 5, text: 'Dann wird es Zeit für dein kleines Extra. Komm, wir machen das jetzt richtig schön.' },
+      {
+        from: 1,
+        title: 'Na, da hat wohl jemand ein kleines Bauchgefühl …',
+        text: 'Und das täuscht selten. Vielleicht fehlt deiner Marke nur eine Kleinigkeit, damit sie sich wieder richtig nach dir anfühlt. Finden wir’s gemeinsam heraus?',
+      },
+      {
+        from: 3,
+        title: 'Du spürst es also auch. Deine Marke kann mehr!',
+        text: 'Deine Marke könnte ein bisschen frischen Wind vertragen. Und manchmal braucht es dafür gar nicht viel. Nur den richtigen Blick von außen – und ein paar richtig gute Ideen.',
+      },
+      {
+        from: 5,
+        title: 'Okay, wir müssen reden. 🥐',
+        text: 'Deine Marke und du – da geht noch was! Höchste Zeit für das gewisse Extra. Und keine Sorge: Wir haben schon ein paar Ideen, wie aus einem „Eh ganz okay“ ein „Wow, das bin ich!“ werden kann.',
+      },
     ],
     cta: 'Lass uns frühstücken',
   },
@@ -155,26 +181,27 @@ export const croissant = {
   },
 
   final: {
-    title: 'Dann lass uns frühstücken.',
-    textHtml: 'Vielleicht beginnt eure Zusammenarbeit ja mit einem Croissant.',
+    title: 'Lass uns gemeinsam frühstücken.',
+    textHtml:
+      'Nehmen wir uns 30 Minuten Zeit für ein virtuelles Frühstück. Wir lernen uns kennen, deine Marke und alles, was sie besonders macht. Wir stellen Fragen, hören zu und schauen gemeinsam, wo noch ein bisschen mehr drinsteckt. Ganz entspannt und ohne Verpflichtungen.',
+    teamAlt: 'Nina und Pia, die Gründerinnen der Online Boutique Agentur, lachend in hellen Blazern vor einem Leinenvorhang',
   },
 
   cta: {
     label: 'Einladung annehmen',
-    meta: '30 Minuten · kostenlos · live oder virtuell',
+    meta: '30 Minuten · kostenlos · virtuell',
   },
 
   form: {
-    title: 'Schön, dass du dabei bist.',
-    text: 'Verrate uns kurz, wer du bist und wo wir frühstücken. Wir melden uns mit einem Terminvorschlag.',
+    textHtml: 'Verrate uns kurz, wer du bist. Wir melden uns gerne mit einem Terminvorschlag. <b>Wir freuen uns auf dich!</b>',
     fields: {
       name: 'Dein Name',
       company: 'Marke / Unternehmen',
+      website: 'Website (optional)',
       email: 'E-Mail',
       phone: 'Telefon (optional)',
       format: 'Wo frühstücken wir?',
       when: 'Wann passt es dir meistens? (optional)',
-      whenPlaceholder: 'z. B. vormittags, Di oder Do',
       message: 'Magst du uns schon etwas erzählen? (optional)',
     },
     formats: [
