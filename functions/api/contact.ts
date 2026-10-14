@@ -18,6 +18,7 @@
  */
 import { json, shortHash, type Context, type Env } from '../../lib/auth';
 import { speichern, type Anfrage } from '../../lib/anfragen';
+import { alsAngenommenMarkieren, SLUG_RE } from '../../lib/angebot-daten';
 import { sendSmtp } from '../../lib/smtp';
 
 const MIN_FILL_MS = 2500; // schneller ausgefüllt = sehr wahrscheinlich ein Bot
@@ -26,8 +27,6 @@ const RATE_LIMIT = 5; // Anfragen pro Stunde und Absender
 const LIMITS = { name: 120, firma: 160, email: 200, telefon: 40, nachricht: 5000, wunschtermin: 200, webseite: 200, quiz: 1500 } as const;
 /** Croissant-Einladung: erlaubte Antworten auf „Wo frühstücken wir?“ */
 const FORMATE: Record<string, string> = { 'bei-uns': 'Bei euch in Pasching', 'bei-mir': 'Beim Kunden', virtuell: 'Virtuell' };
-/** Angebotsseiten: Kennung aus der URL (/angebot/<slug>/) */
-const ANGEBOT_RE = /^[a-z0-9-]{1,80}$/;
 const EMAIL_RE = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[a-z]{2,}$/i;
 const DEFAULT_ORIGINS = ['https://www.online-boutique-agentur.at', 'https://online-boutique-agentur.at'];
 
@@ -191,7 +190,7 @@ export const onRequestPost = async ({ request, env }: Context): Promise<Response
           webseite: clean(form.get('webseite'), LIMITS.webseite) || undefined,
           quiz: clean(form.get('quiz'), LIMITS.quiz).replace(/\r/g, '') || undefined,
         }
-      : form.get('quelle') === 'angebot' && ANGEBOT_RE.test(String(form.get('angebot')))
+      : form.get('quelle') === 'angebot' && SLUG_RE.test(String(form.get('angebot')))
         ? { quelle: 'angebot' as const, angebot: String(form.get('angebot')) }
         : { quelle: 'website' as const }),
     mail: 'nicht eingerichtet',
@@ -206,6 +205,10 @@ export const onRequestPost = async ({ request, env }: Context): Promise<Response
   }
 
   if (kv) await speichern(kv, anfrage);
+  // Angebot aus dem CRM: Annahme vermerken, das CRM zeigt das Angebot dann als „angenommen“
+  if (kv && anfrage.quelle === 'angebot' && anfrage.angebot) {
+    await alsAngenommenMarkieren(kv, anfrage.angebot, anfrage.eingang).catch((err) => console.error('contact: Angebot nicht markiert', err));
+  }
 
   // Erfolg, sobald die Anfrage sicher angekommen ist (gespeichert oder gemailt).
   const ok = Boolean(kv) || anfrage.mail === 'gesendet';

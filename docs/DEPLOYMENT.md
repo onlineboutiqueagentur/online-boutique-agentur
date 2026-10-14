@@ -17,7 +17,7 @@ Cloudflare Dashboard → *Workers & Pages* → *Create* → *Pages* → *Connect
 | Node-Version | Umgebungsvariable `NODE_VERSION` = `24` |
 
 Der Ordner `functions/` wird automatisch als Pages Functions erkannt (`/api/contact`).
-Jeder Push auf `main` → Produktion; andere Branches → Preview-URL (`*.pages.dev`, per `_headers` auf `noindex`).
+Jeder Push auf `main` → Produktion (über GitHub Actions, siehe unten); andere Branches → Preview-URL (`*.pages.dev`, per `_headers` auf `noindex`).
 
 ## 3. Kontaktformular & Anfragen-Übersicht (/admin)
 
@@ -77,14 +77,18 @@ Siehe [DNS-WORLD4YOU.md](DNS-WORLD4YOU.md). Erst nach erfolgreichem Test der `*.
 Cloudflare Pages Free: unbegrenzte Requests für statische Inhalte, 100.000 Function-Aufrufe/Tag
 (für ein Kontaktformular mehr als genug). Domain/E-Mail weiterhin bei World4You.
 
-## Produktions-Branch = `live` (seit 12.10.2026)
+## Produktions-Branch = `live` (seit 12.10.2026), Deploy über GitHub (seit 14.10.2026)
 
-Live geht nur, was mit `--branch live` hochgeladen wird:
+Live geht nur, was mit `--branch live` hochgeladen wird. Das erledigt jetzt GitHub Actions
+(`.github/workflows/deploy.yml`): Jeder Push bzw. Merge auf `main` wird gebaut und mit `--branch live`
+veröffentlicht. Andere Branches werden nur Vorschauen (`https://<branch>.online-boutique-agentur.pages.dev`).
+
+**Nicht mehr vom Laptop deployen.** GitHub `main` ist ab jetzt der einzige Stand, der live geht.
+Ein Upload vom Laptop würde den GitHub-Stand bis zum nächsten Merge überschreiben.
+Nur im Notfall (GitHub nicht erreichbar):
 
 ```bash
 npm run build && npx wrangler pages deploy dist --project-name online-boutique-agentur --branch live --commit-dirty=true
 ```
 
-Uploads mit anderem Branch-Namen (auch `main`) werden automatisch nur Vorschauen
-(`https://<hash>.online-boutique-agentur.pages.dev`). Hintergrund: Ein zweiter Rechner hatte mehrfach
-einen veralteten Stand mit `--branch main` live geschaltet.
+Hintergrund: Ein zweiter Rechner hatte mehrfach einen veralteten Stand mit `--branch main` live geschaltet.

@@ -3,7 +3,10 @@
  * --------------------------------------------------------------
  * Grundlage: „The Onepage Concept“ (ehemals Canva-PDF), überarbeitet ohne Wix.
  *
- * Neues Angebot anlegen: unten in `angebote` einen Eintrag kopieren und anpassen.
+ * Angebote entstehen im CRM (Leads → Angebot erstellen) und sind sofort online,
+ * ohne neues Hochladen der Website (functions/angebot/[[path]].ts).
+ * Hier in `angebote` steht nur noch das Musterangebot /angebot/beispiel/ –
+ * ein Eintrag hier funktioniert aber weiterhin (braucht dann Build + Upload).
  * Der `slug` wird zur Adresse – am besten Kundenname + ein kurzes Kürzel,
  * damit niemand fremde Angebote erraten kann (z. B. 'cafe-mayer-7k2f').
  * Die Seiten sind nicht in der Sitemap und für Suchmaschinen gesperrt.
@@ -14,6 +17,7 @@
 
 import heroImg from '../assets/images/entdecken/leistung-webdesign-laptop-schreibtisch.jpg';
 import teamImg from '../assets/images/minimal/pia-nina-zwillinge-boutique-agentur-schwarzweiss.jpg';
+import { preise, euro, zusatzText, gueltigText, growText } from '../../lib/angebot-daten';
 
 export const angebotImages = {
   hero: { src: heroImg, alt: 'Laptop auf einem Travertin-Block im Sonnenlicht, darauf eine elegante Website' },
@@ -21,16 +25,8 @@ export const angebotImages = {
 } as const;
 
 // ---------- Preise (in Euro) ----------
-export const preise = {
-  onepager: 1480,
-  /** je zusätzlicher Inhaltsseite */
-  zusatzSeite: 290,
-  /** Hosting & Betreuung pro Monat */
-  betreuungMonat: 29,
-} as const;
-
-/** 1480 → „€ 1.480,–“ (Tausenderpunkt wie im bisherigen Angebot) */
-export const euro = (n: number) => `€ ${String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.')},–`;
+// Stehen zusammen mit den Formatierungen in lib/angebot-daten.ts, weil auch die Angebote aus dem CRM sie brauchen.
+export { preise, euro };
 
 // ---------- Ein Angebot pro Kunde ----------
 export interface Angebot {
@@ -42,6 +38,8 @@ export interface Angebot {
   /** Vor- und Nachname + E-Mail: kommen beim Klick auf „Angebot annehmen“ in deine Mail */
   name: string;
   email: string;
+  /** Nur Brief-Variante: eigene Anrede, z. B. „Liebe Lisa,“ (sonst „Hallo Lisa,“) */
+  briefAnrede?: string;
   /** Persönliche Zeilen nach der Begrüßung (HTML erlaubt). Leer = Standardtext. */
   grussHtml?: string;
   /** Anzahl zusätzlicher Inhaltsseiten (0 = reiner Onepager) */
@@ -62,6 +60,7 @@ export const angebote: Angebot[] = [
     // Musterangebot zum Ansehen und Kopieren
     slug: 'beispiel',
     anrede: 'Lisa',
+    briefAnrede: 'Liebe Lisa,',
     firma: 'Studio Beispiel',
     name: 'Lisa Beispiel',
     email: 'lisa@beispiel.at',
@@ -144,7 +143,7 @@ export const angebot = {
   preis: {
     title: 'Dein Onepager. <em>Mit Style, zum Fixpreis.</em>',
     onepager: 'Onepager inkl. aller angeführten Leistungen',
-    zusatz: (n: number) => (n === 1 ? '1 zusätzliche Inhaltsseite' : `${n} zusätzliche Inhaltsseiten`),
+    zusatz: zusatzText,
     gesamt: 'Dein Fixpreis',
     steuer: 'Keine Umsatzsteuer laut Kleinunternehmerregelung (§ 6 Abs. 1 Z 27 UStG).',
     timing: {
@@ -158,7 +157,7 @@ export const angebot = {
       domain: 'Domain',
       domainText: 'Die laufenden Kosten deiner Domain sind nicht Teil des Angebots und werden separat verrechnet.',
     },
-    grow: (preis: string) => `Jede weitere Inhaltsseite: ${preis}`,
+    grow: growText,
   },
 
   toppings: {
@@ -184,6 +183,34 @@ export const angebot = {
     quote: 'Wir ticken gleich – und denken unterschiedlich. Und genau das macht uns als Team so stark: wie Lois & Clark, Gin & Tonic und Copy & Paste.',
   },
 
+  /** Vorschlag 2: Angebot als persönlicher Brief (/angebot/brief/<kunde>/) */
+  brief: {
+    ort: 'Pasching',
+    /** Standard, wenn ein Angebot keine eigene Briefanrede hat (z. B. „Liebe Lisa,“) */
+    anrede: (name: string) => `Hallo ${name},`,
+    absaetze: (firma: string) => [
+      `danke für das schöne Gespräch! Es hat uns große Freude gemacht, mehr über dich und ${firma} zu erfahren – und ehrlich gesagt hatten wir dabei schon die ersten Bilder im Kopf.`,
+      'Wir haben uns Gedanken gemacht, wie dein neuer Webauftritt aussehen kann: ein Onepager, der auf den ersten Blick zeigt, wer du bist und was dich besonders macht. Klar, persönlich und mit Style – am Handy genauso wie am Desktop. Kein Baukasten, sondern eine Website, die wir ganz individuell für dich gestalten.',
+      'Unten findest du dein Angebot. Wenn du magst, kannst du dir darunter noch in Ruhe ansehen, wie wir arbeiten, wie dein Onepager aufgebaut ist und welche Extras es gibt.',
+      'Wir freuen uns darauf, deine Marke ins Rampenlicht zu bringen!',
+    ],
+    gruss: 'Alles Liebe',
+    angebotTitel: 'Dein Angebot',
+    inklusive: ['Kick-off Call', 'Konzept & Design', 'Individuelle Umsetzung', 'Optimiert für Handy & Desktop', 'SEO-Basics', 'DSGVO-ready', 'Go Live & Übergabe'],
+    inklusiveTitel: 'Das ist alles drin',
+    tipp: 'Unser Tipp für dich',
+    mehrTitel: 'Wenn du mehr wissen möchtest',
+    mehrText: 'Tipp einfach auf ein Thema – alles andere bleibt zu.',
+    themen: {
+      warum: 'Warum ein Onepager?',
+      aufbau: 'So ist dein Onepager aufgebaut',
+      ablauf: 'So läuft unsere Zusammenarbeit ab',
+      technik: 'Technik, Hosting & Domain',
+      toppings: 'Extras zum Dazubuchen',
+      team: 'Wer wir sind',
+    },
+  },
+
   final: {
     quote: 'Can’t wait to bring your brand into the spotlight together.',
     title: 'Bereit für deinen <em>großen Auftritt?</em>',
@@ -197,7 +224,7 @@ export const angebot = {
     },
     alternative: 'Lieber persönlich?',
     signature: 'Pia & Nina',
-    gueltig: (datum: string) => `Angebot gültig bis ${datum}`,
+    gueltig: gueltigText,
     pdf: 'Als PDF speichern',
   },
 } as const;
