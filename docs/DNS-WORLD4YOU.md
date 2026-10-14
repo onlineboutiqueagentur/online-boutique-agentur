@@ -28,8 +28,13 @@
 - Unverändert: Apex A `81.19.154.98` (World4You-Weiterleitungsserver), `ftp` A `81.19.154.98`,
   MX, SPF, `mail` A `81.19.149.70`, `imap` CNAME.
 
-- World4You *SSL / TLS*: kostenloses „Basic-Wildcard-SSL | Let's Encrypt“ (0 €, automatische Verlängerung alle 3 Monate)
-  bestellt, damit `https://online-boutique-agentur.at` (ohne www) erreichbar ist und weiterleitet.
+- World4You *SSL / TLS*: Let's Encrypt bestellt – laut World4You-Support (08.10.2026) aber **nicht installierbar**, weil das Paket
+  nur ein Mail-Paket (E-Mail Go) ohne Webhosting ist. Folge: `https://online-boutique-agentur.at` (ohne www) antwortet nicht;
+  `http://online-boutique-agentur.at` leitet per 301 auf www weiter. Lösung bei Bedarf: DNS zu Cloudflare (Variante B) oder Webhosting-Upgrade.
+- **Wichtig:** Die World4You-Weiterleitung hat den `www`-CNAME zunächst wieder mit A `81.19.154.98` überschrieben.
+  Der Support hat den CNAME am 08.10.2026 neu gesetzt. Bei jeder Änderung an der Weiterleitung danach prüfen:
+  `dig +short @ns1.world4you.at www.online-boutique-agentur.at` → muss `online-boutique-agentur.pages.dev.` liefern.
+- **Live seit 08.10.2026:** https://www.online-boutique-agentur.at (Zertifikat von Cloudflare, Google Trust Services).
 
 **Zurück auf den alten Stand:** `www` wieder als A `81.19.154.98` setzen und Weiterleitungsziel auf
 `www.eternalflame.at/online-boutique-agentur` zurückstellen.

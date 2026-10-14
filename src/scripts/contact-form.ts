@@ -11,6 +11,8 @@ function setup(form: HTMLFormElement) {
   if (ts) ts.value = String(Date.now());
 
   const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+  /** Beschriftung des Buttons (ein Icon davor bleibt beim Absenden erhalten) */
+  const submitText = submit.querySelector<HTMLElement>('[data-btn-text]') ?? submit;
   const status = form.querySelector<HTMLElement>('[data-form-status]')!;
   const ok = form.querySelector<HTMLElement>('[data-ok]')!;
   const err = form.querySelector<HTMLElement>('[data-err]')!;
@@ -48,7 +50,7 @@ function setup(form: HTMLFormElement) {
     if (designField) designField.value = document.documentElement.dataset.design ?? '';
 
     submit.disabled = true;
-    submit.textContent = submit.dataset.sending ?? '…';
+    submitText.textContent = submit.dataset.sending ?? '…';
     try {
       const response = await fetch(form.action, {
         method: 'POST',
@@ -64,7 +66,7 @@ function setup(form: HTMLFormElement) {
       err.hidden = false;
     } finally {
       submit.disabled = false;
-      submit.textContent = submit.dataset.label ?? '';
+      submitText.textContent = submit.dataset.label ?? '';
       if (ts) ts.value = String(Date.now());
       status.focus();
     }

@@ -1,0 +1,157 @@
+---
+/** „Lass uns gemeinsam frühstücken.“ – Einladung zum virtuellen Frühstück mit Formular (Landingpage /entdecken/). */
+import { Picture } from 'astro:assets';
+import CroissantArt from '../CroissantArt.astro';
+import { entdecken } from '../../content/entdecken';
+import { croissant } from '../../content/croissant';
+import { insights } from '../../content/site';
+const v = entdecken.invite;
+const { fields } = croissant.form;
+---
+
+<section class="e-invite" id="anfrage" aria-labelledby="e-invite">
+  <div class="v-line" aria-hidden="true"></div>
+  <div class="container--text e-invite__head">
+    <figure class="e-team reveal">
+      <Picture src={insights.image.src} alt={croissant.final.teamAlt} widths={[520, 1040]} sizes="16rem" formats={['avif', 'webp']} loading="lazy" decoding="async" />
+    </figure>
+    <h2 class="heading" id="e-invite">{v.title}</h2>
+    <p class="lead-text">{v.text}</p>
+  </div>
+
+  <form class="form e-form" action="/api/contact" method="post" novalidate data-contact-form>
+    <div class="e-form__fields" data-form-fields>
+      <p class="e-form__intro" set:html={v.introHtml} />
+      <div class="form__field">
+        <label for="e-name">{fields.name} <span aria-hidden="true">*</span></label>
+        <input id="e-name" placeholder=" " name="name" type="text" autocomplete="name" required maxlength="120" aria-describedby="e-name-err" />
+        <p class="form__error" id="e-name-err" hidden>Verrätst du uns deinen Namen?</p>
+      </div>
+      <div class="form__field">
+        <label for="e-company">{fields.company} <span aria-hidden="true">*</span></label>
+        <input id="e-company" placeholder=" " name="company" type="text" autocomplete="organization" required maxlength="160" aria-describedby="e-company-err" />
+        <p class="form__error" id="e-company-err" hidden>Wie heißt deine Marke oder dein Unternehmen?</p>
+      </div>
+      <div class="form__field">
+        <label for="e-email">{fields.email} <span aria-hidden="true">*</span></label>
+        <input id="e-email" placeholder=" " name="email" type="email" autocomplete="email" required maxlength="200" aria-describedby="e-email-err" />
+        <p class="form__error" id="e-email-err" hidden>Bitte gib eine gültige E-Mail-Adresse an.</p>
+      </div>
+      <div class="form__field">
+        <label for="e-phone">{fields.phone}</label>
+        <input id="e-phone" placeholder=" " name="phone" type="tel" autocomplete="tel" maxlength="40" />
+      </div>
+      <div class="form__field">
+        <label for="e-when">{fields.when}</label>
+        <input id="e-when" placeholder=" " name="when" type="text" maxlength="200" />
+      </div>
+      <div class="form__field">
+        <label for="e-message">{fields.message}</label>
+        <textarea id="e-message" placeholder=" " name="message" rows="3" maxlength="5000"></textarea>
+      </div>
+
+      <div class="form__hp" aria-hidden="true">
+        <label for="e-website">Website</label>
+        <input id="e-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+      <input type="hidden" name="ts" value="" data-ts />
+      <input type="hidden" name="quelle" value="croissant" />
+      <input type="hidden" name="format" value="virtuell" />
+      <input type="hidden" name="design" value="" data-design-field />
+
+      <p class="form__privacy">Mit dem Absenden werden deine Angaben zur Bearbeitung deiner Anfrage verwendet. Mehr dazu in der <a href="/datenschutz/">Datenschutzerklärung</a>.</p>
+      <div class="form__actions">
+        <button class="btn btn--solid e-cta" type="submit" data-label={v.submit} data-sending={v.sending}>
+          <CroissantArt mini class="e-cta__icon" />
+          <span data-btn-text>{v.submit}</span>
+        </button>
+      </div>
+      <p class="e-form__meta">{v.meta}</p>
+    </div>
+
+    <div class="form__status" role="status" aria-live="polite" tabindex="-1" data-form-status>
+      <p class="form__msg form__msg--ok e-form__ok" hidden data-ok>{v.success}</p>
+      <p class="form__msg form__msg--err" hidden data-err>{v.error}</p>
+    </div>
+  </form>
+</section>
+
+<script>
+  import '../../scripts/contact-form';
+</script>
+
+<style>
+  .e-invite {
+    padding-bottom: clamp(4rem, 9vw, 6.5rem);
+  }
+  .e-invite__head {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+  .e-invite__head .lead-text {
+    max-width: 40rem;
+  }
+  .e-team {
+    width: 11rem;
+    aspect-ratio: 1;
+    margin: 0 auto 1.75rem;
+    overflow: hidden;
+    border-radius: 50%;
+  }
+  .e-team :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 63% 30%;
+    transform: scale(1.45);
+    transform-origin: 63% 32%;
+  }
+  .e-form {
+    width: min(100% - 2 * var(--gutter), 34rem);
+    margin: 2.5rem auto 0;
+  }
+  .e-form__fields {
+    display: grid;
+    gap: 0.85rem;
+  }
+  .e-form__intro {
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+  .e-form__intro :global(strong) {
+    display: block;
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: 1.25rem;
+  }
+  .e-form__meta {
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--c-ink-soft);
+  }
+  .e-form__ok {
+    white-space: pre-line;
+    text-align: center;
+    font-size: 1.0625rem;
+  }
+  .e-cta {
+    gap: 0.6rem;
+    padding-inline: 1.5rem;
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+  }
+  .e-cta :global(.e-cta__icon) {
+    width: 1.6rem;
+    color: inherit;
+    --croissant-fill: transparent;
+    --croissant-stroke: 1.4;
+  }
+  :global(:root[data-design='louder']) .e-invite .heading {
+    font-family: var(--f-bold);
+    font-size: var(--fs-h2);
+    letter-spacing: 2px;
+    text-transform: lowercase;
+    color: var(--c-heading);
+  }
+</style>

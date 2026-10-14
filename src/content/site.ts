@@ -24,11 +24,9 @@ import introLouder from '../assets/images/louder/pia-nina-zwillinge-boutique-age
 import feelMinimal from '../assets/images/minimal/feel-haende-im-licht.jpg';
 import flowMinimal from '../assets/images/minimal/flow-fliessender-stoff.jpg';
 import growMinimal from '../assets/images/minimal/grow-weisse-bluete.jpg';
-import glowMinimal from '../assets/images/minimal/glow-lachende-frau.jpg';
 import feelLouder from '../assets/images/louder/feel-haende-im-licht.jpg';
 import flowLouder from '../assets/images/louder/flow-fliessender-stoff.jpg';
 import growLouder from '../assets/images/louder/grow-weisse-bluete.jpg';
-import glowLouder from '../assets/images/louder/glow-lachende-frau.jpg';
 import iconWebsites from '../assets/images/icons/websites.png';
 import iconEcommerce from '../assets/images/icons/ecommerce.png';
 import iconContent from '../assets/images/icons/content-management.png';
@@ -105,7 +103,7 @@ export const navigation = [
   { label: 'Erfahrungen', href: '#erfahrungen' },
   { label: 'Kundenstimmen', href: '#kundenstimmen' },
   { label: 'Das Croissant-Prinzip', href: '/croissant/' },
-  { label: 'Kontakt', href: '#kontakt' },
+  { label: 'Kontakt', href: '/kontakt/' },
 ] as const;
 
 // ---------- Hero ----------
@@ -126,7 +124,7 @@ export const intro = {
   typewriter: { before: 'Wir', words: ['leben', 'lieben'], after: 'Boutique Agentur.' },
   textHtml:
     'Hello, wir sind Pia &amp; Nina. Wir begleiten dich im Online Marketing von der ersten Idee und Strategie bis zur erfolgreichen Umsetzung. Als Zwillinge bringen wir <b>doppelte Expertise</b>, <b>doppelte Kreativität &amp; noch vielmehr Herz</b> in dein Online-Projekt. Als kleine <b>Boutique-Agentur</b> lieben wir’s persönlich – kreativ – exklusiv. Individuell statt Standard. Direkt statt Umwege. Gespräche statt Tickets. <b>Modern. Smart. Stylish. Boutique eben.</b>',
-  cta: { label: 'Lass uns reden', href: '#kontakt' },
+  cta: { label: 'Lass uns reden', href: '/kontakt/' },
   image: {
     alt: 'Pia und Nina, Zwillinge und Gründerinnen der Online Boutique Agentur, in Schwarzweiß',
     minimal: introMinimal,
@@ -145,13 +143,13 @@ export const flowImages: ThemedImage[] = [
   { alt: 'feel – zwei Hände, die sich im Licht berühren', minimal: feelMinimal, louder: feelLouder },
   { alt: 'flow – ein fließendes, transparentes Tuch im Wind', minimal: flowMinimal, louder: flowLouder },
   { alt: 'grow – eine weiße Blüte in Bewegung', minimal: growMinimal, louder: growLouder },
-  { alt: 'glow – eine lachende Frau mit hellem, offenem Haar', minimal: glowMinimal, louder: glowLouder },
+  // glow (lachende Frau) am 09.10.2026 entfernt – Bilder liegen weiter unter assets/images/*/glow-lachende-frau.jpg
 ];
 
 export const headHeart = {
   titleHtml: 'Wenn <em>Kopf</em> und <em>Herz</em><br class="only-louder"> im Einklang sind.',
   textHtml:
-    'Du führst ein <b>Einzel</b>-, <b>Klein</b>– oder <b>mittelständisches Unternehmen</b> und willst sichtbar werden &amp; auf deine ganz persönliche Weise wachsen? Dann bist du genau richtig bei uns! Wenn du spürst, dass es sich richtig anfühlt, vertraue dem Flow und lass uns dein Business boosten. Feel – flow – grow – glow: weil Erfolg dann entsteht, wenn Kopf und Herz im Einklang sind.',
+    'Du führst ein <b>Einzel</b>-, <b>Klein</b>– oder <b>mittelständisches Unternehmen</b> und willst sichtbar werden &amp; auf deine ganz persönliche Weise wachsen? Dann bist du genau richtig bei uns! Wenn du spürst, dass es sich richtig anfühlt, vertraue dem Flow und lass uns dein Business boosten. Feel – flow – grow: weil Erfolg dann entsteht, wenn Kopf und Herz im Einklang sind.',
 } as const;
 
 // ---------- Leistungen ----------
@@ -195,7 +193,7 @@ export const experience = {
     },
     { title: 'Expertise als Weiterbildung', textHtml: 'Markting Vorträge für Erwachsenenbildung', logo: logoBfi, logoAlt: 'Logo Berufsförderungsinstitut OÖ (bfi)' },
   ],
-  cta: { label: 'Jetzt anfragen', href: '#kontakt' },
+  cta: { label: 'Jetzt anfragen', href: '/kontakt/' },
 } as const;
 
 // ---------- Design-Typ (Switch-Sektion) ----------
@@ -314,4 +312,41 @@ export const footer = {
  */
 export const tracking = {
   ga4MeasurementId: '', // z. B. 'G-XXXXXXXXXX'
+} as const;
+
+/**
+ * „Gedanke für dich“ – wechselnde Sprüche auf der Startseite (bei jedem Besuch ein anderer,
+ * per Klick ein neuer). Idee aus dem Agentur-CRM. Entwurf – von Nina & Pia freizugeben.
+ */
+export const thoughts = {
+  eyebrow: 'Unser Gedanke für dich',
+  signature: 'Nina & Pia',
+  next: 'Noch ein Gedanke',
+  items: [
+    'Deine Marke ist kein Logo. Sie ist ein Gefühl.',
+    'Sichtbar sein ist gut. Gefühlt werden ist besser.',
+    'Gutes Marketing klingt nicht nach Werbung, sondern nach dir.',
+    'Klicks sind schön. Vertrauen ist schöner.',
+    'Wer alle erreichen will, berührt niemanden.',
+    'Erzähl keine Features. Erzähl Geschichten.',
+    'Strategie zuerst, Glitzer danach.',
+    'Authentisch schlägt perfekt. Immer.',
+    'Algorithmen ändern sich. Gute Geschichten nicht.',
+    'Deine Zielgruppe scrollt schnell. Sei es wert, stehen zu bleiben.',
+    'Content ohne Persönlichkeit ist nur Text.',
+    'Eine klare Botschaft ist schon die halbe Kampagne.',
+    'Deine Website ist dein Schaufenster – dekorier es mit Liebe.',
+    'SEO ist kein Zauber. Nur Geduld mit Plan.',
+    'Daten sagen dir, was passiert. Gefühl sagt dir, warum.',
+    'Dein Bauchgefühl ist auch ein Datenpunkt.',
+    'Wachstum beginnt mit Klarheit.',
+    'Gute Farben sagen mehr als tausend Adjektive.',
+    'Lieber eine Herzensmarke als eine Massenmarke.',
+    'Online heißt nicht weniger persönlich.',
+    'Gute Gestaltung ist Haltung.',
+    'Mach es einfach. Dann mach es schön.',
+    'Details machen den Unterschied.',
+    'Ein bisschen très chic schadet nie.',
+    'Feel. Flow. Grow.',
+  ],
 } as const;

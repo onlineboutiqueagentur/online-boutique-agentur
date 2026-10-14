@@ -1,7 +1,8 @@
 ---
 /**
  * /angebot/<kunde>/ – persönliche Angebotsseite „The Onepage Concept“.
- * Eine Seite pro Kunde, Daten in src/content/angebot.ts.
+ * Angebote aus dem CRM: functions/angebot/[[path]].ts füllt die Vorlage /angebot/_vorlage/ mit den Daten
+ * aus dem Speicher (Stellen mit data-a="…"). Feste Angebote (z. B. „beispiel“) stehen in src/content/angebot.ts.
  * Nicht indexiert (noindex + X-Robots-Tag in public/_headers), nicht in der Sitemap.
  * „Als PDF speichern“ nutzt den Druckdialog des Browsers – das Druck-Layout steht unten bei @media print.
  * Gestaltung mit den bestehenden Design-Elementen – funktioniert in beiden Designwelten.
@@ -10,21 +11,34 @@ import Base from '../../layouts/Base.astro';
 import SectionHead from '../../components/SectionHead.astro';
 import Footer from '../../components/Footer.astro';
 import { Picture } from 'astro:assets';
-import { agency } from '../../content/site';
+import { agency, intro } from '../../content/site';
 import { angebot as t, angebote, angebotImages as img, preise as standardPreise, euro, type Angebot } from '../../content/angebot';
+import { datum } from '../../../lib/angebot-daten';
 
 export function getStaticPaths() {
-  return angebote.map((a) => ({ params: { kunde: a.slug }, props: { a } }));
+  /** Platzhalter für die Vorlage – die Function ersetzt alle markierten Stellen. */
+  const vorlage: Angebot = {
+    slug: '_vorlage',
+    anrede: 'Vorname',
+    firma: 'Firma',
+    name: 'Name',
+    email: 'mail@example.at',
+    zusatzSeiten: 1,
+    zusatzSeitenNotiz: 'Notiz',
+    erstellt: '2026-01-01',
+    gueltigBis: '2026-01-31',
+  };
+  return [...angebote, vorlage].map((a) => ({ params: { kunde: a.slug }, props: { a } }));
 }
 
 const { a } = Astro.props as { a: Angebot };
 const p = { ...standardPreise, ...a.preise };
 const zusatzSumme = a.zusatzSeiten * p.zusatzSeite;
 const gesamt = p.onepager + zusatzSumme;
-const datum = (iso: string) =>
-  new Date(`${iso}T12:00:00`).toLocaleDateString('de-AT', { day: 'numeric', month: 'long', year: 'numeric' });
 const empfohlen = new Set(a.empfohlen ?? []);
-const { fields } = t.final.form;
+// Überschrift im Team-Abschnitt: „Wir lieben/leben Boutique Agentur.“ wie auf der Startseite (Schreibmaschine)
+const tw = intro.typewriter;
+const twSteps = tw.words.map((word) => ({ word }));
 
 const title = `Dein Angebot, ${a.anrede} | Online Boutique Agentur`;
 const description = `The Onepage Concept für ${a.firma} – dein persönliches Website-Angebot von Pia & Nina.`;
@@ -41,14 +55,14 @@ const path = `/angebot/${a.slug}/`;
     <!-- 1 · Persönlicher Einstieg -->
     <section class="a-hero container" aria-labelledby="a-title">
       <div class="a-hero__text">
-        <p class="a-eyebrow">{t.eyebrow} · für {a.firma}</p>
+        <p class="a-eyebrow">{t.eyebrow} · für <span data-a="firma">{a.firma}</span></p>
         <h1 class="a-title" id="a-title">{t.hero.title}<br /><em>{t.hero.titleSecond}</em></h1>
         <p class="a-greeting">
-          <span class="a-greeting__hello">Hallo {a.anrede},</span>
-          <span set:html={a.grussHtml || t.gruss} />
+          <span class="a-greeting__hello" data-a="hallo">Hallo {a.anrede},</span>
+          <span data-a="gruss" data-standard={t.gruss} set:html={a.grussHtml || t.gruss} />
         </p>
         <p class="a-signature">{t.final.signature}</p>
-        <p class="a-meta">Erstellt am {datum(a.erstellt)} · {t.final.gueltig(datum(a.gueltigBis))}</p>
+        <p class="a-meta" data-a="meta">Erstellt am {datum(a.erstellt)} · {t.final.gueltig(datum(a.gueltigBis))}</p>
       </div>
       <figure class="a-hero__media reveal">
         <Picture src={img.hero.src} alt={img.hero.alt} widths={[480, 800, 1100]} sizes="(min-width: 48rem) 30rem, 90vw" formats={['avif', 'webp']} loading="eager" fetchpriority="high" decoding="async" />
@@ -108,7 +122,7 @@ const path = `/angebot/${a.slug}/`;
       <div class="a-grow container--text reveal-up">
         <p class="a-grow__title">{t.struktur.grow.title}</p>
         <p>{t.struktur.grow.text}</p>
-        <p class="a-grow__price">{t.preis.grow(euro(p.zusatzSeite))}</p>
+        <p class="a-grow__price" data-a="grow">{t.preis.grow(euro(p.zusatzSeite))}</p>
       </div>
       <blockquote class="a-quote reveal-up"><p>„{t.struktur.quote}“</p></blockquote>
     </section>
@@ -130,23 +144,23 @@ const path = `/angebot/${a.slug}/`;
           <dl class="a-price__lines">
             <div class="a-price__line">
               <dt>{t.preis.onepager}</dt>
-              <dd>{euro(p.onepager)}</dd>
+              <dd data-a="onepager">{euro(p.onepager)}</dd>
             </div>
             {
               a.zusatzSeiten > 0 && (
-                <div class="a-price__line">
+                <div class="a-price__line" data-a="zusatz">
                   <dt>
-                    {t.preis.zusatz(a.zusatzSeiten)}
-                    {a.zusatzSeitenNotiz && <span class="a-price__note">{a.zusatzSeitenNotiz}</span>}
-                    <span class="a-price__note">{a.zusatzSeiten} × {euro(p.zusatzSeite)}</span>
+                    <span data-a="zusatz-text">{t.preis.zusatz(a.zusatzSeiten)}</span>
+                    {a.zusatzSeitenNotiz && <span class="a-price__note" data-a="zusatz-notiz">{a.zusatzSeitenNotiz}</span>}
+                    <span class="a-price__note" data-a="zusatz-rechnung">{a.zusatzSeiten} × {euro(p.zusatzSeite)}</span>
                   </dt>
-                  <dd>{euro(zusatzSumme)}</dd>
+                  <dd data-a="zusatz-summe">{euro(zusatzSumme)}</dd>
                 </div>
               )
             }
             <div class="a-price__line a-price__line--total">
               <dt>{t.preis.gesamt}</dt>
-              <dd>{euro(gesamt)}</dd>
+              <dd data-a="gesamt">{euro(gesamt)}</dd>
             </div>
           </dl>
           <p class="a-price__tax">{t.preis.steuer}</p>
@@ -159,7 +173,7 @@ const path = `/angebot/${a.slug}/`;
           </div>
           <div class="reveal-up">
             <h3 class="a-card__title">{t.preis.laufend.title}</h3>
-            <p><b>{t.preis.laufend.betreuung} · {euro(p.betreuungMonat)} / Monat</b><br />{t.preis.laufend.betreuungText}</p>
+            <p><b>{t.preis.laufend.betreuung} · <span data-a="betreuung">{euro(p.betreuungMonat)}</span> / Monat</b><br />{t.preis.laufend.betreuungText}</p>
             <p><b>{t.preis.laufend.domain}</b><br />{t.preis.laufend.domainText}</p>
           </div>
         </div>
@@ -169,10 +183,10 @@ const path = `/angebot/${a.slug}/`;
     <!-- 7 · Toppings -->
     <section class="a-block" aria-labelledby="a-toppings">
       <SectionHead id="a-toppings" titleHtml={t.toppings.title} textHtml={t.toppings.text} />
-      <ul role="list" class="a-toppings container">
+      <ul role="list" class="a-toppings container" data-tipp={t.toppings.empfohlen}>
         {
           t.toppings.items.map((item, i) => (
-            <li class:list={['a-card a-topping reveal-up', { 'is-empfohlen': empfohlen.has(item.nr) }]} style={`--i:${i % 3}`}>
+            <li class:list={['a-card a-topping reveal-up', { 'is-empfohlen': empfohlen.has(item.nr) }]} style={`--i:${i % 3}`} data-topping={item.nr}>
               {empfohlen.has(item.nr) && <span class="a-topping__tip">{t.toppings.empfohlen}</span>}
               <span class="a-topping__nr">#{item.nr}</span>
               <h3 class="a-card__title">{item.title}</h3>
@@ -189,11 +203,16 @@ const path = `/angebot/${a.slug}/`;
       <div class="v-line" aria-hidden="true"></div>
       <div class="a-team container">
         <figure class="a-team__media reveal">
-          <Picture src={img.team.src} alt={img.team.alt} widths={[400, 700]} sizes="(min-width: 48rem) 24rem, 80vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
+          <Picture src={img.team.src} alt={img.team.alt} widths={[500, 800, 1100]} sizes="(min-width: 48rem) 32rem, 90vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
         </figure>
         <div class="a-team__text">
           <p class="a-eyebrow">{t.team.eyebrow}</p>
-          <h2 class="heading a-h2" id="a-team" set:html={t.team.title} />
+          <h2 class="heading a-h2 a-team__title" id="a-team">
+            <span class="sr-only">{intro.headingStatic}</span>
+            <span aria-hidden="true" data-typewriter={JSON.stringify(twSteps)}>
+              {tw.before} <span data-tw-word>{tw.words[1]}</span><span class="cursor">|</span>{tw.after}
+            </span>
+          </h2>
           {t.team.paragraphs.map((html) => <p set:html={html} />)}
           <blockquote class="a-team__quote"><p>„{t.team.quote}“</p></blockquote>
         </div>
@@ -211,44 +230,22 @@ const path = `/angebot/${a.slug}/`;
 
       <form class="form a-form" action="/api/contact" method="post" novalidate data-contact-form>
         <div class="a-form__fields" data-form-fields>
-          <p class="a-form__intro"><strong>{t.final.form.title}</strong> {t.eyebrow} · {euro(gesamt)}</p>
-          <div class="form__field">
-            <label for="a-name">{fields.name} <span aria-hidden="true">*</span></label>
-            <input id="a-name" name="name" type="text" autocomplete="name" required maxlength="120" aria-describedby="a-name-err" />
-            <p class="form__error" id="a-name-err" hidden>Verrätst du uns deinen Namen?</p>
-          </div>
-          <div class="form__field">
-            <label for="a-company">{fields.company} <span aria-hidden="true">*</span></label>
-            <input id="a-company" name="company" type="text" autocomplete="organization" required maxlength="160" value={a.firma} aria-describedby="a-company-err" />
-            <p class="form__error" id="a-company-err" hidden>Wie heißt deine Marke oder dein Unternehmen?</p>
-          </div>
-          <div class="form__field">
-            <label for="a-email">{fields.email} <span aria-hidden="true">*</span></label>
-            <input id="a-email" name="email" type="email" autocomplete="email" required maxlength="200" aria-describedby="a-email-err" />
-            <p class="form__error" id="a-email-err" hidden>Bitte gib eine gültige E-Mail-Adresse an.</p>
-          </div>
-          <div class="form__field">
-            <label for="a-phone">{fields.phone}</label>
-            <input id="a-phone" name="phone" type="tel" autocomplete="tel" maxlength="40" />
-          </div>
-          <div class="form__field">
-            <label for="a-message">{fields.message}</label>
-            <textarea id="a-message" name="message" rows="3" maxlength="5000"></textarea>
-          </div>
-
+          <input type="hidden" name="name" value={a.name} data-a="name" />
+          <input type="hidden" name="company" value={a.firma} data-a="company" />
+          <input type="hidden" name="email" value={a.email} data-a="email" />
+          <input type="hidden" name="message" value={`${t.eyebrow} · ${euro(gesamt)} · ${a.zusatzSeiten} Zusatzseite(n)`} data-a="message" />
           <div class="form__hp" aria-hidden="true">
             <label for="a-website">Website</label>
             <input id="a-website" name="website" type="text" tabindex="-1" autocomplete="off" />
           </div>
           <input type="hidden" name="ts" value="" data-ts />
           <input type="hidden" name="quelle" value="angebot" />
-          <input type="hidden" name="angebot" value={a.slug} />
+          <input type="hidden" name="angebot" value={a.slug} data-a="slug" />
           <input type="hidden" name="design" value="" data-design-field />
-
-          <p class="form__privacy">Mit dem Absenden werden deine Angaben zur Bearbeitung deiner Anfrage verwendet. Mehr dazu in der <a href="/datenschutz/">Datenschutzerklärung</a>.</p>
-          <div class="form__actions">
+          <div class="form__actions a-form__actions">
             <button class="btn btn--solid a-form__btn" type="submit" data-label={t.final.form.submit} data-sending={t.final.form.sending}>{t.final.form.submit}</button>
           </div>
+          <p class="a-form__note" data-a="note">{t.eyebrow} · {euro(gesamt)}</p>
         </div>
 
         <div class="form__status" role="status" aria-live="polite" tabindex="-1" data-form-status>
@@ -263,18 +260,18 @@ const path = `/angebot/${a.slug}/`;
         <a href={`tel:${agency.phoneE164}`}>{agency.phone}</a> ·
         <a href={`mailto:${agency.email}`}>{agency.email}</a>
       </p>
-      <p class="a-meta a-final__valid">{t.final.gueltig(datum(a.gueltigBis))}</p>
+      <p class="a-meta a-final__valid" data-a="gueltig">{t.final.gueltig(datum(a.gueltigBis))}</p>
 
       <!-- Nur im PDF: Kontakt statt Formular -->
       <div class="a-print-contact">
         <p><b>{t.final.form.title}?</b> Antworte einfach auf unsere Mail oder melde dich direkt:</p>
         <p>{agency.email} · {agency.phone}</p>
-        <p>Online: {agency.url.replace('https://', '')}{path}</p>
+        <p data-a="online">Online: {agency.url.replace('https://', '')}{path}</p>
       </div>
     </section>
   </main>
 
-  <Footer />
+  <Footer contact={false} />
 
   <!-- Mobil: Annehmen-Button am unteren Rand – erscheint nach dem Einstieg, verschwindet beim Formular -->
   <a class="a-sticky btn btn--solid" href="#annehmen" data-sticky-cta>{t.final.form.title}</a>
@@ -282,6 +279,7 @@ const path = `/angebot/${a.slug}/`;
 
 <script>
   import '../../scripts/contact-form';
+  import '../../scripts/typewriter';
 
   document.querySelectorAll<HTMLButtonElement>('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));
 
@@ -481,10 +479,14 @@ const path = `/angebot/${a.slug}/`;
     border-radius: var(--radius);
   }
   @media (min-width: 48rem) {
+    /* Bild links, Text rechts */
     .a-hero {
-      grid-template-columns: 1.15fr 1fr;
+      grid-template-columns: 1fr 1.15fr;
       gap: clamp(2rem, 6vw, 5rem);
       min-height: calc(100svh - 6rem);
+    }
+    .a-hero__media {
+      order: -1;
     }
   }
 
@@ -732,11 +734,11 @@ const path = `/angebot/${a.slug}/`;
     display: grid;
     gap: clamp(2rem, 5vw, 3.5rem);
     align-items: center;
-    width: min(100% - 2 * var(--gutter), 64rem);
+    width: min(100% - 2 * var(--gutter), 72rem);
   }
   .a-team__media {
     margin: 0 auto;
-    width: min(100%, 22rem);
+    width: min(100%, 32rem);
   }
   .a-team__media :global(img) {
     width: 100%;
@@ -747,6 +749,10 @@ const path = `/angebot/${a.slug}/`;
     display: grid;
     gap: 0.9rem;
   }
+  .a-team__title {
+    font-size: var(--fs-typing);
+    line-height: 1.54;
+  }
   .a-team__quote p {
     font-family: var(--f-display);
     font-style: italic;
@@ -754,7 +760,7 @@ const path = `/angebot/${a.slug}/`;
   }
   @media (min-width: 48rem) {
     .a-team {
-      grid-template-columns: 1fr 1.2fr;
+      grid-template-columns: 1.1fr 1fr;
     }
   }
 
@@ -777,18 +783,17 @@ const path = `/angebot/${a.slug}/`;
     display: grid;
     gap: 0.85rem;
   }
-  .a-form__intro {
-    margin-bottom: 0.5rem;
-    text-align: center;
+  .a-form__actions {
+    justify-content: center;
   }
-  .a-form__intro strong {
-    display: block;
-    font-family: var(--f-display);
-    font-weight: var(--w-regular);
-    font-size: 1.25rem;
+  .a-form__note {
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--c-ink-soft);
   }
   .a-form__btn {
-    padding-inline: 1.75rem;
+    min-height: 52px;
+    padding-inline: 2.5rem;
     font-size: 0.875rem;
     letter-spacing: 0.04em;
   }
@@ -866,7 +871,7 @@ const path = `/angebot/${a.slug}/`;
     }
     .a-hero {
       min-height: 0;
-      grid-template-columns: 1.2fr 1fr;
+      grid-template-columns: 1fr 1.2fr;
       padding-top: 0;
     }
     .a-block {
@@ -890,6 +895,18 @@ const path = `/angebot/${a.slug}/`;
     .a-price-block,
     .a-team {
       break-before: page;
+    }
+    /* Schreibmaschine im PDF als ruhiger Text */
+    .a-team__title [aria-hidden] {
+      display: none;
+    }
+    .a-team__title :global(.sr-only) {
+      position: static !important;
+      width: auto;
+      height: auto;
+      margin: 0;
+      clip-path: none;
+      white-space: normal;
     }
     .a-print-contact {
       display: block;

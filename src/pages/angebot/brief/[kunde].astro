@@ -1,0 +1,581 @@
+---
+/**
+ * /angebot/brief/<kunde>/ – Vorschlag 2: das Angebot als persönlicher Brief.
+ * Oben ein Brief an den Kunden, gleich darunter das Angebot mit „Angebot annehmen“.
+ * Alle weiteren Infos (Warum Onepager, Aufbau, Ablauf, Technik, Extras, Team) zum gezielten Aufklappen.
+ * Gleiche Daten und Texte wie /angebot/<kunde>/ (src/content/angebot.ts), nicht indexiert.
+ */
+import Base from '../../../layouts/Base.astro';
+import Footer from '../../../components/Footer.astro';
+import { Picture } from 'astro:assets';
+import { agency } from '../../../content/site';
+import { angebot as t, angebote, angebotImages as img, preise as standardPreise, euro, type Angebot } from '../../../content/angebot';
+import { datum } from '../../../../lib/angebot-daten';
+
+export function getStaticPaths() {
+  return angebote.map((a) => ({ params: { kunde: a.slug }, props: { a } }));
+}
+
+const { a } = Astro.props as { a: Angebot };
+const b = t.brief;
+const p = { ...standardPreise, ...a.preise };
+const zusatzSumme = a.zusatzSeiten * p.zusatzSeite;
+const gesamt = p.onepager + zusatzSumme;
+const empfohlen = t.toppings.items.filter((item) => (a.empfohlen ?? []).includes(item.nr));
+
+const title = `Für ${a.anrede}: dein Angebot | Online Boutique Agentur`;
+const description = `Ein persönliches Angebot für ${a.firma} von Pia & Nina.`;
+const path = `/angebot/brief/${a.slug}/`;
+---
+
+<Base title={title} description={description} path={path} noindex>
+  <header class="b-head">
+    <a class="b-head__brand" href="/">Online <em>Boutique</em> Agentur<sup aria-hidden="true">²</sup></a>
+    <button type="button" class="btn btn--sm" data-print>{t.final.pdf}</button>
+  </header>
+
+  <main id="inhalt" tabindex="-1" class="brief">
+    <!-- 1 · Der Brief -->
+    <article class="b-letter" aria-label={`Brief an ${a.anrede}`}>
+      <p class="b-letter__date">{b.ort}, {datum(a.erstellt)}</p>
+      <p class="b-letter__to">{a.name}<br />{a.firma}</p>
+
+      <h1 class="b-letter__hello">{a.briefAnrede || b.anrede(a.anrede)}</h1>
+      {a.grussHtml && <p set:html={a.grussHtml} />}
+      {b.absaetze(a.firma).slice(a.grussHtml ? 1 : 0).map((text) => <p>{text}</p>)}
+
+      <div class="b-letter__sign">
+        <figure class="b-letter__photo">
+          <Picture src={img.team.src} alt={img.team.alt} widths={[160, 320]} sizes="5rem" formats={['avif', 'webp']} loading="eager" decoding="async" />
+        </figure>
+        <p>{b.gruss},<br /><span class="b-letter__names">Pia & Nina</span></p>
+      </div>
+    </article>
+
+    <!-- 2 · Das Angebot -->
+    <section class="b-offer" id="annehmen" aria-labelledby="b-offer">
+      <div class="b-offer__card">
+        <p class="b-offer__eyebrow">{t.eyebrow} · für {a.firma}</p>
+        <h2 class="b-offer__title" id="b-offer">{b.angebotTitel}</h2>
+
+        <dl class="b-lines">
+          <div class="b-line">
+            <dt>{t.preis.onepager}</dt>
+            <dd>{euro(p.onepager)}</dd>
+          </div>
+          {
+            a.zusatzSeiten > 0 && (
+              <div class="b-line">
+                <dt>
+                  {t.preis.zusatz(a.zusatzSeiten)}
+                  {a.zusatzSeitenNotiz && <span class="b-line__note">{a.zusatzSeitenNotiz}</span>}
+                </dt>
+                <dd>{euro(zusatzSumme)}</dd>
+              </div>
+            )
+          }
+          <div class="b-line b-line--total">
+            <dt>{t.preis.gesamt}</dt>
+            <dd>{euro(gesamt)}</dd>
+          </div>
+        </dl>
+        <p class="b-small">
+          Danach {t.preis.laufend.betreuung} um {euro(p.betreuungMonat)} / Monat · Domain separat ·
+          {t.preis.steuer}
+        </p>
+
+        <div class="b-incl">
+          <p class="b-incl__title">{b.inklusiveTitel}</p>
+          <ul role="list" class="b-incl__list">
+            {b.inklusive.map((item) => <li>{item}</li>)}
+          </ul>
+          <p class="b-small">{t.preis.timing.text}</p>
+        </div>
+
+        {
+          empfohlen.length > 0 && (
+            <div class="b-tipp">
+              <p class="b-incl__title">{b.tipp}</p>
+              <ul role="list" class="b-tipp__list">
+                {empfohlen.map((item) => (
+                  <li>
+                    <b>{item.title}</b> · {item.preis}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        <form class="form b-form" action="/api/contact" method="post" novalidate data-contact-form>
+          <div data-form-fields>
+            <input type="hidden" name="name" value={a.name} />
+            <input type="hidden" name="company" value={a.firma} />
+            <input type="hidden" name="email" value={a.email} />
+            <input type="hidden" name="message" value={`${t.eyebrow} · ${euro(gesamt)} · ${a.zusatzSeiten} Zusatzseite(n)`} />
+            <div class="form__hp" aria-hidden="true">
+              <label for="b-website">Website</label>
+              <input id="b-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+            <input type="hidden" name="ts" value="" data-ts />
+            <input type="hidden" name="quelle" value="angebot" />
+            <input type="hidden" name="angebot" value={a.slug} />
+            <input type="hidden" name="design" value="" data-design-field />
+            <button class="btn btn--solid b-form__btn" type="submit" data-label={t.final.form.submit} data-sending={t.final.form.sending}>{t.final.form.submit}</button>
+          </div>
+          <div class="form__status" role="status" aria-live="polite" tabindex="-1" data-form-status>
+            <p class="form__msg form__msg--ok b-form__ok" hidden data-ok>{t.final.form.success}</p>
+            <p class="form__msg form__msg--err" hidden data-err>{t.final.form.error}</p>
+          </div>
+        </form>
+
+        <p class="b-direct">
+          Noch Fragen? <a href={agency.whatsapp} target="_blank" rel="noopener">WhatsApp</a> ·
+          <a href={`tel:${agency.phoneE164}`}>{agency.phone}</a> ·
+          <a href={`mailto:${agency.email}`}>E-Mail</a>
+        </p>
+        <p class="b-small b-valid">{t.final.gueltig(datum(a.gueltigBis))}</p>
+      </div>
+    </section>
+
+    <!-- 3 · Mehr Infos zum Aufklappen -->
+    <section class="b-more" aria-labelledby="b-more">
+      <h2 class="b-more__title" id="b-more">{b.mehrTitel}</h2>
+      <p class="b-more__text">{b.mehrText}</p>
+
+      <div class="b-topics">
+        <details class="b-topic">
+          <summary>{b.themen.warum}</summary>
+          <div class="b-topic__body">
+            {t.why.paragraphs.map((html) => <p set:html={html} />)}
+            {
+              t.why.facts.map(([q, text]) => (
+                <p>
+                  <b>{q}</b> {text}
+                </p>
+              ))
+            }
+          </div>
+        </details>
+
+        <details class="b-topic">
+          <summary>{b.themen.aufbau}</summary>
+          <div class="b-topic__body">
+            <ul role="list" class="b-parts">
+              {
+                t.struktur.parts.map(([name, text]) => (
+                  <li>
+                    <span class="b-parts__name">{name}</span>
+                    <span>{text}</span>
+                  </li>
+                ))
+              }
+            </ul>
+            <p><b>{t.struktur.grow.title}</b> {t.struktur.grow.text} {t.preis.grow(euro(p.zusatzSeite))}.</p>
+          </div>
+        </details>
+
+        <details class="b-topic">
+          <summary>{b.themen.ablauf}</summary>
+          <div class="b-topic__body">
+            <ol role="list" class="b-steps">
+              {
+                t.ablauf.steps.map(([name, text], i) => (
+                  <li>
+                    <span class="b-steps__nr" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                    <span><b>{name}</b> {text}</span>
+                  </li>
+                ))
+              }
+            </ol>
+          </div>
+        </details>
+
+        <details class="b-topic">
+          <summary>{b.themen.technik}</summary>
+          <div class="b-topic__body">
+            {t.technik.paragraphs.map((html) => <p set:html={html} />)}
+            <p><b>{t.preis.laufend.betreuung} · {euro(p.betreuungMonat)} / Monat.</b> {t.preis.laufend.betreuungText}</p>
+            <p><b>{t.technik.domain.title}</b> {t.technik.domain.text} {t.preis.laufend.domainText}</p>
+          </div>
+        </details>
+
+        <details class="b-topic">
+          <summary>{b.themen.toppings}</summary>
+          <div class="b-topic__body">
+            <p>{t.toppings.text}</p>
+            <ul role="list" class="b-toppings">
+              {
+                t.toppings.items.map((item) => (
+                  <li class:list={['b-topping', { 'is-tipp': (a.empfohlen ?? []).includes(item.nr) }]}>
+                    <span class="b-topping__head">
+                      <b>{item.title}</b>
+                      {(a.empfohlen ?? []).includes(item.nr) && <span class="b-topping__tipp">{t.toppings.empfohlen}</span>}
+                    </span>
+                    <span>{item.text}</span>
+                    <span class="b-topping__price">{item.preis}</span>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </details>
+
+        <details class="b-topic">
+          <summary>{b.themen.team}</summary>
+          <div class="b-topic__body b-team">
+            <figure class="b-team__photo">
+              <Picture src={img.team.src} alt={img.team.alt} widths={[400, 700]} sizes="(min-width: 48rem) 14rem, 80vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
+            </figure>
+            <div>
+              {t.team.paragraphs.map((html) => <p set:html={html} />)}
+              <p class="b-team__quote">„{t.team.quote}“</p>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <Footer contact={false} />
+</Base>
+
+<script>
+  import '../../../scripts/contact-form';
+
+  document.querySelectorAll<HTMLButtonElement>('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));
+
+  // Im PDF sollen alle Themen sichtbar sein – danach wieder wie vorher
+  let offen: HTMLDetailsElement[] = [];
+  window.addEventListener('beforeprint', () => {
+    offen = [...document.querySelectorAll<HTMLDetailsElement>('.b-topic:not([open])')];
+    offen.forEach((d) => (d.open = true));
+  });
+  window.addEventListener('afterprint', () => offen.forEach((d) => (d.open = false)));
+</script>
+
+<style>
+  .b-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: min(100% - 2 * var(--gutter), 44rem);
+    margin: 0 auto;
+    padding: 1.25rem 0;
+  }
+  .b-head__brand {
+    font-family: var(--f-display);
+    font-size: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  .brief {
+    width: min(100% - 2 * var(--gutter), 44rem);
+    margin: 0 auto;
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+
+  /* ---------- Brief ---------- */
+  .b-letter {
+    padding: clamp(1.75rem, 5vw, 3.5rem);
+    background: var(--c-card);
+    border-radius: var(--radius);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 40px rgb(0 0 0 / 0.05);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+  }
+  .b-letter p + p {
+    margin-top: 1em;
+  }
+  .b-letter__date {
+    text-align: right;
+    font-size: 0.9375rem;
+    color: var(--c-ink-soft);
+  }
+  .b-letter__to {
+    margin-top: 1.5rem;
+    font-size: 0.9375rem;
+    color: var(--c-ink-soft);
+  }
+  .b-letter__hello {
+    margin: 2.25rem 0 1rem;
+    font-family: var(--f-display);
+    font-style: italic;
+    font-weight: var(--w-regular);
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 1.875rem);
+    line-height: 1.3;
+  }
+  .b-letter__sign {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2.25rem;
+  }
+  .b-letter__photo {
+    flex: none;
+    width: 4.5rem;
+  }
+  .b-letter__photo :global(img) {
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .b-letter__names {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 1.5rem;
+  }
+
+  /* ---------- Angebot ---------- */
+  .b-offer {
+    margin-top: clamp(1.5rem, 4vw, 2.5rem);
+  }
+  .b-offer__card {
+    padding: clamp(1.75rem, 5vw, 3rem);
+    border: 1px solid currentColor;
+    border-radius: var(--radius);
+  }
+  .b-offer__eyebrow {
+    font-family: var(--f-display);
+    font-style: italic;
+    color: var(--c-ink-soft);
+  }
+  .b-offer__title {
+    margin: 0.25rem 0 1.5rem;
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
+    line-height: 1.2;
+  }
+  .b-lines {
+    display: grid;
+  }
+  .b-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid rgb(0 0 0 / 0.12);
+  }
+  .b-line dd {
+    white-space: nowrap;
+  }
+  .b-line__note {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--c-ink-soft);
+  }
+  .b-line--total {
+    border-bottom: 0;
+    padding-top: 1.1rem;
+    font-family: var(--f-display);
+    font-size: clamp(1.375rem, 1.1rem + 1vw, 2rem);
+  }
+  .b-line--total dt {
+    white-space: nowrap;
+  }
+  .b-small {
+    font-size: 0.8125rem;
+    color: var(--c-ink-soft);
+  }
+  .b-incl,
+  .b-tipp {
+    margin-top: 1.75rem;
+  }
+  .b-incl__title {
+    margin-bottom: 0.6rem;
+    font-weight: var(--w-bold);
+  }
+  .b-incl__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .b-incl__list li {
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    background: var(--c-card);
+    font-size: 0.875rem;
+  }
+  .b-tipp__list {
+    display: grid;
+    gap: 0.25rem;
+    font-size: 0.9375rem;
+  }
+  .b-form {
+    margin-top: 2rem;
+  }
+  .b-form__btn {
+    width: 100%;
+    min-height: 56px;
+    font-size: 1rem;
+  }
+  .b-form__ok {
+    white-space: pre-line;
+    text-align: center;
+  }
+  .b-direct {
+    margin-top: 1rem;
+    text-wrap: balance;
+    text-align: center;
+    font-size: 0.9375rem;
+  }
+  .b-valid {
+    margin-top: 0.4rem;
+    text-align: center;
+  }
+
+  /* ---------- Mehr erfahren ---------- */
+  .b-more {
+    margin-top: clamp(3rem, 7vw, 4.5rem);
+  }
+  .b-more__title {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  }
+  .b-more__text {
+    margin: 0.25rem 0 1.25rem;
+    color: var(--c-ink-soft);
+  }
+  .b-topics {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .b-topic {
+    background: var(--c-card);
+    border-radius: var(--radius);
+  }
+  .b-topic summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem 1.4rem;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--f-display);
+    font-size: 1.1875rem;
+  }
+  .b-topic summary::-webkit-details-marker {
+    display: none;
+  }
+  .b-topic summary::after {
+    content: '+';
+    flex: none;
+    font-family: var(--f-body);
+    font-size: 1.5rem;
+    line-height: 1;
+    transition: transform var(--t-fast) var(--ease);
+  }
+  .b-topic[open] summary::after {
+    transform: rotate(45deg);
+  }
+  .b-topic summary:focus-visible {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius);
+  }
+  .b-topic__body {
+    padding: 0 1.4rem 1.4rem;
+    line-height: 1.7;
+  }
+  .b-topic__body p + p,
+  .b-topic__body ul + p,
+  .b-topic__body p + ul {
+    margin-top: 0.9em;
+  }
+  .b-parts,
+  .b-steps,
+  .b-toppings {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .b-parts li {
+    display: grid;
+    gap: 0.1rem;
+  }
+  .b-parts__name {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 1.0625rem;
+  }
+  .b-steps li {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 0.5rem;
+  }
+  .b-steps__nr {
+    font-family: var(--f-display);
+    color: var(--c-ink-soft);
+  }
+  .b-topping {
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius);
+    background: var(--c-bg);
+  }
+  .b-topping.is-tipp {
+    outline: 1px solid currentColor;
+  }
+  .b-topping__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .b-topping__tipp {
+    padding: 0.1rem 0.6rem;
+    border-radius: 999px;
+    background: var(--c-accent);
+    font-size: 0.75rem;
+  }
+  .b-topping__price {
+    font-size: 0.875rem;
+    color: var(--c-ink-soft);
+  }
+  .b-team {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .b-team__photo :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+  }
+  .b-team__quote {
+    font-family: var(--f-display);
+    font-style: italic;
+  }
+  @media (min-width: 40rem) {
+    .b-team {
+      grid-template-columns: 14rem 1fr;
+      align-items: start;
+    }
+  }
+
+  @media print {
+    .b-head button,
+    .b-form,
+    .b-direct a,
+    .b-more__text {
+      display: none;
+    }
+    .b-letter {
+      box-shadow: none;
+      padding: 0;
+    }
+    .b-offer,
+    .b-topic {
+      break-inside: avoid;
+    }
+    .b-topic summary::after {
+      display: none;
+    }
+  }
+</style>

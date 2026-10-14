@@ -9,7 +9,10 @@ import Experience from './Experience.astro';
 import DesignType from './DesignType.astro';
 import Testimonials from './Testimonials.astro';
 import Insights from './Insights.astro';
-// import CroissantTeaser from './CroissantTeaser.astro'; // vorerst ausgeblendet
+import Thoughts from './Thoughts.astro';
+import CroissantTeaser from './CroissantTeaser.astro';
+import StickyInvite from './StickyInvite.astro';
+import { croissantTeaser } from '../content/croissant';
 import Contact from './Contact.astro';
 import Footer from './Footer.astro';
 import { harmony, headHeart } from '../content/site';
@@ -33,13 +36,17 @@ import { harmony, headHeart } from '../content/site';
 
   <Services />
   <Experience />
+  <Insights />
+  <CroissantTeaser />
   <DesignType />
   <Testimonials />
-  <Insights />
-  {/* Croissant-Teaser vorerst ausgeblendet – zum Einblenden diese Zeile wieder aktivieren: <CroissantTeaser /> */}
   <Contact />
+  <Thoughts />
 </main>
-<Footer />
+<!-- Runde Einladung → Anfang der Croissant-Seite; ausgeblendet im Hero, bei der Croissant-Sektion und beim Formular -->
+<StickyInvite href="/croissant/" label={croissantTeaser.sticky.label} meta={croissantTeaser.sticky.meta} hideNear={['.hero', '.teaser', '#kontakt']} />
+<!-- Kontaktdaten stehen auf /kontakt/ – hier nur die Fußleiste (WhatsApp darin) -->
+<Footer contact={false} />
 
 <style>
   .block__media {

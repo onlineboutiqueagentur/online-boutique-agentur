@@ -1,0 +1,297 @@
+---
+/** „Keine Sorge. Wir bringen dich (wieder) ins Schwärmen …“ – drei Themenwelten 01–03 mit Bild im Wechsel (Landingpage /entdecken/). */
+import { Picture } from 'astro:assets';
+import SectionHead from '../SectionHead.astro';
+import { entdecken } from '../../content/entdecken';
+const w = entdecken.worlds;
+interface Props {
+  /** Bildschirm bleibt stehen, die Punkte 01–03 wechseln beim Scrollen (Test-Startseite). */
+  pinned?: boolean;
+}
+const { pinned = false } = Astro.props;
+
+---
+
+<section class="e-block e-block--big" id="leistungen" aria-labelledby="e-worlds" data-pin={pinned ? '' : undefined} data-bg={pinned ? 'window' : undefined} style={`--rows: ${w.rows.length}`}>
+  <SectionHead id="e-worlds" titleHtml={w.titleHtml} textHtml={w.textHtml} />
+  <div class="e-pin">
+  {
+    pinned && (
+      <div class="e-bg" aria-hidden="true">
+        <div class="e-bg__window" />
+      </div>
+    )
+  }
+  <ol role="list" class="e-rows container">
+    {
+      w.rows.map((row, i) => (
+        <li class:list={['e-row', { 'e-row--flip': i % 2 === 1 }]}>
+          <figure class:list={['e-row__media', { reveal: !pinned }]}>
+            <Picture src={row.image} alt={row.alt} widths={[480, 720, 960]} sizes="(min-width: 48rem) 26rem, 90vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
+          </figure>
+          <div class:list={['e-row__text', { 'reveal-up': !pinned }]}>
+            <span class="e-row__no" aria-hidden="true">{row.no}</span>
+            <h3 class="e-row__title">{row.title}</h3>
+            <p>{row.text}</p>
+            <ul role="list" class="e-row__tags">
+              {row.tags.map((tag) => <li>{tag}</li>)}
+            </ul>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+  </div>
+</section>
+
+<script>
+  // Punkte 01–03 „gepinnt“: Die Sektion ist rows × Bildschirmhöhe lang, die Bühne klebt oben,
+  // je nach Scrollfortschritt wird ein Punkt aktiv. Danach scrollt die Seite ganz normal weiter.
+  document.querySelectorAll<HTMLElement>('[data-pin]').forEach((section) => {
+    const pin = section.querySelector<HTMLElement>('.e-pin')!;
+    const rows = [...section.querySelectorAll<HTMLElement>('.e-row')];
+    section.classList.add('is-pinned');
+    let current = -1;
+    let scheduled = false;
+
+    const update = () => {
+      scheduled = false;
+      const rect = pin.getBoundingClientRect();
+      const run = rect.height - window.innerHeight;
+      const p = run > 0 ? Math.min(Math.max(-rect.top / run, 0), 0.9999) : 0;
+      const index = Math.floor(p * rows.length);
+      section.style.setProperty('--p', p.toFixed(4));
+      // Lichthintergrund nur, solange die Bühne den ganzen Bildschirm füllt (Leistung 1 bis 3)
+      section.classList.toggle('is-stuck', rect.top <= 1 && rect.bottom >= window.innerHeight - 1);
+      if (index === current) return;
+      section.dataset.step = String(index);
+      current = index;
+      rows.forEach((row, i) => {
+        row.classList.toggle('is-active', i === index);
+        row.classList.toggle('is-past', i < index);
+        row.toggleAttribute('inert', i !== index);
+      });
+    };
+    const schedule = () => {
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule, { passive: true });
+  });
+</script>
+
+<style>
+  .e-block {
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+  @media (min-width: 48rem) {
+    .e-block--big :global(.section-head__title em) {
+      white-space: nowrap;
+    }
+  }
+  .e-rows {
+    display: grid;
+    gap: clamp(3rem, 7vw, 5.5rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+  .e-row {
+    display: grid;
+    gap: 1.75rem;
+    align-items: center;
+  }
+  .e-row__media {
+    width: min(100%, 22rem);
+    overflow: hidden;
+    border-radius: var(--radius);
+  }
+  .e-row__media :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+  .e-row__text {
+    display: grid;
+    gap: 1rem;
+    font-size: 1.0625rem;
+  }
+  .e-row__no {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+    line-height: 0.9;
+    color: var(--c-ink);
+  }
+  .e-row__title {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+    line-height: 1.25;
+    letter-spacing: var(--ls-display);
+    text-wrap: balance;
+  }
+  /* Leistungen als ruhige Textzeile (keine Button-Optik, da nicht klickbar) */
+  .e-row__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: var(--w-regular);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .e-row__tags li:not(:last-child)::after {
+    content: '·';
+    margin-inline: 0.7em;
+    color: var(--c-ink-soft);
+  }
+  @media (min-width: 48rem) {
+    .e-row {
+      grid-template-columns: 0.75fr 1.1fr;
+      gap: clamp(2.5rem, 6vw, 5rem);
+    }
+    .e-row--flip {
+      grid-template-columns: 1.1fr 0.75fr;
+    }
+    .e-row__media {
+      justify-self: end;
+    }
+    .e-row--flip .e-row__media {
+      order: 2;
+      justify-self: start;
+    }
+  }
+
+  /* ---------- Gepinnte Variante ---------- */
+  .e-block.is-pinned {
+    padding-bottom: 0;
+  }
+  .is-pinned .e-pin {
+    height: calc(var(--rows) * 100svh);
+  }
+  .is-pinned .e-rows {
+    position: sticky;
+    top: 0;
+    display: grid;
+    align-items: center;
+    height: 100svh;
+    margin-top: 0;
+    overflow: hidden;
+  }
+  .is-pinned .e-row {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transform: translateY(2.5rem);
+    transition:
+      opacity 0.6s var(--ease),
+      transform 0.8s var(--ease);
+  }
+  .is-pinned .e-row.is-past {
+    transform: translateY(-2.5rem);
+  }
+  .is-pinned .e-row.is-active {
+    opacity: 1;
+    transform: none;
+  }
+  @media (max-width: 47.99rem) {
+    .is-pinned .e-row {
+      gap: 1.25rem;
+    }
+    .is-pinned .e-row__media {
+      width: min(100%, 34svh);
+      justify-self: center;
+    }
+    .is-pinned .e-row__text {
+      gap: 0.6rem;
+      font-size: 1rem;
+    }
+    .is-pinned .e-row__no {
+      font-size: 2.75rem;
+    }
+    .is-pinned .e-row__title {
+      font-size: 1.4rem;
+    }
+  }
+  /* ---------- Test-Hintergründe der gepinnten Leistungen ---------- */
+  .e-bg {
+    display: none;
+  }
+  .is-pinned .e-bg {
+    position: sticky;
+    top: 0;
+    display: block;
+    height: 100svh;
+    margin-bottom: -100svh;
+    overflow: hidden;
+    pointer-events: none;
+    /* erst einblenden, wenn Leistung 1 den ganzen Bildschirm füllt; nach Leistung 3 rasch weg */
+    opacity: 0;
+    transition: opacity 0.35s ease-out;
+  }
+  .is-stuck .e-bg {
+    opacity: 1;
+    transition: opacity 1.4s ease-in-out 0.15s;
+  }
+  .e-bg > * {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.8s var(--ease);
+  }
+  [data-bg='window'] .e-bg__window {
+    opacity: 1;
+  }
+
+  /* Fensterlicht: leicht abgedunkelte Fläche, darauf ein schräg einfallendes Sprossenfenster aus Licht */
+  .e-bg__window {
+    inset: 0;
+    background: rgb(70 50 30 / 0.05);
+  }
+  .e-bg__window::before {
+    content: '';
+    position: absolute;
+    top: 8%;
+    left: 50%;
+    width: 46vw;
+    height: 78vh;
+    background:
+      linear-gradient(90deg, transparent 0 48%, rgb(70 50 30 / 0.16) 48% 52%, transparent 52%),
+      linear-gradient(0deg, transparent 0 47%, rgb(70 50 30 / 0.16) 47% 53%, transparent 53%),
+      rgb(255 251 244 / 0.75);
+    filter: blur(14px);
+    transform: translateX(calc(var(--p, 0) * -18vw)) rotate(-8deg) skewX(-22deg);
+  }
+
+  :global(:root[data-design='louder']) .e-bg__window::before {
+    background:
+      linear-gradient(90deg, transparent 0 48%, rgb(0 0 0 / 0.06) 48% 52%, transparent 52%),
+      linear-gradient(0deg, transparent 0 47%, rgb(0 0 0 / 0.06) 47% 53%, transparent 53%),
+      color-mix(in srgb, var(--c-accent) 10%, rgb(255 255 255 / 0.28));
+    filter: blur(22px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .is-pinned .e-row {
+      transform: none;
+      transition: opacity 0.2s linear;
+    }
+  }
+
+  :global(:root[data-design='louder']) .e-row__no {
+    font-family: var(--f-bold);
+    font-style: normal;
+    color: #000;
+  }
+  :global(:root[data-design='louder']) .e-row__title {
+    font-family: var(--f-bold);
+    letter-spacing: 1px;
+    text-transform: lowercase;
+    color: var(--c-heading);
+  }
+  :global(:root[data-design='louder']) .e-row__tags li:not(:last-child)::after {
+    color: #000;
+    font-weight: var(--w-bold);
+  }
+</style>

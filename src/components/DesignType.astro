@@ -86,7 +86,14 @@ import MiniHero from './MiniHero.astro';
     .design-type {
       grid-template-columns: 1fr;
     }
+    /* mobil: Überschrift zentriert */
+    .design-type__title {
+      margin-inline: auto;
+      text-align: center;
+    }
+    /* mobil: erst der Text, dann das Bild */
     .design-type__text {
+      order: -1;
       padding: 2.5rem var(--gutter) 3.5rem;
       font-size: 1rem;
     }
