@@ -77,7 +77,7 @@ export const angebote: Angebot[] = [
 // ---------- Texte (für alle Angebote gleich) ----------
 export const angebot = {
   eyebrow: 'The Smart Website Concept',
-  tagline: 'Made Boutique.',
+  tagline: 'Make it boutique.',
   gruss: 'schön, dass du da bist! Hier findest du alles, was dein neuer Webauftritt braucht. Scroll in Ruhe durch und melde dich, wenn du Fragen hast.',
   hero: {
     title: 'Dein stylisches Web-Statement,',

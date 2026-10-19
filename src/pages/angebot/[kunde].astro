@@ -55,7 +55,11 @@ const path = `/angebot/${a.slug}/`;
     <!-- 1 · Persönlicher Einstieg -->
     <section class="a-hero container" aria-labelledby="a-title">
       <div class="a-hero__text">
-        <p class="a-eyebrow">{t.eyebrow}. {t.tagline}<br />für <span data-a="firma">{a.firma}</span></p>
+        <p class="a-concept">
+          <span class="a-concept__name">{t.eyebrow}.</span>
+          <span class="a-concept__tag">{t.tagline}</span>
+          <span class="a-concept__for">für <span data-a="firma">{a.firma}</span></span>
+        </p>
         <h1 class="a-title" id="a-title">{t.hero.title}<br /><em>{t.hero.titleSecond}</em></h1>
         <p class="a-greeting">
           <span class="a-greeting__hello" data-a="hallo">Hallo {a.anrede},</span>
@@ -332,6 +336,23 @@ const path = `/angebot/${a.slug}/`;
   }
 
   /* ---------- Bausteine ---------- */
+  .a-concept {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .a-concept__name {
+    font-family: var(--f-display);
+    font-size: clamp(1.375rem, 1.15rem + 0.8vw, 1.75rem);
+    line-height: 1.2;
+    color: var(--c-heading, inherit);
+  }
+  .a-concept__tag,
+  .a-concept__for {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 0.875rem;
+    color: var(--c-ink-soft);
+  }
   .a-eyebrow {
     font-family: var(--f-display);
     font-style: italic;

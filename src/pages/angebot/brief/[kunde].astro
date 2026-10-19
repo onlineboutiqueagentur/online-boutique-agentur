@@ -57,7 +57,11 @@ const path = `/angebot/brief/${a.slug}/`;
     <!-- 2 · Das Angebot -->
     <section class="b-offer" id="annehmen" aria-labelledby="b-offer">
       <div class="b-offer__card">
-        <p class="b-offer__eyebrow">{t.eyebrow}. {t.tagline}<br />für {a.firma}</p>
+        <p class="b-concept">
+          <span class="b-concept__name">{t.eyebrow}.</span>
+          <span class="b-concept__tag">{t.tagline}</span>
+          <span class="b-concept__for">für {a.firma}</span>
+        </p>
         <h2 class="b-offer__title" id="b-offer">{b.angebotTitel}</h2>
 
         <dl class="b-lines">
@@ -347,13 +351,25 @@ const path = `/angebot/brief/${a.slug}/`;
     border: 1px solid currentColor;
     border-radius: var(--radius);
   }
-  .b-offer__eyebrow {
+  .b-concept {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .b-concept__name {
+    font-family: var(--f-display);
+    font-size: clamp(1.375rem, 1.15rem + 0.8vw, 1.75rem);
+    line-height: 1.2;
+    color: var(--c-heading, inherit);
+  }
+  .b-concept__tag,
+  .b-concept__for {
     font-family: var(--f-display);
     font-style: italic;
+    font-size: 0.875rem;
     color: var(--c-ink-soft);
   }
   .b-offer__title {
-    margin: 0.25rem 0 1.5rem;
+    margin: 1.25rem 0 1.5rem;
     font-family: var(--f-display);
     font-weight: var(--w-regular);
     font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
