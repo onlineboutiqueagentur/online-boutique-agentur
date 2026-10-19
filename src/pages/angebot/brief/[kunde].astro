@@ -51,13 +51,12 @@ const path = `/angebot/brief/${a.slug}/`;
         </figure>
         <p>{b.gruss},<br /><span class="b-letter__names">Pia & Nina</span></p>
       </div>
-      <p class="b-letter__date">{b.ort}, {datum(a.erstellt)}</p>
     </article>
 
     <!-- 2 · Das Angebot -->
     <section class="b-offer" id="annehmen" aria-labelledby="b-offer">
       <div class="b-offer__card">
-        <h2 class="b-offer__title" id="b-offer">{b.angebotTitel} <span class="b-offer__firma">{a.firma}</span></h2>
+        <h2 class="b-offer__title" id="b-offer">{b.angebotTitel} <span class="b-offer__firma">{a.firma}</span><span class="b-offer__date">{b.ort}, {datum(a.erstellt)}</span></h2>
 
         <dl class="b-lines">
           <div class="b-line">
@@ -306,11 +305,6 @@ const path = `/angebot/brief/${a.slug}/`;
   .b-letter p + p {
     margin-top: 1em;
   }
-  .b-letter__date {
-    margin-top: 1.5rem;
-    font-size: 0.875rem;
-    color: var(--c-ink-soft);
-  }
   .b-letter__hello {
     margin: 0 0 1rem;
     font-family: var(--f-display);
@@ -377,6 +371,12 @@ const path = `/angebot/brief/${a.slug}/`;
   }
   .b-offer__firma {
     display: block;
+  }
+  .b-offer__date {
+    display: block;
+    margin-top: 0.35rem;
+    font-family: var(--f-body);
+    font-size: 0.75rem;
   }
   .b-lines {
     display: grid;
