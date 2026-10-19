@@ -87,7 +87,6 @@ const path = `/angebot/brief/${a.slug}/`;
             <dd>{euro(gesamt)}</dd>
           </div>
         </dl>
-        <p class="b-small b-tax">{t.preis.steuer}</p>
 
 
 
@@ -117,10 +116,11 @@ const path = `/angebot/brief/${a.slug}/`;
         </form>
 
         <p class="b-direct">
-          Noch Fragen? <a href={agency.whatsapp} target="_blank" rel="noopener">WhatsApp</a> ·
+          Noch Fragen?<br /><a href={agency.whatsapp} target="_blank" rel="noopener">WhatsApp</a> ·
           <a href={`tel:${agency.phoneE164}`}>{agency.phone}</a> ·
           <a href={`mailto:${agency.email}`}>E-Mail</a>
         </p>
+        <p class="b-small b-tax">{t.preis.steuer}</p>
         <p class="b-small b-valid">{t.final.gueltig(datum(a.gueltigBis))}</p>
       </div>
     </section>
@@ -407,8 +407,8 @@ const path = `/angebot/brief/${a.slug}/`;
   }
   /* hängt direkt unter den Gesamtkosten, danach mehr Luft */
   .b-tax {
-    margin-top: -0.75rem;
-    text-align: right;
+    margin-top: 1.75rem;
+    text-align: center;
   }
   /* All inclusive direkt unter dem Konzept, volle Breite */
   .b-line--concept {
@@ -460,8 +460,9 @@ const path = `/angebot/brief/${a.slug}/`;
     font-size: 0.9375rem;
   }
   .b-valid {
-    margin-top: 0.4rem;
+    margin-top: 0.25rem;
     text-align: center;
+    font-size: 0.75rem;
   }
 
   /* ---------- Mehr erfahren ---------- */
@@ -685,9 +686,6 @@ const path = `/angebot/brief/${a.slug}/`;
     .b-form {
       margin-top: 1.5rem;
       text-align: left;
-    }
-    .b-valid {
-      margin-top: 1.5rem;
     }
     .b-offer {
       margin: 0;
