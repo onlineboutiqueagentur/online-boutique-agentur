@@ -202,11 +202,11 @@ export const angebot = {
     mehrTitel: 'Good to know. The details.',
     /** „Was ist das Smart Website Concept?“ – ersetzt im Brief „Warum ein Onepager?“ */
     konzept: {
-      text: 'Das Smart Website Concept ist unser Weg zu deinem neuen Webauftritt: <b>eine Website, die klar, persönlich und mit Style zeigt, wer du bist.</b> Kein Website-Wahnsinn, kein Textfriedhof – sondern genau das, was deine Kund:innen wirklich interessiert: wer du bist, was du drauf hast und warum genau du die richtige Wahl für sie bist.',
+      text: 'Smart, modern und ein bisschen très chic: <b>Das Smart Website Concept ist unsere Art, Websites zu machen.</b> Klar im Aufbau, stylisch im Look und technisch auf dem neuesten Stand. Für alle, die online nicht einfach nur da sein, sondern einen echten Auftritt hinlegen wollen.',
       punkte: [
-        ['Smart.', 'Alles Wichtige auf einer Seite, mit einer Menüführung, die smooth zu allen Bereichen scrollt. Schnell, klar und userfreundlich – am Handy genauso wie am Desktop.'],
-        ['Make it boutique.', 'Kein Baukasten, keine Vorlage von der Stange. Wir gestalten und entwickeln deine Website ganz individuell – mit offenem Ohr, viel Feingefühl und dem Blick fürs Wesentliche.'],
-        ['Zum Fixpreis.', 'Du weißt von Anfang an, was deine Website kostet. Und wenn dein Business wächst, wächst sie einfach mit.'],
+        ['Smart.', 'Alles Wichtige auf einen Blick, mit einer Menüführung, die smooth zu allen Bereichen scrollt. Schnell geladen, klar strukturiert und intuitiv – am Handy genauso wie am Desktop.'],
+        ['Modern umgesetzt.', 'Kein Baukasten, keine Vorlage von der Stange. Wir entwickeln deine Website mit aktueller Technik: blitzschnell, sicher verschlüsselt und so gebaut, dass sie mit deinem Business wachsen kann.'],
+        ['Make it boutique.', 'Design mit Gefühl für Details: Farben, Schriften und Bilder, die zu deiner Marke passen. Stylisch, persönlich und mit genau der Portion Eleganz, die man sich merkt.'],
       ],
     },
     themen: {
