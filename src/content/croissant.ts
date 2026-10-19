@@ -8,14 +8,14 @@ import cafeImg from '../assets/images/croissant/croissant-cafe-la-vie-est-belle.
 import zutatenImg from '../assets/images/croissant/croissant-zutaten-einer-marke.jpg';
 import verpackungImg from '../assets/images/croissant/boutique-croissant-verpackung.jpg';
 import fruehstueckImg from '../assets/images/croissant/franzoesisches-fruehstueck-kaffee-croissant.jpg';
-import headerImg from '../assets/images/croissant/croissant-goldener-croissant-sonnenlicht.jpg';
+import headerImg from '../assets/images/croissant/croissant-prinzip-butter-croissant-teller-sonnenlicht.jpg';
 
 /** Bilder der Croissant-Seite (Zwischenlösung aus dem Moodboard – später durch echte Fotos ersetzen). */
 export const croissantImages = {
-  /** Header-Bild (breit, dekorativ) */
+  /** Header-Bild (breit) – seit 19.10.2026 mit Alt-Text für die Bildersuche */
   header: {
     src: headerImg,
-    alt: '',
+    alt: 'Goldbraunes Butter-Croissant auf einem hellen Keramikteller im warmen Sonnenlicht mit Blätterschatten – Sinnbild für das Croissant-Prinzip der Online Boutique Agentur',
   },
   cafe: {
     src: cafeImg,
