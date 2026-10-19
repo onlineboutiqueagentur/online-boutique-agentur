@@ -197,7 +197,7 @@ export const angebot = {
     gruss: 'Alles Liebe',
     angebotTitel: 'Unser Angebot für',
     gesamtTitel: 'Gesamtkosten',
-    inklusive: ['Kick-off Call', 'Konzept & Design', 'Individuelle Umsetzung', 'Optimiert für Handy & Desktop', 'SEO-Basics', 'DSGVO-ready', 'Go Live & Übergabe'],
+    inklusive: ['Kick-off Call', 'Konzept & Design', 'Individuelle Umsetzung', 'SEO-Basics', 'Optimiert für Handy & Desktop', 'DSGVO-ready', 'Go Live & Übergabe'],
     inklusiveTitel: 'All inclusive. The boutique way.',
     tipp: 'Unser Tipp für dich',
     mehrTitel: 'Good to know. The details.',
