@@ -98,7 +98,7 @@ const path = `/angebot/brief/${a.slug}/`;
             <input type="hidden" name="name" value={a.name} />
             <input type="hidden" name="company" value={a.firma} />
             <input type="hidden" name="email" value={a.email} />
-            <input type="hidden" name="message" value={`${t.eyebrow} · ${euro(gesamt)} · ${a.zusatzSeiten} Zusatzseite(n)`} />
+            <input type="hidden" name="message" value={`${t.eyebrow} · ${euro(gesamt)} · ${a.zusatzSeiten} Zusatzseite(n)`} data-message />
             <div class="form__hp" aria-hidden="true">
               <label for="b-website">Website</label>
               <input id="b-website" name="website" type="text" tabindex="-1" autocomplete="off" />
@@ -107,6 +107,8 @@ const path = `/angebot/brief/${a.slug}/`;
             <input type="hidden" name="quelle" value="angebot" />
             <input type="hidden" name="angebot" value={a.slug} />
             <input type="hidden" name="design" value="" data-design-field />
+            <p class="b-picked" hidden data-picked>{b.extras.gewaehlt} <span data-picked-list></span></p>
+            <p class="b-small b-pick-hint" data-pick-hint>{b.extras.hinweis}</p>
             <button class="btn btn--solid b-form__btn" type="submit" data-label={t.final.form.submit} data-sending={t.final.form.sending}>{t.final.form.submit}</button>
           </div>
           <div class="form__status" role="status" aria-live="polite" tabindex="-1" data-form-status>
@@ -184,6 +186,10 @@ const path = `/angebot/brief/${a.slug}/`;
                     </span>
                     <span>{item.text}</span>
                     <span class="b-topping__price">{item.preis}</span>
+                    <label class="b-topping__pick">
+                      <input type="checkbox" data-extra={`${item.title} (${item.preis})`} />
+                      {b.extras.anhaken}
+                    </label>
                   </li>
                 ))
               }
@@ -229,6 +235,24 @@ const path = `/angebot/brief/${a.slug}/`;
 <script>
   import '../../../scripts/contact-form';
   import '../../../scripts/typewriter';
+
+  // Angehakte Extras gehen beim „Angebot annehmen“ in der Nachricht mit
+  const message = document.querySelector<HTMLInputElement>('[data-message]');
+  const picked = document.querySelector<HTMLElement>('[data-picked]');
+  const pickedList = document.querySelector<HTMLElement>('[data-picked-list]');
+  const hint = document.querySelector<HTMLElement>('[data-pick-hint]');
+  const extras = [...document.querySelectorAll<HTMLInputElement>('[data-extra]')];
+  const basis = message?.value ?? '';
+  const aktualisieren = () => {
+    const gewaehlt = extras.filter((x) => x.checked).map((x) => x.dataset.extra ?? '');
+    if (message) message.value = gewaehlt.length ? `${basis} · Extras: ${gewaehlt.join(', ')}` : basis;
+    if (pickedList) pickedList.textContent = gewaehlt.map((g) => g.replace(/ \(.*\)$/, '')).join(', ');
+    if (picked) picked.hidden = gewaehlt.length === 0;
+    if (hint) hint.hidden = gewaehlt.length > 0;
+    extras.forEach((x) => x.closest('.b-topping')?.classList.toggle('is-picked', x.checked));
+  };
+  extras.forEach((x) => x.addEventListener('change', aktualisieren));
+  aktualisieren();
 
   document.querySelectorAll<HTMLButtonElement>('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));
 
@@ -501,6 +525,31 @@ const path = `/angebot/brief/${a.slug}/`;
     border-radius: var(--radius);
     background: var(--c-bg);
   }
+  .b-topping__pick {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+  .b-topping__pick input {
+    width: 1.125rem;
+    height: 1.125rem;
+    accent-color: var(--c-ink, #111);
+    cursor: pointer;
+  }
+  .b-topping.is-picked {
+    outline: 2px solid currentColor;
+  }
+  .b-picked {
+    margin-bottom: 0.75rem;
+    font-size: 0.9375rem;
+    font-weight: var(--w-bold);
+  }
+  .b-pick-hint {
+    margin-bottom: 0.75rem;
+  }
   .b-topping.is-tipp {
     outline: 1px solid currentColor;
   }
@@ -568,6 +617,7 @@ const path = `/angebot/brief/${a.slug}/`;
 
   @media print {
     .b-head button,
+    .b-topping__pick,
     .b-form,
     .b-direct a {
       display: none;

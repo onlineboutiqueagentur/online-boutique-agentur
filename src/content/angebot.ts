@@ -200,6 +200,12 @@ export const angebot = {
     inklusiveTitel: 'All inclusive. The boutique way.',
     tipp: 'Unser Tipp für dich',
     mehrTitel: 'Good to know. The details.',
+    /** Extras zum Anhaken – werden beim „Angebot annehmen“ mitgeschickt */
+    extras: {
+      hinweis: 'Lust auf Extras? Unter „Extras zum Dazubuchen“ kannst du sie einfach anhaken.',
+      gewaehlt: 'Dazugebucht:',
+      anhaken: 'Dazubuchen',
+    },
     technikSorglos: 'Um Technik, Hosting und Sicherheit musst du dich nicht kümmern. Das übernehmen wir. Du lehnst dich zurück, deine Website läuft.',
     /** Abschluss-Statement ganz unten */
     statement: {
