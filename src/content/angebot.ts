@@ -212,13 +212,11 @@ export const angebot = {
     konzept: {
       text: 'Smart, modern und ein bisschen très chic: <b>The Smart Website Concept ist unsere Art, dich sichtbar zu machen.</b> Klar im Aufbau, stylisch im Look und technisch auf dem neuesten Stand. Für alle, die online nicht einfach nur da sein, sondern einen echten Auftritt hinlegen wollen.',
       punkte: [
-        ['Smart.', 'Klar strukturiert, schnell geladen und intuitiv zu bedienen. Deine Besucher:innen finden sofort, was sie suchen – am Handy genauso wie am Desktop.'],
-        ['Modern umgesetzt.', 'Kein Baukasten, keine Vorlage von der Stange. Wir entwickeln deine Website mit aktueller Technik: blitzschnell, sicher verschlüsselt und so gebaut, dass sie mit deinem Business wachsen kann.'],
-        ['Make it boutique.', 'Design mit Gefühl für Details: Farben, Schriften und Bilder, die zu deiner Marke passen. Stylisch, persönlich und mit genau der Portion Eleganz, die man sich merkt.'],
+        ['Make it boutique.', 'Kein Baukasten, keine Vorlage von der Stange. Wir entwickeln deine Website mit dem gewissen Extra: ein Design mit Gefühl für Details, mit Farben, Schriften und Bildern, die zu deiner Marke passen. Dahinter steckt moderne Technik – blitzschnell, sicher verschlüsselt, am Handy genauso stark wie am Desktop und so gebaut, dass sie mit deinem Business wachsen kann.'],
       ],
     },
     themen: {
-      warum: 'Was ist das Smart Website Concept?',
+      warum: 'Was ist: The Smart Website Concept',
       ablauf: 'So läuft unsere Zusammenarbeit ab',
       technik: 'Technik, Hosting & Domain',
       toppings: 'Extras zum Dazubuchen',
