@@ -61,7 +61,7 @@ export const angebote: Angebot[] = [
     slug: 'beispiel',
     anrede: 'Lisa',
     briefAnrede: 'Liebe Lisa,',
-    firma: 'Studio Beispiel',
+    firma: 'evented GmbH',
     name: 'Lisa Beispiel',
     email: 'lisa@beispiel.at',
     grussHtml:
@@ -195,7 +195,7 @@ export const angebot = {
       'Wir freuen uns darauf, deine Marke ins Rampenlicht zu bringen!',
     ],
     gruss: 'Alles Liebe',
-    angebotTitel: 'Dein Angebot',
+    angebotTitel: 'Unser Angebot für',
     inklusive: ['Kick-off Call', 'Konzept & Design', 'Individuelle Umsetzung', 'Optimiert für Handy & Desktop', 'SEO-Basics', 'DSGVO-ready', 'Go Live & Übergabe'],
     inklusiveTitel: 'Das ist alles drin',
     tipp: 'Unser Tipp für dich',
