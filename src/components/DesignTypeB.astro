@@ -1,27 +1,69 @@
 ---
 /**
  * Variante B von „Welcher Design-Typ bist du?“ (Test-Startseite /startseite-neu/):
- * ohne Vorschaubild, einspaltig und zentriert – Überschrift, Claim, Text, Twin-Toggle.
+ * einspaltig und zentriert – Überschrift, Claim, Text, Vorher/Nachher-Regler (minimal | louder), Twin-Toggle.
  */
 import { designType } from '../content/site';
 import DesignSwitch from './DesignSwitch.astro';
+import MiniHero from './MiniHero.astro';
 ---
 
 <section class="design-type-b" id="design-typ" aria-labelledby="design-typ-title">
+  <div class="v-line" aria-hidden="true"></div>
   <div class="design-type-b__inner container--text">
     <h2 class="design-type-b__title flash" id="design-typ-title">{designType.title}</h2>
     <p class="design-type-b__claim">{designType.claim}</p>
     <div class="design-type-b__text">
       {designType.paragraphs.map((p) => <p>{p}</p>)}
     </div>
+
+    <!-- Vorher/Nachher: links minimal, rechts louder – Regler in der Mitte verschieben -->
+    <div class="dt-compare" data-compare>
+      <div class="dt-compare__layer"><MiniHero shows="minimal" text="entdecken" /></div>
+      <div class="dt-compare__layer dt-compare__layer--top"><MiniHero shows="louder" text="entdecken" /></div>
+      <span class="dt-compare__tag dt-compare__tag--l" aria-hidden="true">louder</span>
+      <span class="dt-compare__tag dt-compare__tag--r" aria-hidden="true">minimal</span>
+      <span class="dt-compare__handle" aria-hidden="true">
+        <span class="dt-compare__knob">
+          <svg viewBox="0 0 24 24" width="22" height="22" focusable="false"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </span>
+      </span>
+      <input class="dt-compare__range" type="range" min="0" max="100" value="50" step="1" aria-label="Vergleich der Designwelten: nach links für minimal, nach rechts für louder" />
+    </div>
+
     <DesignSwitch variant="toggle" class="design-type-b__switch" />
+    <p class="design-type-b__hint">switch to your design</p>
   </div>
 </section>
+
+<script>
+  // Vorher/Nachher-Regler: Position als CSS-Variable; beim ersten Sichtbarwerden ein kleiner Hinweis-Schwung
+  document.querySelectorAll<HTMLElement>('[data-compare]').forEach((box) => {
+    const range = box.querySelector<HTMLInputElement>('.dt-compare__range')!;
+    const set = (v: number) => box.style.setProperty('--pos', v + '%');
+    let touched = false;
+    range.addEventListener('input', () => {
+      touched = true;
+      box.classList.remove('is-hinting');
+      set(Number(range.value));
+    });
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    new IntersectionObserver((entries, obs) => {
+      if (!entries[0].isIntersecting) return;
+      obs.disconnect();
+      if (touched) return;
+      box.classList.add('is-hinting');
+      box.addEventListener('animationend', () => box.classList.remove('is-hinting'), { once: true });
+    }, { threshold: 0.6 }).observe(box);
+  });
+</script>
 
 <style>
   .design-type-b {
     margin-block: clamp(3.5rem, 8vw, 7rem);
+    margin-top: 0;
     padding-block: clamp(3.5rem, 8vw, 6rem);
+    padding-top: 0;
     background: var(--c-design-type-bg);
     transition: background-color var(--t-med) var(--ease);
   }
@@ -31,11 +73,19 @@ import DesignSwitch from './DesignSwitch.astro';
     justify-items: center;
     text-align: center;
   }
+  /* Minimal: Serifen-Headline wie die übrigen Sektionen */
   .design-type-b__title {
-    max-width: 12em;
-    font-family: var(--f-bold);
+    white-space: nowrap;
+    font-family: var(--f-display);
     font-weight: var(--w-regular);
-    font-size: var(--fs-design-type);
+    font-size: clamp(1.35rem, 0.9rem + 2.2vw, var(--fs-h2));
+    line-height: 1.25;
+    letter-spacing: var(--ls-display);
+  }
+  /* Louder: Anton, klein geschrieben */
+  :global(:root[data-design='louder']) .design-type-b__title {
+    font-family: var(--f-bold);
+    font-size: clamp(1.5rem, 0.9rem + 3vw, 3rem);
     line-height: 1.2;
     letter-spacing: 2px;
     text-transform: lowercase;
@@ -54,6 +104,131 @@ import DesignSwitch from './DesignSwitch.astro';
     line-height: 1.54;
     text-wrap: pretty;
   }
+  /* ---------- Vorher/Nachher-Regler ---------- */
+  .dt-compare {
+    --pos: 50%;
+    position: relative;
+    width: min(100%, 40rem);
+    margin-top: 1rem;
+    overflow: hidden;
+    border-radius: var(--radius);
+    box-shadow: 0 12px 40px rgb(0 0 0 / 0.12);
+    touch-action: pan-y;
+  }
+  .dt-compare__layer {
+    display: block;
+  }
+  /* „switch to design“-Kreis der Vorschau hier ausblenden */
+  .dt-compare :global(.mini-hero__cta) {
+    display: none;
+  }
+  .dt-compare :global(.mini-hero) {
+    border-radius: 0;
+  }
+  .dt-compare__layer--top {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+  }
+  .dt-compare__tag {
+    position: absolute;
+    bottom: 0.75rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    line-height: 1.3;
+    pointer-events: none;
+  }
+  .dt-compare__tag--l {
+    left: 0.75rem;
+    background: var(--c-accent);
+    color: #000;
+    font-family: var(--f-bold);
+    letter-spacing: 0.04em;
+  }
+  .dt-compare__tag--r {
+    right: 0.75rem;
+    background: #111;
+    color: #fff;
+    font-family: var(--f-display);
+    font-style: italic;
+  }
+  .dt-compare__handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--pos);
+    width: 2px;
+    margin-left: -1px;
+    background: #fff;
+    box-shadow: 0 0 6px rgb(0 0 0 / 0.25);
+    pointer-events: none;
+  }
+  .dt-compare__knob {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: #fff;
+    color: #111;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 0.25);
+    translate: -50% -50%;
+    transition: scale 0.2s var(--ease);
+  }
+  .dt-compare:hover .dt-compare__knob {
+    scale: 1.08;
+  }
+  /* unsichtbarer Schieberegler über der ganzen Fläche (Maus, Touch, Tastatur) */
+  .dt-compare__range {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+    appearance: none;
+  }
+  .dt-compare__range:focus-visible + * ,
+  .dt-compare:has(.dt-compare__range:focus-visible) {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 3px;
+  }
+  .dt-compare.is-hinting {
+    animation: dt-hint 2.4s cubic-bezier(0.45, 0, 0.25, 1);
+  }
+  @property --pos {
+    syntax: '<percentage>';
+    inherits: true;
+    initial-value: 50%;
+  }
+  @keyframes dt-hint {
+    0%, 100% { --pos: 50%; }
+    30% { --pos: 28%; }
+    65% { --pos: 72%; }
+  }
+
+  /* „louder“ im Umschalter schon in Gelb-Orange – man sieht gleich, wohin es geht */
+  :global(:root:not([data-design='louder'])) .design-type-b__inner :global(.twin-toggle__opt--louder) {
+    background: var(--c-accent);
+    color: #000;
+  }
+
+  .design-type-b__hint {
+    margin-top: -0.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--c-ink);
+  }
+  :global(:root[data-design='louder']) .design-type-b__hint {
+    color: #000;
+  }
+
   .design-type-b__inner :global(.design-type-b__switch) {
     margin-top: 1rem;
   }

@@ -1,0 +1,107 @@
+---
+/**
+ * /behind-the-boutique/ – seit 15.10.2026: „Behind the Boutique“ (Über uns + Expertise) aus den Sektionen der bisherigen Startseite
+ * (Intro, Harmonie, Kopf & Herz, Leistungen, Erfahrung/Expertise, Some insights)
+ * + Croissant-Sektion + Frühstücks-Kontakt. Im Menü als „Behind the Boutique“.
+ */
+import Base from '../layouts/Base.astro';
+import Navigation from '../components/Navigation.astro';
+import Intro from '../components/Intro.astro';
+import SectionHead from '../components/SectionHead.astro';
+import FlowCollage from '../components/FlowCollage.astro';
+import Services from '../components/Services.astro';
+import Experience from '../components/Experience.astro';
+import Insights from '../components/Insights.astro';
+import CroissantTeaser from '../components/CroissantTeaser.astro';
+import Contact from '../components/Contact.astro';
+import StickyInvite from '../components/StickyInvite.astro';
+import Footer from '../components/Footer.astro';
+import { croissantTeaser } from '../content/croissant';
+import { harmony, headHeart } from '../content/site';
+---
+
+<Base
+  title="Behind the Boutique – Expertise & Erfahrung | Online Boutique Agentur"
+  description="Pia & Nina – die Zwillinge hinter der Online Boutique Agentur: Leistungen, Erfahrung und Expertise für deine Marke."
+  path="/behind-the-boutique/"
+>
+  <header class="u-head" id="top">
+    <Navigation base="/" />
+    <a class="u-head__home" href="/">Online <em>Boutique</em> Agentur<sup aria-hidden="true">2</sup></a>
+  </header>
+
+  <main id="inhalt" class="u" tabindex="-1">
+    <div class="u-hero container--text">
+      <div class="v-line" aria-hidden="true"></div>
+      <h1 class="u-eyebrow">Behind the Boutique</h1>
+    </div>
+
+    <Intro />
+
+    <section class="block" aria-labelledby="harmonie-title">
+      <SectionHead id="harmonie-title" titleHtml={harmony.titleHtml} textHtml={harmony.textHtml} />
+      <div class="block__media">
+        <FlowCollage />
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="kopf-herz-title">
+      <SectionHead id="kopf-herz-title" titleHtml={headHeart.titleHtml} textHtml={headHeart.textHtml} tone="dark" line={false} />
+    </section>
+
+    <Services />
+    <Experience />
+    <Insights />
+    <CroissantTeaser />
+    <Contact breakfast />
+  </main>
+
+  <StickyInvite href="/croissant/" label={croissantTeaser.sticky.label} meta={croissantTeaser.sticky.meta} hideNear={['.u-hero', '.teaser', '#kontakt']} />
+  <Footer contact={false} />
+</Base>
+
+<style>
+  .u-head {
+    --c-ink-hero: var(--c-ink);
+    text-align: center;
+  }
+  .u-head__home {
+    display: inline-block;
+    margin-top: 1.5rem;
+    font-family: var(--f-display);
+    font-size: 1.5rem;
+    text-decoration: none;
+  }
+  .u-head__home sup {
+    font-size: 0.6em;
+    vertical-align: 0.75em;
+  }
+  :global(:root[data-design='louder']) .u-head__home {
+    font-family: var(--f-bold);
+    font-size: 2rem;
+    letter-spacing: 1px;
+    color: var(--c-accent);
+  }
+  :global(:root[data-design='louder']) .u-head__home em {
+    font-style: normal;
+  }
+  .u:focus {
+    outline: none;
+  }
+  .u-hero {
+    text-align: center;
+  }
+  .u-eyebrow {
+    font-family: var(--f-body);
+    font-weight: var(--w-regular);
+    font-size: 0.8125rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  :global(:root[data-design='louder']) .u-eyebrow {
+    color: #000;
+  }
+  .block__media {
+    padding: clamp(3rem, 6vw, 4.5rem) 0 clamp(4rem, 10vw, 9rem);
+  }
+</style>

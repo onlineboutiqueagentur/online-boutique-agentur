@@ -9,11 +9,13 @@ import { navigation } from '../content/site';
 interface Props {
   /** Auf Unterseiten zeigen Anker auf die Startseite */
   base?: string;
-  /** Erster Menüpunkt als Schriftzug-Logo „Online Boutique Agentur²“ (Test-Startseite) */
-  logo?: boolean;
+  /** Ziel des Schriftzug-Logos (erster Menüpunkt), falls abweichend – z. B. '#top' */
+  logoHref?: string;
 }
-const { base = '', logo = false } = Astro.props;
-const isLogo = (i: number) => logo && i === 0;
+const { base = '', logoHref } = Astro.props;
+// Erster Menüpunkt = Schriftzug-Logo „Online Boutique Agentur²“
+const isLogo = (i: number) => i === 0;
+const hrefOf = (href: string, i: number) => (isLogo(i) && logoHref ? logoHref : href.startsWith('/') ? href : `${base}${href}`);
 ---
 
 <div class="nav-bar">
@@ -22,7 +24,7 @@ const isLogo = (i: number) => logo && i === 0;
       {
         navigation.map((item, i) => (
           <li>
-            <a href={item.href.startsWith('/') ? item.href : `${base}${item.href}`} class:list={{ 'nav-logo': isLogo(i) }}>
+            <a href={hrefOf(item.href, i)} class:list={{ 'nav-logo': isLogo(i) }}>
               {isLogo(i) ? (
                 <>
                   Online <em>Boutique</em> Agentur<sup aria-hidden="true">2</sup>
@@ -56,7 +58,7 @@ const isLogo = (i: number) => logo && i === 0;
         {
           navigation.map((item, i) => (
             <li>
-              <a href={item.href.startsWith('/') ? item.href : `${base}${item.href}`} data-close-menu>
+              <a href={hrefOf(item.href, i)} data-close-menu>
                 {isLogo(i) ? (
                   <>
                     Online <em>Boutique</em> Agentur<sup aria-hidden="true">2</sup>

@@ -22,6 +22,8 @@ export const entdecken = {
     titleHtml: 'Deine Marke kann mehr.<br /><em>Zeigen wir es der Welt.</em>',
     sub: 'Du liebst, was du tust. Aber zeigt dein Außenauftritt auch, wie viel in deinem Unternehmen steckt? Wir machen deine Marke sichtbar, deine Website besonders und dein Marketing persönlich.',
     cta: 'Entdecke, was möglich ist.',
+    /** neue Startseite: ohne den letzten Satz */
+    subHome: 'Du liebst, was du tust. Aber zeigt dein Außenauftritt auch, wie viel in deinem Unternehmen steckt?',
   },
 
   statement: {
@@ -81,7 +83,7 @@ export const entdecken = {
     first: 'Du musst nicht alles selbst können. Und schon gar nicht alles alleine machen.',
     textHtml:
       'Wir bringen Klarheit in deinen Markenauftritt, frische Ideen in dein Marketing und das gewisse Extra, das dein Unternehmen unverwechselbar macht. <b>Mit Erfahrung, einem guten Gespür für Marken und ganz viel Liebe fürs Detail.</b>',
-    cta: { label: 'Erfahre mehr über uns.', href: '/' },
+    cta: { label: 'Erfahre mehr über uns.', href: '/behind-the-boutique/' },
     link: { label: 'Wofür uns unsere Kunden:innen lieben. →', href: '/#kundenstimmen' },
   },
 
@@ -91,7 +93,9 @@ export const entdecken = {
     headingStatic: 'Du musst nicht alles alleine können.',
     typewriter: { before: 'Du musst nicht alles', beforeLine2: 'alleine', words: ['können.', 'machen.'] },
     textHtml:
-      'Hello, wir sind Pia &amp; Nina. Du musst nicht alles selbst können und schon gar nicht alles alleine machen – dafür hast du uns. Wir bringen Klarheit in deinen Markenauftritt, frische Ideen in dein Marketing und das gewisse Extra, das dein Unternehmen unverwechselbar macht. <b>Mit Erfahrung, einem guten Gespür für Marken und ganz viel Liebe fürs Detail.</b>',
+      'Hello, wir sind Pia &amp; Nina. Du musst nicht alles selbst können und schon gar nicht alles alleine machen – dafür hast du uns. Wir bringen Klarheit in deinen Markenauftritt, frische Ideen in dein Marketing und das gewisse Extra, das dein Unternehmen unverwechselbar macht.',
+    text2Html:
+      'Als kleine Boutique-Agentur lieben wir’s persönlich – kreativ – exklusiv. Individuell statt Standard. Direkt statt Umwege. Gespräche statt Tickets. <b>Modern. Smart. Stylish. Boutique eben.</b>',
   },
 
   final: {

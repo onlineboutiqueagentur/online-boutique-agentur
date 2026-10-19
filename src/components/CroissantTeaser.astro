@@ -8,12 +8,16 @@ import { Picture } from 'astro:assets';
 import CroissantArt from './CroissantArt.astro';
 import { croissantTeaser as t } from '../content/croissant';
 import croissantPhoto from '../assets/images/croissant/croissant-goldener-croissant-sonnenlicht.jpg';
+import { entdecken } from '../content/entdecken';
 
 interface Props {
   /** Test-Startseite: Zeichnung baut sich malerisch auf und verwandelt sich danach in ein echtes Croissant */
   morph?: boolean;
+  /** 'entdecken': Text der Croissant-Sektion der Landingpage /entdecken/ (Test-Startseite) */
+  text?: 'home' | 'entdecken';
 }
-const { morph = false } = Astro.props;
+const { morph = false, text = 'home' } = Astro.props;
+const f = entdecken.final;
 ---
 
 <section class:list={['teaser', { 'teaser--morph': morph }]} aria-labelledby="croissant-teaser-title">
@@ -38,18 +42,36 @@ const { morph = false } = Astro.props;
         )
       }
     </a>
-    <div class="teaser__text">
-      <p class="teaser__eyebrow">{t.eyebrow}</p>
-      <h2 class="teaser__title" id="croissant-teaser-title">{t.title}</h2>
-      <p class="teaser__copy">{t.text}</p>
-      <p class="teaser__spoiler">{t.spoiler}</p>
-      <div class="teaser__action">
-        <a class="btn btn--solid teaser__cta" href={t.href}>
-          <CroissantArt mini class="teaser__icon" />
-          {t.cta} <span class="teaser__arrow" aria-hidden="true">→</span>
-        </a>
-      </div>
-    </div>
+    {
+      text === 'entdecken' ? (
+        <div class="teaser__text">
+          <h2 class="teaser__title teaser__title--extra" id="croissant-teaser-title" set:html={f.titleHtml} />
+          <div class="teaser__paras">
+            {f.paragraphsHtml.map((p) => <p set:html={p} />)}
+          </div>
+          <div class="teaser__action">
+            <a class="btn btn--solid teaser__cta" href={t.href}>
+              <CroissantArt mini class="teaser__icon" />
+              {f.cta}
+            </a>
+            <a class="teaser__link" href={t.href}>{f.link}</a>
+          </div>
+        </div>
+      ) : (
+        <div class="teaser__text">
+          <p class="teaser__eyebrow">{t.eyebrow}</p>
+          <h2 class="teaser__title" id="croissant-teaser-title">{t.title}</h2>
+          <p class="teaser__copy">{t.text}</p>
+          <p class="teaser__spoiler">{t.spoiler}</p>
+          <div class="teaser__action">
+            <a class="btn btn--solid teaser__cta" href={t.href}>
+              <CroissantArt mini class="teaser__icon" />
+              {t.cta} <span class="teaser__arrow" aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      )
+    }
   </div>
 </section>
 
@@ -119,6 +141,30 @@ const { morph = false } = Astro.props;
   }
   .teaser__cta:hover .teaser__arrow {
     transform: translateX(4px);
+  }
+  .teaser__paras {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 38rem;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    text-wrap: pretty;
+  }
+  .teaser__paras :global(b) {
+    font-weight: var(--w-bold);
+  }
+  .teaser__title--extra :global(em) {
+    font-style: italic;
+  }
+  :global(:root[data-design='louder']) .teaser__title--extra :global(em) {
+    font-style: normal;
+  }
+  .teaser__link {
+    margin-top: 0.5rem;
+    border-bottom: 1px solid;
+    font-size: 0.9375rem;
+    font-weight: var(--w-regular);
+    text-decoration: none;
   }
   .teaser__copy {
     max-width: 36rem;

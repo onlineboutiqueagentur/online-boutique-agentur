@@ -2,6 +2,12 @@
 import { Picture } from 'astro:assets';
 import { testimonials } from '../content/site';
 
+interface Props {
+  /** senkrechter Strich über der Überschrift (Test-Startseite) */
+  line?: boolean;
+}
+const { line = false } = Astro.props;
+
 const quoteMarks = { curly: ['“', '”'], german: ['„', '“'] } as const;
 // Scroll-Bewegung wie im Original: links ↑, Mitte ruhig, rechts ↓
 const motion = ['parallax-up', '', 'parallax-down'];
@@ -9,7 +15,8 @@ const louderTitle = typeof testimonials.titleHtml === 'string' ? testimonials.ti
 const minimalTitle = typeof testimonials.titleHtml === 'string' ? testimonials.titleHtml : testimonials.titleHtml.minimal;
 ---
 
-<section class="testimonials" id="kundenstimmen" aria-labelledby="kundenstimmen-title">
+<section class:list={['testimonials', { 'testimonials--line': line }]} id="kundenstimmen" aria-labelledby="kundenstimmen-title">
+  {line && <div class="v-line" aria-hidden="true" />}
   <div class="testimonials__head">
     <h2 class="heading testimonials__title" id="kundenstimmen-title">
       <span class="only-minimal" set:html={minimalTitle} />
@@ -55,6 +62,9 @@ const minimalTitle = typeof testimonials.titleHtml === 'string' ? testimonials.t
 <style>
   .testimonials {
     padding: 4.5rem 0;
+  }
+  .testimonials--line {
+    padding-top: 0;
   }
   /* Minimal: gleiche Schrift und Größe wie „Unsere Erfahrung/Expertise.“ */
   .testimonials__title {

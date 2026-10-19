@@ -1,0 +1,116 @@
+---
+/**
+ * Frühstücks-Formular – dieselben Felder, Texte und derselbe Button wie auf der Croissant-Seite.
+ * Verwendet auf der Test-Startseite (/startseite-neu/) in der Kontaktsektion.
+ * Versand über dasselbe Skript und dieselbe API (quelle=croissant).
+ */
+import CroissantArt from './CroissantArt.astro';
+import { croissant as c } from '../content/croissant';
+const { fields } = c.form;
+---
+
+<form class="form b-form" action="/api/contact" method="post" novalidate data-contact-form>
+  <div class="b-form__fields" data-form-fields>
+    <p class="b-form__intro" set:html={c.form.textHtml} />
+    <div class="form__field">
+      <label for="b-name">{fields.name} <span aria-hidden="true">*</span></label>
+      <input id="b-name" placeholder=" " name="name" type="text" autocomplete="name" required maxlength="120" aria-describedby="b-name-err" />
+      <p class="form__error" id="b-name-err" hidden>Verrätst du uns deinen Namen?</p>
+    </div>
+    <div class="form__field">
+      <label for="b-company">{fields.company} <span aria-hidden="true">*</span></label>
+      <input id="b-company" placeholder=" " name="company" type="text" autocomplete="organization" required maxlength="160" aria-describedby="b-company-err" />
+      <p class="form__error" id="b-company-err" hidden>Wie heißt deine Marke oder dein Unternehmen?</p>
+    </div>
+    <div class="form__field">
+      <label for="b-webseite">{fields.website}</label>
+      <input id="b-webseite" placeholder=" " name="webseite" type="text" inputmode="url" autocomplete="url" maxlength="200" />
+    </div>
+    <div class="form__field">
+      <label for="b-email">{fields.email} <span aria-hidden="true">*</span></label>
+      <input id="b-email" placeholder=" " name="email" type="email" autocomplete="email" required maxlength="200" aria-describedby="b-email-err" />
+      <p class="form__error" id="b-email-err" hidden>Bitte gib eine gültige E-Mail-Adresse an.</p>
+    </div>
+    <div class="form__field">
+      <label for="b-phone">{fields.phone}</label>
+      <input id="b-phone" placeholder=" " name="phone" type="tel" autocomplete="tel" maxlength="40" />
+    </div>
+    <div class="form__field">
+      <label for="b-when">{fields.when}</label>
+      <input id="b-when" placeholder=" " name="when" type="text" maxlength="200" />
+    </div>
+    <div class="form__field">
+      <label for="b-message">{fields.message}</label>
+      <textarea id="b-message" placeholder=" " name="message" rows="3" maxlength="5000"></textarea>
+    </div>
+
+    <div class="form__hp" aria-hidden="true">
+      <label for="b-website">Website</label>
+      <input id="b-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+    <input type="hidden" name="ts" value="" data-ts />
+    <input type="hidden" name="quelle" value="croissant" />
+    <input type="hidden" name="design" value="" data-design-field />
+
+    <p class="form__privacy">Mit dem Absenden werden deine Angaben zur Bearbeitung deiner Anfrage verwendet. Mehr dazu in der <a href="/datenschutz/">Datenschutzerklärung</a>.</p>
+    <div class="form__actions">
+      <button class="btn btn--solid b-cta" type="submit" data-label={c.form.submit} data-sending={c.form.sending}>
+        <CroissantArt mini class="b-cta__icon" />
+        <span data-btn-text>{c.form.submit}</span>
+      </button>
+    </div>
+    <p class="b-form__meta">{c.cta.meta}</p>
+  </div>
+
+  <div class="form__status" role="status" aria-live="polite" tabindex="-1" data-form-status>
+    <p class="form__msg form__msg--ok b-form__ok" hidden data-ok>{c.form.success}</p>
+    <p class="form__msg form__msg--err" hidden data-err>{c.form.error}</p>
+  </div>
+</form>
+
+<script>
+  import '../scripts/contact-form';
+</script>
+
+<style>
+  .b-form {
+    margin-top: 1.5rem;
+  }
+  .b-form__fields {
+    display: grid;
+    gap: 0.85rem;
+  }
+  .b-form__intro {
+    margin-bottom: 0.5rem;
+  }
+  .b-form__intro :global(b) {
+    font-weight: var(--w-bold);
+  }
+  .b-form .form__actions {
+    margin-top: 1.5rem;
+  }
+  .b-form__meta {
+    font-size: 0.8125rem;
+    color: var(--c-ink-soft);
+  }
+  .b-form__ok {
+    white-space: pre-line;
+    font-size: 1.0625rem;
+  }
+  .b-cta {
+    gap: 0.6rem;
+    padding-inline: 1.5rem;
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+  }
+  .b-cta :global(.b-cta__icon) {
+    width: 1.6rem;
+    color: inherit;
+    --croissant-fill: transparent;
+    --croissant-stroke: 1.4;
+    transition: transform 0.4s var(--ease);
+  }
+  .b-cta:hover :global(.b-cta__icon) {
+    transform: rotate(-12deg) scale(1.08);
+  }
+</style>

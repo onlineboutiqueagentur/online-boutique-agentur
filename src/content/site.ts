@@ -98,10 +98,9 @@ export const seo = {
 
 // ---------- Navigation ----------
 export const navigation = [
-  { label: 'Online Boutique Agentur', href: '#boutiqueagentur' },
+  { label: 'Online Boutique Agentur', href: '/' },
+  { label: 'Behind the Boutique', href: '/behind-the-boutique/' },
   { label: 'Leistungen', href: '#leistungen' },
-  { label: 'Erfahrungen', href: '#erfahrungen' },
-  { label: 'Kundenstimmen', href: '#kundenstimmen' },
   { label: 'Das Croissant-Prinzip', href: '/croissant/' },
   { label: 'Kontakt', href: '/kontakt/' },
 ] as const;
@@ -280,6 +279,12 @@ export const insights = {
 export const contact = {
   titleHtml: 'Erzähl uns von dir.',
   text: 'Wenn du dich hier wohl fühlst und du unser Match spüren kannst, dann schreib uns gerne. Erzähl uns von dir, deinen Ideen oder dem, was dich gerade bewegt. Wir freuen uns darauf, dich kennenzulernen und gemeinsam etwas Schönes entstehen zu lassen.',
+  /** Test-Startseite (/startseite-neu/): Einladung zum virtuellen Frühstück */
+  breakfast: {
+    titleHtml: 'Lass uns gemeinsam frühstücken.',
+    textHtml:
+      'Nehmen wir uns 30 Minuten Zeit für ein virtuelles Frühstück. Wir lernen uns kennen, deine Marke und alles, was sie besonders macht. Wir stellen Fragen, hören zu und schauen gemeinsam, wo noch ein bisschen mehr drinsteckt. Ganz entspannt und ohne Verpflichtungen.',
+  },
   video: {
     src: '/media/online-boutique-agentur-websites-content-social-media.mp4',
     label: 'Kurzes Video: Einblicke in die Arbeit der Online Boutique Agentur',
