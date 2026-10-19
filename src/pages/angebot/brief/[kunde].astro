@@ -232,7 +232,9 @@ const path = `/angebot/brief/${a.slug}/`;
   <!-- 5 · Zum Schluss: unser Statement -->
   <section class="b-statement" aria-label="Unser Statement">
     <p class="b-statement__text">
-      {b.statement.lead} {b.statement.zeilen.join(' ')} {b.statement.claim} <em>{b.statement.schluss}</em>
+      {b.statement.lead}
+      {[...b.statement.zeilen, b.statement.claim].map((z) => <><br />{z}</>)}
+      <br /><em>{b.statement.schluss}</em>
     </p>
   </section>
 
