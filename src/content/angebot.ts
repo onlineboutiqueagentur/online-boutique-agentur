@@ -199,7 +199,7 @@ export const angebot = {
     gesamtTitel: 'Gesamtkosten',
     /** Go Live als eigene Zeile im Angebotskasten */
     golive: {
-      titel: 'Dein Go Live',
+      titel: 'Timing',
       wert: 'in ca. 3 Wochen',
       text: 'Ab dem Kick-off, sobald alle Unterlagen bei uns sind. Dann ist deine Website bereit für den großen Auftritt.',
     },
