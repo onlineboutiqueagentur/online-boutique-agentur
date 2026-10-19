@@ -5,14 +5,17 @@
  * Fokus-Management + Esc-Taste übernimmt der Browser).
  */
 import { navigation } from '../content/site';
+import DesignSwitch from './DesignSwitch.astro';
 
 interface Props {
   /** Auf Unterseiten zeigen Anker auf die Startseite */
   base?: string;
   /** Ziel des Schriftzug-Logos (erster Menüpunkt), falls abweichend – z. B. '#top' */
   logoHref?: string;
+  /** Unterseiten: Twin-Switch minimal | louder links neben dem Menü */
+  designSwitch?: boolean;
 }
-const { base = '', logoHref } = Astro.props;
+const { base = '', logoHref, designSwitch = false } = Astro.props;
 // Erster Menüpunkt = Schriftzug-Logo „Online Boutique Agentur²“
 const isLogo = (i: number) => i === 0;
 const hrefOf = (href: string, i: number) => (isLogo(i) && logoHref ? logoHref : href.startsWith('/') ? href : `${base}${href}`);
@@ -38,6 +41,14 @@ const hrefOf = (href: string, i: number) => (isLogo(i) && logoHref ? logoHref : 
       }
     </ul>
   </nav>
+
+  {
+    designSwitch && (
+      <div class="nav-switch">
+        <DesignSwitch variant="twins" />
+      </div>
+    )
+  }
 
   <button type="button" class="nav-toggle" popovertarget="mobile-menu" aria-haspopup="true">
     Menü
@@ -134,6 +145,23 @@ const hrefOf = (href: string, i: number) => (isLogo(i) && logoHref ? logoHref : 
   .mobile-menu__list sup {
     font-size: 0.6em;
     vertical-align: 0.75em;
+  }
+
+  /* Twin-Switch auf Unterseiten: links, kompakt, ohne Beschriftung */
+  .nav-switch {
+    position: absolute;
+    top: 1.15rem;
+    left: var(--gutter);
+    --twins-size: 2.75rem;
+  }
+  .nav-switch :global(.twins__label) {
+    display: none;
+  }
+  @media (max-width: 63.99rem) {
+    .nav-switch {
+      position: static;
+      order: -1;
+    }
   }
 
   .nav-toggle {
