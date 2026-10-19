@@ -199,7 +199,7 @@ export const angebot = {
     gesamtTitel: 'Gesamtkosten',
     /** Timing – Klappbox bei „Good to know. The details.“ */
     golive: {
-      titel: 'Timing',
+      titel: 'Timing & Go Live',
       text: 'Ca. 3 Wochen ab dem Kick-off, sobald alle Unterlagen bei uns sind. Dann ist deine Website bereit für den großen Auftritt.',
     },
     inklusive: ['Kick-off Call', 'Konzept & Design', 'Individuelle Umsetzung', 'SEO-Basics', 'Optimiert für Handy & Desktop', 'DSGVO-ready', 'Go Live & Übergabe'],
