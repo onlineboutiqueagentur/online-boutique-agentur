@@ -200,6 +200,13 @@ export const angebot = {
     inklusiveTitel: 'All inclusive. The boutique way.',
     tipp: 'Unser Tipp für dich',
     mehrTitel: 'Good to know. The details.',
+    /** Abschluss-Statement ganz unten */
+    statement: {
+      lead: 'Als kleine Boutique-Agentur lieben wir’s persönlich – kreativ – exklusiv.',
+      zeilen: ['Individuell statt Standard.', 'Direkt statt Umwege.', 'Gespräche statt Tickets.'],
+      claim: 'Modern. Smart. Stylish.',
+      schluss: 'Boutique eben.',
+    },
     /** „Was ist das Smart Website Concept?“ – ersetzt im Brief „Warum ein Onepager?“ */
     konzept: {
       text: 'Smart, modern und ein bisschen très chic: <b>The Smart Website Concept ist unsere Art, dich sichtbar zu machen.</b> Klar im Aufbau, stylisch im Look und technisch auf dem neuesten Stand. Für alle, die online nicht einfach nur da sein, sondern einen echten Auftritt hinlegen wollen.',
