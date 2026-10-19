@@ -223,10 +223,11 @@ const path = `/angebot/brief/${a.slug}/`;
 
   <!-- 5 · Zum Schluss: unser Statement -->
   <section class="b-statement" aria-label="Unser Statement">
+    <div class="v-line" aria-hidden="true"></div>
     <CroissantArt draw class="b-statement__art" label="Feine Linienzeichnung eines Croissants" />
     <p class="b-statement__text">
-      {b.statement.lead}
-      {[...b.statement.zeilen, b.statement.claim].map((z) => <><br />{z}</>)}
+      <span class="b-statement__lead">{b.statement.lead}</span>
+      {[...b.statement.zeilen, b.statement.claim].map((z, i) => <>{i > 0 && <br />}{z}</>)}
       <br /><em>{b.statement.schluss}</em>
     </p>
   </section>
@@ -602,19 +603,48 @@ const path = `/angebot/brief/${a.slug}/`;
   .b-statement {
     width: min(100% - 2 * var(--gutter), 46rem);
     margin: 0 auto;
-    padding: clamp(1rem, 3vw, 2rem) 0 clamp(4rem, 9vw, 6.5rem);
+    padding: 0 0 clamp(3rem, 7vw, 5rem);
     text-align: center;
   }
+  .b-statement .v-line {
+    margin-top: 0;
+    margin-bottom: clamp(1.25rem, 3vw, 2rem);
+  }
   .b-statement :global(.b-statement__art) {
-    width: min(55%, 13rem);
-    margin: 0 auto clamp(1.5rem, 4vw, 2.5rem);
+    width: min(45%, 10rem);
+    margin: 0 auto clamp(1rem, 3vw, 1.5rem);
     color: var(--c-ink);
+  }
+  /* beim Drüberfahren wackelt das Croissant – wie auf „Das Croissant-Prinzip“ */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .b-statement :global(.b-statement__art:hover) {
+      animation: b-wiggle 0.9s var(--ease);
+    }
+  }
+  @keyframes b-wiggle {
+    0%,
+    100% {
+      transform: none;
+    }
+    25% {
+      transform: rotate(-8deg) scale(1.04);
+    }
+    50% {
+      transform: rotate(5deg) scale(1.04);
+    }
+    75% {
+      transform: rotate(-3deg) scale(1.02);
+    }
   }
   .b-statement__text {
     font-family: var(--f-display);
-    font-size: clamp(1.375rem, 1.1rem + 1.2vw, 2rem);
-    line-height: 1.45;
+    font-size: clamp(1.1875rem, 1rem + 0.8vw, 1.625rem);
+    line-height: 1.35;
     text-wrap: balance;
+  }
+  .b-statement__lead {
+    display: block;
+    margin: 0 auto 0.4em;
   }
   @media (min-width: 48rem) {
     .b-team {

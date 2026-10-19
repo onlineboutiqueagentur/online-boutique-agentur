@@ -209,7 +209,7 @@ export const angebot = {
     technikSorglos: 'Um Technik, Hosting und Sicherheit musst du dich nicht kümmern. Das übernehmen wir. Du lehnst dich zurück, deine Website läuft.',
     /** Abschluss-Statement ganz unten */
     statement: {
-      lead: 'Als kleine Boutique-Agentur lieben wir’s persönlich – kreativ – exklusiv.',
+      lead: 'Wir lieben’s persönlich – kreativ – exklusiv.',
       zeilen: ['Individuell statt Standard.', 'Direkt statt Umwege.', 'Gespräche statt Tickets.'],
       claim: 'Modern. Smart. Stylish.',
       schluss: 'Boutique eben.',
