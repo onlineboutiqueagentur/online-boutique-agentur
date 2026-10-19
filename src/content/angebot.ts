@@ -197,7 +197,7 @@ export const angebot = {
     gruss: 'Alles Liebe',
     angebotTitel: 'Unser Angebot für',
     inklusive: ['Kick-off Call', 'Konzept & Design', 'Individuelle Umsetzung', 'Optimiert für Handy & Desktop', 'SEO-Basics', 'DSGVO-ready', 'Go Live & Übergabe'],
-    inklusiveTitel: 'Das ist alles drin',
+    inklusiveTitel: 'All inclusive. The boutique way.',
     tipp: 'Unser Tipp für dich',
     mehrTitel: 'Good to know. The details.',
     /** „Was ist das Smart Website Concept?“ – ersetzt im Brief „Warum ein Onepager?“ */
