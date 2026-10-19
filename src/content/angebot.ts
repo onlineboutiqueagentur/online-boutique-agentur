@@ -195,7 +195,7 @@ export const angebot = {
       'Wir freuen uns darauf, deine Marke ins Rampenlicht zu bringen!',
     ],
     gruss: 'Alles Liebe',
-    angebotTitel: 'Unser Angebot für',
+    angebotTitel: 'Angebot für',
     gesamtTitel: 'Gesamtkosten',
     /** Timing – Klappbox bei „Good to know. The details.“ */
     golive: {

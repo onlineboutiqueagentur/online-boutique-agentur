@@ -263,14 +263,6 @@ const path = `/angebot/brief/${a.slug}/`;
   aktualisieren();
 
   document.querySelectorAll<HTMLButtonElement>('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));
-
-  // Im PDF sollen alle Themen sichtbar sein – danach wieder wie vorher
-  let offen: HTMLDetailsElement[] = [];
-  window.addEventListener('beforeprint', () => {
-    offen = [...document.querySelectorAll<HTMLDetailsElement>('.b-topic:not([open])')];
-    offen.forEach((d) => (d.open = true));
-  });
-  window.addEventListener('afterprint', () => offen.forEach((d) => (d.open = false)));
 </script>
 
 <style>
@@ -679,37 +671,29 @@ const path = `/angebot/brief/${a.slug}/`;
     }
   }
 
+  /* Im PDF nur der Angebotskasten */
   @media print {
-    .b-head button,
-    .b-topping__pick,
-    .b-form,
-    .b-direct a {
-      display: none;
+    :global(body > *:not(main)),
+    .brief > :not(.b-offer),
+    .b-pick-hint,
+    .b-form__btn,
+    .b-form .form__status,
+    .b-direct {
+      display: none !important;
     }
-    .b-letter {
-      box-shadow: none;
+    /* dazugebuchte Extras kommen mit ins PDF */
+    .b-form {
+      margin-top: 1.5rem;
+      text-align: left;
+    }
+    .b-valid {
+      margin-top: 1.5rem;
+    }
+    .b-offer {
+      margin: 0;
       padding: 0;
-    }
-    .b-offer,
-    .b-topic,
-    .b-team,
-    .b-statement {
       break-inside: avoid;
     }
-    /* Schreibmaschine im PDF als ruhiger Text */
-    .b-team__title [aria-hidden] {
-      display: none;
-    }
-    .b-team__title :global(.sr-only) {
-      position: static !important;
-      width: auto;
-      height: auto;
-      margin: 0;
-      clip-path: none;
-      white-space: normal;
-    }
-    .b-topic summary::after {
-      display: none;
-    }
   }
+
 </style>
