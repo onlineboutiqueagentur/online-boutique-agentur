@@ -57,7 +57,7 @@ const path = `/angebot/brief/${a.slug}/`;
     <!-- 2 · Das Angebot -->
     <section class="b-offer" id="annehmen" aria-labelledby="b-offer">
       <div class="b-offer__card">
-        <h2 class="b-offer__title" id="b-offer">{b.angebotTitel}<span class="b-offer__firma">{a.firma}</span></h2>
+        <h2 class="b-offer__title" id="b-offer">{b.angebotTitel} <span class="b-offer__firma">{a.firma}</span></h2>
 
         <dl class="b-lines">
           <div class="b-line">
@@ -365,7 +365,7 @@ const path = `/angebot/brief/${a.slug}/`;
     margin: 0 0 1.25rem;
     font-family: var(--f-display);
     font-weight: var(--w-regular);
-    font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
     line-height: 1.3;
   }
   .b-offer__firma {
