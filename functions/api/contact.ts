@@ -17,7 +17,7 @@
  *   ALLOWED_ORIGINS optional, kommagetrennt (Standard: Produktions-Domains + *.pages.dev)
  */
 import { json, shortHash, type Context, type Env } from '../../lib/auth';
-import { speichern, type Anfrage } from '../../lib/anfragen';
+import { kampagneText, speichern, type Anfrage } from '../../lib/anfragen';
 import { alsAngenommenMarkieren, SLUG_RE } from '../../lib/angebot-daten';
 import { sendSmtp } from '../../lib/smtp';
 
@@ -48,6 +48,16 @@ function respond(request: Request, ok: boolean, status: number): Response {
   return Response.redirect(`${url.origin}/kontakt/${ok ? 'danke' : 'fehler'}/`, 303);
 }
 
+/** UTM-Parameter aus dem Formular (gesetzt von scripts/contact-form.ts), nur wenn vorhanden */
+function kampagneAus(form: FormData): Anfrage['kampagne'] {
+  const k: NonNullable<Anfrage['kampagne']> = {};
+  for (const feld of ['source', 'medium', 'campaign', 'content', 'term'] as const) {
+    const wert = clean(form.get(`utm_${feld}`), 100);
+    if (wert) k[feld] = wert;
+  }
+  return Object.keys(k).length ? k : undefined;
+}
+
 const designAus = (value: FormDataEntryValue | null): Anfrage['design'] =>
   value === 'louder' || value === 'minimal' ? value : 'unbekannt';
 
@@ -73,6 +83,7 @@ async function sendMail(env: Env, a: Anfrage, adminUrl: string): Promise<boolean
     a.telefon ? `Tel.: ${a.telefon}` : null,
     a.webseite ? `Website: ${a.webseite}` : null,
     croissant || angebot ? null : `Design: ${a.design === 'louder' ? 'Louder' : a.design === 'minimal' ? 'Minimal' : 'unbekannt'}`,
+    a.kampagne ? `Kam über Werbelink: ${kampagneText(a.kampagne)}` : null,
     croissant && a.format ? `Wo frühstücken wir: ${FORMATE[a.format] ?? a.format}` : null,
     croissant ? `Wann passt es: ${a.wunschtermin || '–'}` : null,
     croissant && a.quiz ? `\nIm Quiz angetippt:\n${a.quiz.split('\n').map((z) => `• ${z}`).join('\n')}` : null,
@@ -182,6 +193,7 @@ export const onRequestPost = async ({ request, env }: Context): Promise<Response
     gelesen: false,
     ...daten,
     design: designAus(form.get('design')),
+    kampagne: kampagneAus(form),
     ...(form.get('quelle') === 'croissant'
       ? {
           quelle: 'croissant' as const,
