@@ -8,6 +8,7 @@
  */
 import Base from '../../../layouts/Base.astro';
 import Footer from '../../../components/Footer.astro';
+import CroissantArt from '../../../components/CroissantArt.astro';
 import { Picture } from 'astro:assets';
 import { agency, intro } from '../../../content/site';
 import { angebot as t, angebote, angebotImages as img, preise as standardPreise, euro, type Angebot } from '../../../content/angebot';
@@ -222,6 +223,7 @@ const path = `/angebot/brief/${a.slug}/`;
 
   <!-- 5 · Zum Schluss: unser Statement -->
   <section class="b-statement" aria-label="Unser Statement">
+    <CroissantArt draw class="b-statement__art" label="Feine Linienzeichnung eines Croissants" />
     <p class="b-statement__text">
       {b.statement.lead}
       {[...b.statement.zeilen, b.statement.claim].map((z) => <><br />{z}</>)}
@@ -602,6 +604,11 @@ const path = `/angebot/brief/${a.slug}/`;
     margin: 0 auto;
     padding: clamp(1rem, 3vw, 2rem) 0 clamp(4rem, 9vw, 6.5rem);
     text-align: center;
+  }
+  .b-statement :global(.b-statement__art) {
+    width: min(55%, 13rem);
+    margin: 0 auto clamp(1.5rem, 4vw, 2.5rem);
+    color: var(--c-ink);
   }
   .b-statement__text {
     font-family: var(--f-display);
