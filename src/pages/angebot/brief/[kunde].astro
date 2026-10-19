@@ -25,7 +25,6 @@ const gesamt = p.onepager + zusatzSumme;
 // Überschrift im Team-Abschnitt: „Wir lieben/leben Boutique Agentur.“ wie auf der Startseite (Schreibmaschine)
 const tw = intro.typewriter;
 const twSteps = tw.words.map((word) => ({ word }));
-const empfohlen = t.toppings.items.filter((item) => (a.empfohlen ?? []).includes(item.nr));
 
 const title = `Für ${a.anrede}: dein Angebot | Online Boutique Agentur`;
 const description = `Ein persönliches Angebot für ${a.firma} von Pia & Nina.`;
@@ -93,20 +92,6 @@ const path = `/angebot/brief/${a.slug}/`;
           <p class="b-small">{t.preis.timing.text}</p>
         </div>
 
-        {
-          empfohlen.length > 0 && (
-            <div class="b-tipp">
-              <p class="b-incl__title">{b.tipp}</p>
-              <ul role="list" class="b-tipp__list">
-                {empfohlen.map((item) => (
-                  <li>
-                    <b>{item.title}</b> · {item.preis}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )
-        }
 
         <form class="form b-form" action="/api/contact" method="post" novalidate data-contact-form>
           <div data-form-fields>
@@ -391,8 +376,7 @@ const path = `/angebot/brief/${a.slug}/`;
     font-size: 0.8125rem;
     color: var(--c-ink-soft);
   }
-  .b-incl,
-  .b-tipp {
+  .b-incl {
     margin-top: 1.75rem;
   }
   .b-incl__title {
@@ -410,11 +394,6 @@ const path = `/angebot/brief/${a.slug}/`;
     border-radius: 999px;
     background: var(--c-card);
     font-size: 0.875rem;
-  }
-  .b-tipp__list {
-    display: grid;
-    gap: 0.25rem;
-    font-size: 0.9375rem;
   }
   .b-form {
     margin-top: 2rem;
