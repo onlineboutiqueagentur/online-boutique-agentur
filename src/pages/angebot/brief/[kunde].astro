@@ -15,7 +15,19 @@ import { angebot as t, angebote, angebotImages as img, preise as standardPreise,
 import { datum } from '../../../../lib/angebot-daten';
 
 export function getStaticPaths() {
-  return angebote.map((a) => ({ params: { kunde: a.slug }, props: { a } }));
+  /** Platzhalter für die Vorlage – functions/angebot/[[path]].ts ersetzt alle data-a-Stellen mit den CRM-Daten. */
+  const vorlage: Angebot = {
+    slug: '_vorlage',
+    anrede: 'Vorname',
+    firma: 'Firma',
+    name: 'Name',
+    email: 'mail@example.at',
+    zusatzSeiten: 1,
+    zusatzSeitenNotiz: 'Notiz',
+    erstellt: '2026-01-01',
+    gueltigBis: '2026-01-31',
+  };
+  return [...angebote, vorlage].map((a) => ({ params: { kunde: a.slug }, props: { a } }));
 }
 
 const { a } = Astro.props as { a: Angebot };
@@ -41,10 +53,11 @@ const path = `/angebot/brief/${a.slug}/`;
 
   <main id="inhalt" tabindex="-1" class="brief">
     <!-- 1 · Der Brief -->
-    <article class="b-letter" aria-label={`Brief an ${a.anrede}`}>
-      <h1 class="b-letter__hello">{a.briefAnrede || b.anrede(a.anrede)}</h1>
-      {a.grussHtml && <p set:html={a.grussHtml} />}
-      {b.absaetze(a.firma).slice(a.grussHtml ? 1 : 0).map((text) => <p>{text}</p>)}
+    <article class="b-letter" aria-label={`Brief an ${a.anrede}`} data-a="brief">
+      <h1 class="b-letter__hello" data-a="brief-hallo">{a.briefAnrede || b.anrede(a.anrede)}</h1>
+      <!-- erster Absatz: persönlicher Gruß aus dem CRM, sonst der Standardtext (FIRMA wird ersetzt) -->
+      <p data-a="brief-gruss" data-standard={b.absaetze('FIRMA')[0]} set:html={a.grussHtml || b.absaetze(a.firma)[0]} />
+      {b.absaetze(a.firma).slice(1).map((text) => <p>{text}</p>)}
 
       <div class="b-letter__sign">
         <figure class="b-letter__photo">
@@ -66,7 +79,7 @@ const path = `/angebot/brief/${a.slug}/`;
         </p>
       </div>
       <div class="b-offer__card">
-        <h2 class="b-offer__title" id="b-offer">{b.angebotTitel} <span class="b-offer__firma">{a.firma}</span><span class="b-offer__date">{datum(a.erstellt)}</span></h2>
+        <h2 class="b-offer__title" id="b-offer">{b.angebotTitel} <span class="b-offer__firma" data-a="firma">{a.firma}</span><span class="b-offer__date" data-a="datum">{datum(a.erstellt)}</span></h2>
 
         <dl class="b-lines">
           <div class="b-line b-line--concept">
@@ -74,7 +87,7 @@ const path = `/angebot/brief/${a.slug}/`;
               <span class="b-concept__name">{t.eyebrow}.</span>
               <span class="b-concept__tag">{t.tagline}</span>
             </dt>
-            <dd>{euro(p.onepager)}</dd>
+            <dd data-a="onepager">{euro(p.onepager)}</dd>
             <dd class="b-incl">
               <ul role="list" class="b-incl__list">
                 {b.inklusive.map((item) => <li><a href="#zusammenarbeit" data-open-topic>{item}</a></li>)}
@@ -83,18 +96,18 @@ const path = `/angebot/brief/${a.slug}/`;
           </div>
           {
             a.zusatzSeiten > 0 && (
-              <div class="b-line">
+              <div class="b-line" data-a="zusatz">
                 <dt>
-                  {t.preis.zusatz(a.zusatzSeiten)}
-                  {a.zusatzSeitenNotiz && <span class="b-line__note">{a.zusatzSeitenNotiz}</span>}
+                  <span data-a="zusatz-text">{t.preis.zusatz(a.zusatzSeiten)}</span>
+                  {a.zusatzSeitenNotiz && <span class="b-line__note" data-a="zusatz-notiz">{a.zusatzSeitenNotiz}</span>}
                 </dt>
-                <dd>{euro(zusatzSumme)}</dd>
+                <dd data-a="zusatz-summe">{euro(zusatzSumme)}</dd>
               </div>
             )
           }
           <div class="b-line b-line--total">
             <dt>{b.gesamtTitel}</dt>
-            <dd>{euro(gesamt)}</dd>
+            <dd data-a="gesamt">{euro(gesamt)}</dd>
           </div>
         </dl>
 
@@ -103,17 +116,17 @@ const path = `/angebot/brief/${a.slug}/`;
 
         <form class="form b-form" action="/api/contact" method="post" novalidate data-contact-form>
           <div data-form-fields>
-            <input type="hidden" name="name" value={a.name} />
-            <input type="hidden" name="company" value={a.firma} />
-            <input type="hidden" name="email" value={a.email} />
-            <input type="hidden" name="message" value={`${t.eyebrow} · ${euro(gesamt)} · ${a.zusatzSeiten} Zusatzseite(n)`} data-message />
+            <input type="hidden" name="name" value={a.name} data-a="name" />
+            <input type="hidden" name="company" value={a.firma} data-a="company" />
+            <input type="hidden" name="email" value={a.email} data-a="email" />
+            <input type="hidden" name="message" value={`${t.eyebrow} · ${euro(gesamt)} · ${a.zusatzSeiten} Zusatzseite(n)`} data-message data-a="message" />
             <div class="form__hp" aria-hidden="true">
               <label for="b-website">Website</label>
               <input id="b-website" name="website" type="text" tabindex="-1" autocomplete="off" />
             </div>
             <input type="hidden" name="ts" value="" data-ts />
             <input type="hidden" name="quelle" value="angebot" />
-            <input type="hidden" name="angebot" value={a.slug} />
+            <input type="hidden" name="angebot" value={a.slug} data-a="slug" />
             <input type="hidden" name="design" value="" data-design-field />
             <p class="b-picked" hidden data-picked>{b.extras.gewaehlt} <span data-picked-list></span></p>
             <p class="b-small b-pick-hint" data-pick-hint set:html={b.extras.hinweis} />
@@ -130,7 +143,7 @@ const path = `/angebot/brief/${a.slug}/`;
           <a href={`tel:${agency.phoneE164}`}>{agency.phone}</a> ·
           <a href={`mailto:${agency.email}`}>E-Mail</a>
         </p>
-        <p class="b-small b-valid">{t.final.gueltig(datum(a.gueltigBis))}</p>
+        <p class="b-small b-valid" data-a="gueltig">{t.final.gueltig(datum(a.gueltigBis))}</p>
         <p class="b-small b-tax">{t.preis.steuer}</p>
       </div>
       <!-- nur im PDF: Kontaktdaten -->
@@ -199,8 +212,8 @@ const path = `/angebot/brief/${a.slug}/`;
             <ul role="list" class="b-toppings">
               {
                 extras.map((item) => (
-                  <li class:list={['b-topping', { 'is-tipp': (a.empfohlen ?? []).includes(item.nr) }]}>
-                    <span class="b-topping__head">
+                  <li class:list={['b-topping', { 'is-tipp': (a.empfohlen ?? []).includes(item.nr) }]} data-brief-topping={item.nr}>
+                    <span class="b-topping__head" data-brief-tipp={item.nr} data-tipp-text={t.toppings.empfohlen}>
                       <b>{item.title}</b>
                       {(a.empfohlen ?? []).includes(item.nr) && <span class="b-topping__tipp">{t.toppings.empfohlen}</span>}
                     </span>
