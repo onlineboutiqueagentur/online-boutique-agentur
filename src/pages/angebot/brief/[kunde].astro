@@ -120,8 +120,8 @@ const path = `/angebot/brief/${a.slug}/`;
           <a href={`tel:${agency.phoneE164}`}>{agency.phone}</a> ·
           <a href={`mailto:${agency.email}`}>E-Mail</a>
         </p>
-        <p class="b-small b-tax">{t.preis.steuer}</p>
         <p class="b-small b-valid">{t.final.gueltig(datum(a.gueltigBis))}</p>
+        <p class="b-small b-tax">{t.preis.steuer}</p>
       </div>
     </section>
 
@@ -408,7 +408,7 @@ const path = `/angebot/brief/${a.slug}/`;
   }
   /* hängt direkt unter den Gesamtkosten, danach mehr Luft */
   .b-tax {
-    margin-top: 1.75rem;
+    margin-top: 0.25rem;
     text-align: center;
   }
   /* All inclusive direkt unter dem Konzept, volle Breite */
@@ -461,7 +461,7 @@ const path = `/angebot/brief/${a.slug}/`;
     font-size: 0.9375rem;
   }
   .b-valid {
-    margin-top: 0.25rem;
+    margin-top: 1.75rem;
     text-align: center;
     font-size: 0.75rem;
   }
