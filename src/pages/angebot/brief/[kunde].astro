@@ -2,13 +2,14 @@
 /**
  * /angebot/brief/<kunde>/ – Vorschlag 2: das Angebot als persönlicher Brief.
  * Oben ein Brief an den Kunden, gleich darunter das Angebot mit „Angebot annehmen“.
- * Alle weiteren Infos (Warum Onepager, Aufbau, Ablauf, Technik, Extras, Team) zum gezielten Aufklappen.
+ * Weitere Infos (Warum Onepager, Aufbau, Ablauf, Technik, Extras) zum gezielten Aufklappen,
+ * zum Schluss „Das sind wir“ als eigene Sektion wie auf /angebot/<kunde>/.
  * Gleiche Daten und Texte wie /angebot/<kunde>/ (src/content/angebot.ts), nicht indexiert.
  */
 import Base from '../../../layouts/Base.astro';
 import Footer from '../../../components/Footer.astro';
 import { Picture } from 'astro:assets';
-import { agency } from '../../../content/site';
+import { agency, intro } from '../../../content/site';
 import { angebot as t, angebote, angebotImages as img, preise as standardPreise, euro, type Angebot } from '../../../content/angebot';
 import { datum } from '../../../../lib/angebot-daten';
 
@@ -21,6 +22,9 @@ const b = t.brief;
 const p = { ...standardPreise, ...a.preise };
 const zusatzSumme = a.zusatzSeiten * p.zusatzSeite;
 const gesamt = p.onepager + zusatzSumme;
+// Überschrift im Team-Abschnitt: „Wir lieben/leben Boutique Agentur.“ wie auf der Startseite (Schreibmaschine)
+const tw = intro.typewriter;
+const twSteps = tw.words.map((word) => ({ word }));
 const empfohlen = t.toppings.items.filter((item) => (a.empfohlen ?? []).includes(item.nr));
 
 const title = `Für ${a.anrede}: dein Angebot | Online Boutique Agentur`;
@@ -37,9 +41,6 @@ const path = `/angebot/brief/${a.slug}/`;
   <main id="inhalt" tabindex="-1" class="brief">
     <!-- 1 · Der Brief -->
     <article class="b-letter" aria-label={`Brief an ${a.anrede}`}>
-      <p class="b-letter__date">{b.ort}, {datum(a.erstellt)}</p>
-      <p class="b-letter__to">{a.name}<br />{a.firma}</p>
-
       <h1 class="b-letter__hello">{a.briefAnrede || b.anrede(a.anrede)}</h1>
       {a.grussHtml && <p set:html={a.grussHtml} />}
       {b.absaetze(a.firma).slice(a.grussHtml ? 1 : 0).map((text) => <p>{text}</p>)}
@@ -50,6 +51,7 @@ const path = `/angebot/brief/${a.slug}/`;
         </figure>
         <p>{b.gruss},<br /><span class="b-letter__names">Pia & Nina</span></p>
       </div>
+      <p class="b-letter__date">{b.ort}, {datum(a.erstellt)}</p>
     </article>
 
     <!-- 2 · Das Angebot -->
@@ -221,27 +223,37 @@ const path = `/angebot/brief/${a.slug}/`;
           </div>
         </details>
 
-        <details class="b-topic">
-          <summary>{b.themen.team}</summary>
-          <div class="b-topic__body b-team">
-            <figure class="b-team__photo">
-              <Picture src={img.team.src} alt={img.team.alt} widths={[400, 700]} sizes="(min-width: 48rem) 14rem, 80vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
-            </figure>
-            <div>
-              {t.team.paragraphs.map((html) => <p set:html={html} />)}
-              <p class="b-team__quote">„{t.team.quote}“</p>
-            </div>
-          </div>
-        </details>
       </div>
     </section>
   </main>
+
+  <!-- 4 · Das sind wir -->
+  <section class="b-team-block" aria-labelledby="b-team">
+    <div class="v-line" aria-hidden="true"></div>
+    <div class="b-team container">
+      <figure class="b-team__media reveal">
+        <Picture src={img.team.src} alt={img.team.alt} widths={[500, 800, 1100]} sizes="(min-width: 48rem) 32rem, 90vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
+      </figure>
+      <div class="b-team__text">
+        <p class="b-team__eyebrow">{t.team.eyebrow}</p>
+        <h2 class="heading b-team__title" id="b-team">
+          <span class="sr-only">{intro.headingStatic}</span>
+          <span aria-hidden="true" data-typewriter={JSON.stringify(twSteps)}>
+            {tw.before} <span data-tw-word>{tw.words[1]}</span><span class="cursor">|</span>{tw.after}
+          </span>
+        </h2>
+        {t.team.paragraphs.map((html) => <p set:html={html} />)}
+        <blockquote class="b-team__quote"><p>„{t.team.quote}“</p></blockquote>
+      </div>
+    </div>
+  </section>
 
   <Footer contact={false} />
 </Base>
 
 <script>
   import '../../../scripts/contact-form';
+  import '../../../scripts/typewriter';
 
   document.querySelectorAll<HTMLButtonElement>('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));
 
@@ -289,17 +301,12 @@ const path = `/angebot/brief/${a.slug}/`;
     margin-top: 1em;
   }
   .b-letter__date {
-    text-align: right;
-    font-size: 0.9375rem;
-    color: var(--c-ink-soft);
-  }
-  .b-letter__to {
     margin-top: 1.5rem;
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     color: var(--c-ink-soft);
   }
   .b-letter__hello {
-    margin: 2.25rem 0 1rem;
+    margin: 0 0 1rem;
     font-family: var(--f-display);
     font-style: italic;
     font-weight: var(--w-regular);
@@ -324,8 +331,7 @@ const path = `/angebot/brief/${a.slug}/`;
   }
   .b-letter__names {
     font-family: var(--f-display);
-    font-style: italic;
-    font-size: 1.5rem;
+    font-size: 1.375rem;
   }
 
   /* ---------- Angebot ---------- */
@@ -371,8 +377,8 @@ const path = `/angebot/brief/${a.slug}/`;
   .b-line--total {
     border-bottom: 0;
     padding-top: 1.1rem;
-    font-family: var(--f-display);
-    font-size: clamp(1.375rem, 1.1rem + 1vw, 2rem);
+    font-size: 1.1875rem;
+    font-weight: var(--w-bold);
   }
   .b-line--total dt {
     white-space: nowrap;
@@ -539,23 +545,47 @@ const path = `/angebot/brief/${a.slug}/`;
     font-size: 0.875rem;
     color: var(--c-ink-soft);
   }
+  /* ---------- Das sind wir (wie /angebot/<kunde>/) ---------- */
+  .b-team-block {
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
   .b-team {
     display: grid;
-    gap: 1.25rem;
+    gap: clamp(2rem, 5vw, 3.5rem);
+    align-items: center;
+    width: min(100% - 2 * var(--gutter), 72rem);
   }
-  .b-team__photo :global(img) {
+  .b-team__media {
+    margin: 0 auto;
+    width: min(100%, 32rem);
+  }
+  .b-team__media :global(img) {
     width: 100%;
     height: auto;
     border-radius: var(--radius);
   }
-  .b-team__quote {
+  .b-team__text {
+    display: grid;
+    gap: 0.9rem;
+  }
+  .b-team__eyebrow {
     font-family: var(--f-display);
     font-style: italic;
+    color: var(--c-ink-soft);
   }
-  @media (min-width: 40rem) {
+  .b-team__title {
+    text-align: left;
+    font-size: var(--fs-typing);
+    line-height: 1.54;
+  }
+  .b-team__quote p {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 1.0625rem;
+  }
+  @media (min-width: 48rem) {
     .b-team {
-      grid-template-columns: 14rem 1fr;
-      align-items: start;
+      grid-template-columns: 1.1fr 1fr;
     }
   }
 
@@ -571,8 +601,21 @@ const path = `/angebot/brief/${a.slug}/`;
       padding: 0;
     }
     .b-offer,
-    .b-topic {
+    .b-topic,
+    .b-team {
       break-inside: avoid;
+    }
+    /* Schreibmaschine im PDF als ruhiger Text */
+    .b-team__title [aria-hidden] {
+      display: none;
+    }
+    .b-team__title :global(.sr-only) {
+      position: static !important;
+      width: auto;
+      height: auto;
+      margin: 0;
+      clip-path: none;
+      white-space: normal;
     }
     .b-topic summary::after {
       display: none;
