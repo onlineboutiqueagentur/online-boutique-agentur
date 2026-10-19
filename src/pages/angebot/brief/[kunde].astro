@@ -163,18 +163,18 @@ const path = `/angebot/brief/${a.slug}/`;
         </details>
 
         <details class="b-topic">
-          <summary>{b.golive.titel}</summary>
-          <div class="b-topic__body">
-            <p>{b.golive.text}</p>
-          </div>
-        </details>
-
-        <details class="b-topic">
           <summary>{b.themen.technik}</summary>
           <div class="b-topic__body">
             <p set:html={t.technik.paragraphs[0]} />
             <p>{b.technikSorglos}</p>
             <p><b>{t.technik.domain.title}</b> {t.technik.domain.text} {t.preis.laufend.domainText}</p>
+          </div>
+        </details>
+
+        <details class="b-topic">
+          <summary>{b.golive.titel}</summary>
+          <div class="b-topic__body">
+            <p>{b.golive.text}</p>
           </div>
         </details>
 
