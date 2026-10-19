@@ -228,8 +228,7 @@ const path = `/angebot/brief/${a.slug}/`;
     <p class="b-statement__text">
       <span class="b-statement__lead">{b.statement.lead}</span>
       <span class="b-statement__lead">{b.statement.zeilen.map((z, i) => <>{i > 0 && <br />}{z}</>)}</span>
-      {b.statement.claim}
-      <br /><em>{b.statement.schluss}</em>
+      <em>{b.statement.schluss}</em>
     </p>
   </section>
 

@@ -211,7 +211,6 @@ export const angebot = {
     statement: {
       lead: 'Wir lieben’s persönlich – kreativ – exklusiv.',
       zeilen: ['Individuell statt Standard.', 'Direkt statt Umwege.', 'Gespräche statt Tickets.'],
-      claim: 'Modern. Smart. Stylish.',
       schluss: 'Boutique eben.',
     },
     /** „Was ist das Smart Website Concept?“ – ersetzt im Brief „Warum ein Onepager?“ */
