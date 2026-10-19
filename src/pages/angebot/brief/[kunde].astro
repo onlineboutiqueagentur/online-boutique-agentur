@@ -227,7 +227,8 @@ const path = `/angebot/brief/${a.slug}/`;
     <CroissantArt draw class="b-statement__art" label="Feine Linienzeichnung eines Croissants" />
     <p class="b-statement__text">
       <span class="b-statement__lead">{b.statement.lead}</span>
-      {[...b.statement.zeilen, b.statement.claim].map((z, i) => <>{i > 0 && <br />}{z}</>)}
+      <span class="b-statement__lead">{b.statement.zeilen.map((z, i) => <>{i > 0 && <br />}{z}</>)}</span>
+      {b.statement.claim}
       <br /><em>{b.statement.schluss}</em>
     </p>
   </section>
