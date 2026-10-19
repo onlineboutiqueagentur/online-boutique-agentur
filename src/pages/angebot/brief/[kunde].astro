@@ -56,6 +56,15 @@ const path = `/angebot/brief/${a.slug}/`;
 
     <!-- 2 · Das Angebot -->
     <section class="b-offer" id="annehmen" aria-labelledby="b-offer">
+      <!-- nur im PDF: Logo und Absender -->
+      <div class="b-print b-print__head" aria-hidden="true">
+        <p class="b-print__brand">Online <em>Boutique</em> Agentur<sup>²</sup></p>
+        <p class="b-print__from">
+          {agency.name}<br />
+          {agency.address.street}<br />
+          {agency.address.zip} {agency.address.city}, {agency.address.countryName}
+        </p>
+      </div>
       <div class="b-offer__card">
         <h2 class="b-offer__title" id="b-offer">{b.angebotTitel} <span class="b-offer__firma">{a.firma}</span><span class="b-offer__date">{datum(a.erstellt)}</span></h2>
 
@@ -124,6 +133,10 @@ const path = `/angebot/brief/${a.slug}/`;
         <p class="b-small b-valid">{t.final.gueltig(datum(a.gueltigBis))}</p>
         <p class="b-small b-tax">{t.preis.steuer}</p>
       </div>
+      <!-- nur im PDF: Kontaktdaten -->
+      <p class="b-print b-print__foot" aria-hidden="true">
+        {agency.name} · Pia & Nina · {agency.phone} · {agency.email} · {agency.url.replace('https://', '')}
+      </p>
     </section>
 
     <!-- 3 · Mehr Infos zum Aufklappen -->
@@ -305,7 +318,7 @@ const path = `/angebot/brief/${a.slug}/`;
     background: var(--c-card);
     border-radius: var(--radius);
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 40px rgb(0 0 0 / 0.05);
-    font-size: 1.0625rem;
+    font-size: 0.9375rem;
     line-height: 1.75;
   }
   .b-letter p + p {
@@ -707,8 +720,84 @@ const path = `/angebot/brief/${a.slug}/`;
     }
   }
 
-  /* Im PDF nur der Angebotskasten */
+  .b-print {
+    display: none;
+  }
+  /* Im PDF nur der Angebotskasten, mit Logo/Absender oben und Kontakt unten */
   @media print {
+    @page {
+      size: A4;
+      margin: 14mm 16mm;
+    }
+    :global(html),
+    :global(body) {
+      background: #fff;
+    }
+    .b-print {
+      display: block;
+    }
+    .b-print__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 2rem;
+      margin-bottom: 10mm;
+    }
+    .b-print__brand {
+      font-family: var(--f-display);
+      font-size: 1.5rem;
+    }
+    .b-print__from {
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      text-align: right;
+    }
+    .b-print__foot {
+      margin-top: 8mm;
+      padding-top: 4mm;
+      border-top: 1px solid rgb(0 0 0 / 0.15);
+      font-size: 0.6875rem;
+      white-space: nowrap;
+      text-align: center;
+      color: var(--c-ink-soft);
+    }
+    .brief {
+      width: 100%;
+      padding: 0;
+    }
+    /* Kasten füllt die A4-Seite, Kontakt steht unten */
+    .b-offer {
+      display: flex;
+      flex-direction: column;
+      min-height: 262mm;
+    }
+    .b-offer__card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 12mm 12mm 8mm;
+      font-size: 1.0625rem;
+    }
+    .b-offer__card .b-form {
+      margin-top: auto;
+    }
+    .b-offer__title {
+      font-size: 1rem;
+      margin-bottom: 18mm;
+    }
+    .b-concept__name {
+      font-size: 1.625rem;
+    }
+    /* ohne Hintergrundfarben im Druck: Buttons mit feiner Kontur */
+    .b-incl__list a {
+      border: 1px solid rgb(0 0 0 / 0.2);
+    }
+    .b-line {
+      padding: 1.1rem 0;
+    }
+    .b-line .b-incl {
+      margin-top: 1.75rem;
+    }
     :global(body > *:not(main)),
     .brief > :not(.b-offer),
     .b-pick-hint,
