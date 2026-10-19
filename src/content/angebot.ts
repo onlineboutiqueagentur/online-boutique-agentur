@@ -61,7 +61,7 @@ export const angebote: Angebot[] = [
     slug: 'beispiel',
     anrede: 'Lisa',
     briefAnrede: 'Liebe Lisa,',
-    firma: 'Studio Beispiel',
+    firma: 'evented GmbH',
     name: 'Lisa Beispiel',
     email: 'lisa@beispiel.at',
     grussHtml:
@@ -104,7 +104,7 @@ export const angebot = {
       ['Konzeption & Design', 'Gemeinsam legen wir die passenden Sektionen fest und entwickeln ein stylisches Design, das perfekt zu deiner Marke passt.'],
       ['Content & Text', 'Bilder und Texte kommen nach Absprache und einer gemeinsam definierten Checkliste von dir. Wir integrieren sie ansprechend und passend ins Design.'],
       ['Technische Umsetzung', 'Deine Website wird individuell für dich entwickelt – kein Baukasten, keine Vorlage von der Stange. Blitzschnell, sicher verschlüsselt und optimiert für Handy und Desktop.'],
-      ['Aufbau', 'Dein Onepager ist smart aufgebaut – mit einer Menüführung, die smooth zu allen wichtigen Bereichen scrollt. Klar, modern und userfreundlich.'],
+      ['Aufbau', 'Deine Website ist smart aufgebaut – mit einer klaren Menüführung, die zu allen wichtigen Bereichen führt. Modern und userfreundlich.'],
       ['SEO-Basics', 'Grundlegende Suchmaschinenoptimierung für bessere Auffindbarkeit: aussagekräftige Seitentitel, Meta-Beschreibungen, Verlinkungen und Headlines.'],
       ['DSGVO-ready', 'Datenschutz inklusive: Cookie-Hinweis, Impressum und Datenschutzerklärung sind selbstverständlich integriert.'],
       ['Go Live & Übergabe Call', 'Der letzte Feinschliff. Gemeinsam checken wir alles durch, klären offene Fragen und machen deine Seite bereit für den großen Auftritt.'],
@@ -148,7 +148,7 @@ export const angebot = {
     steuer: 'Keine Umsatzsteuer laut Kleinunternehmerregelung (§ 6 Abs. 1 Z 27 UStG).',
     timing: {
       title: 'Timing.',
-      text: 'Dein Onepager ist ca. 2–3 Wochen nach dem Kick-off und der Übermittlung aller Unterlagen bereit für den großen Auftritt.',
+      text: 'Deine Website ist ca. 3 Wochen nach dem Kick-off und der Übermittlung aller Unterlagen bereit für den großen Auftritt.',
     },
     laufend: {
       title: 'Laufende Kosten.',
@@ -167,7 +167,7 @@ export const angebot = {
     items: [
       { nr: '01', title: 'Wort & Bild', text: 'Professionelle Texte und Bilder, die deine Botschaft emotional und klar transportieren.', preis: 'Auf Stundenbasis à € 85,–' },
       { nr: '02', title: 'Schnittstellen', text: 'Anbindung und Integration von Tools wie Newsletter-Systemen, Buchungsplattformen oder Social Media Feeds.', preis: 'Ab € 170,–' },
-      { nr: '03', title: 'Pflege-Paket', text: 'Du möchtest Texte oder Bilder ändern? Schick uns einfach eine Nachricht, wir setzen es um. Zwei Stunden pro Quartal, ohne Stundenzettel.', preis: 'Pauschal € 170,– pro Quartal' },
+      { nr: '03', title: 'Technik-Service', text: 'Zweimal im Jahr gehen wir für dich über alles Technische: Sicherheit, Server und Updates. Wir prüfen, ob alles aktuell ist und rund läuft, damit du dich um nichts kümmern musst.', preis: 'Pauschal € 170,– pro Halbjahr' },
       { nr: '04', title: 'Online Marketing', text: 'Suchmaschinenwerbung mit strategischen Kampagnen auf Google & Co., um deine Sichtbarkeit gezielt zu pushen.', preis: 'Setup ab € 425,–' },
       { nr: '05', title: 'Content & Updates', text: 'Laufende Anpassungen und Erweiterungen – flexibel und nach Aufwand.', preis: 'Auf Stundenbasis à € 85,–' },
       { nr: '06', title: 'Analytics & Reporting', text: 'Einrichtung von Google Analytics und regelmäßige Auswertung, damit du deine Website-Besucher:innen genau verstehst.', preis: 'Setup ab € 170,–' },
@@ -190,19 +190,33 @@ export const angebot = {
     anrede: (name: string) => `Hallo ${name},`,
     absaetze: (firma: string) => [
       `danke für das schöne Gespräch! Es hat uns große Freude gemacht, mehr über dich und ${firma} zu erfahren – und ehrlich gesagt hatten wir dabei schon die ersten Bilder im Kopf.`,
-      'Wir haben uns Gedanken gemacht, wie dein neuer Webauftritt aussehen kann: ein Onepager, der auf den ersten Blick zeigt, wer du bist und was dich besonders macht. Klar, persönlich und mit Style – am Handy genauso wie am Desktop. Kein Baukasten, sondern eine Website, die wir ganz individuell für dich gestalten.',
-      'Unten findest du dein Angebot. Wenn du magst, kannst du dir darunter noch in Ruhe ansehen, wie wir arbeiten, wie dein Onepager aufgebaut ist und welche Extras es gibt.',
+      'Wir haben uns Gedanken gemacht, wie dein neuer Webauftritt aussehen kann: eine Website, die auf den ersten Blick zeigt, wer du bist und was dich besonders macht. Klar, persönlich und mit Style – am Handy genauso wie am Desktop. Kein Baukasten, sondern eine Website, die wir ganz individuell für dich gestalten.',
+      'Unten findest du dein Angebot. Wenn du magst, kannst du dir darunter noch in Ruhe ansehen, was hinter dem Smart Website Concept steckt, wie wir arbeiten und welche Extras es gibt.',
       'Wir freuen uns darauf, deine Marke ins Rampenlicht zu bringen!',
     ],
     gruss: 'Alles Liebe',
-    angebotTitel: 'Dein Angebot',
+    angebotTitel: 'Unser Angebot für',
     inklusive: ['Kick-off Call', 'Konzept & Design', 'Individuelle Umsetzung', 'Optimiert für Handy & Desktop', 'SEO-Basics', 'DSGVO-ready', 'Go Live & Übergabe'],
-    inklusiveTitel: 'Das ist alles drin',
+    inklusiveTitel: 'All inclusive. The boutique way.',
     tipp: 'Unser Tipp für dich',
     mehrTitel: 'Good to know. The details.',
+    technikSorglos: 'Um Technik, Hosting und Sicherheit musst du dich nicht kümmern. Das übernehmen wir. Du lehnst dich zurück, deine Website läuft.',
+    /** Abschluss-Statement ganz unten */
+    statement: {
+      lead: 'Als kleine Boutique-Agentur lieben wir’s persönlich – kreativ – exklusiv.',
+      zeilen: ['Individuell statt Standard.', 'Direkt statt Umwege.', 'Gespräche statt Tickets.'],
+      claim: 'Modern. Smart. Stylish.',
+      schluss: 'Boutique eben.',
+    },
+    /** „Was ist das Smart Website Concept?“ – ersetzt im Brief „Warum ein Onepager?“ */
+    konzept: {
+      text: 'Smart, modern und ein bisschen très chic: <b>The Smart Website Concept ist unsere Art, dich sichtbar zu machen.</b> Klar im Aufbau, stylisch im Look und technisch auf dem neuesten Stand. Für alle, die online nicht einfach nur da sein, sondern einen echten Auftritt hinlegen wollen.',
+      punkte: [
+        ['Make it boutique.', 'Kein Baukasten, keine Vorlage von der Stange. Wir entwickeln deine Website mit dem gewissen Extra: ein Design mit Gefühl für Details, mit Farben, Schriften und Bildern, die zu deiner Marke passen. Dahinter steckt moderne Technik – blitzschnell, sicher verschlüsselt, am Handy genauso stark wie am Desktop und so gebaut, dass sie mit deinem Business wachsen kann.'],
+      ],
+    },
     themen: {
-      warum: 'Warum ein Onepager?',
-      aufbau: 'So ist dein Onepager aufgebaut',
+      warum: 'Was ist: The Smart Website Concept',
       ablauf: 'So läuft unsere Zusammenarbeit ab',
       technik: 'Technik, Hosting & Domain',
       toppings: 'Extras zum Dazubuchen',
