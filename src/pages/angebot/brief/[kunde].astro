@@ -59,12 +59,18 @@ const path = `/angebot/brief/${a.slug}/`;
         <h2 class="b-offer__title" id="b-offer">{b.angebotTitel} <span class="b-offer__firma">{a.firma}</span><span class="b-offer__date">{b.ort}, {datum(a.erstellt)}</span></h2>
 
         <dl class="b-lines">
-          <div class="b-line">
+          <div class="b-line b-line--concept">
             <dt class="b-concept">
               <span class="b-concept__name">{t.eyebrow}.</span>
               <span class="b-concept__tag">{t.tagline}</span>
             </dt>
             <dd>{euro(p.onepager)}</dd>
+            <dd class="b-incl">
+              <p class="b-incl__title">{b.inklusiveTitel}</p>
+              <ul role="list" class="b-incl__list">
+                {b.inklusive.map((item) => <li>{item}</li>)}
+              </ul>
+            </dd>
           </div>
           {
             a.zusatzSeiten > 0 && (
@@ -84,12 +90,6 @@ const path = `/angebot/brief/${a.slug}/`;
         </dl>
         <p class="b-small b-tax">{t.preis.steuer}</p>
 
-        <div class="b-incl">
-          <p class="b-incl__title">{b.inklusiveTitel}</p>
-          <ul role="list" class="b-incl__list">
-            {b.inklusive.map((item) => <li>{item}</li>)}
-          </ul>
-        </div>
 
         <div class="b-golive">
           <p class="b-golive__row"><span>{b.golive.titel}</span><span>{b.golive.wert}</span></p>
@@ -416,8 +416,20 @@ const path = `/angebot/brief/${a.slug}/`;
     margin-top: -0.75rem;
     text-align: right;
   }
-  .b-incl {
-    margin-top: 2.5rem;
+  /* All inclusive direkt unter dem Konzept, volle Breite */
+  .b-line--concept {
+    flex-wrap: wrap;
+    padding-bottom: 1.5rem;
+  }
+  .b-line--concept > dt {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .b-line .b-incl {
+    flex-basis: 100%;
+    margin-inline-start: 0;
+    margin-top: 1.25rem;
+    white-space: normal;
   }
   .b-incl__title {
     margin-bottom: 0.6rem;
@@ -429,7 +441,7 @@ const path = `/angebot/brief/${a.slug}/`;
     gap: 0.5rem;
   }
   .b-golive {
-    margin-top: 2rem;
+    margin-top: 2.5rem;
     padding-top: 1rem;
     border-top: 1px solid rgb(0 0 0 / 0.12);
   }
