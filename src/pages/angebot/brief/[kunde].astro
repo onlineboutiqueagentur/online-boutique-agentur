@@ -150,31 +150,17 @@ const path = `/angebot/brief/${a.slug}/`;
         <details class="b-topic">
           <summary>{b.themen.warum}</summary>
           <div class="b-topic__body">
-            {t.why.paragraphs.map((html) => <p set:html={html} />)}
-            {
-              t.why.facts.map(([q, text]) => (
-                <p>
-                  <b>{q}</b> {text}
-                </p>
-              ))
-            }
-          </div>
-        </details>
-
-        <details class="b-topic">
-          <summary>{b.themen.aufbau}</summary>
-          <div class="b-topic__body">
-            <ul role="list" class="b-parts">
+            <p set:html={b.konzept.text} />
+            <ul role="list" class="b-points">
               {
-                t.struktur.parts.map(([name, text]) => (
+                b.konzept.punkte.map(([name, text]) => (
                   <li>
-                    <span class="b-parts__name">{name}</span>
-                    <span>{text}</span>
+                    <b>{name}</b> {text}
                   </li>
                 ))
               }
             </ul>
-            <p><b>{t.struktur.grow.title}</b> {t.struktur.grow.text} {t.preis.grow(euro(p.zusatzSeite))}.</p>
+            <p class="b-small">{t.preis.grow(euro(p.zusatzSeite))}.</p>
           </div>
         </details>
 
@@ -207,16 +193,18 @@ const path = `/angebot/brief/${a.slug}/`;
           <summary>{b.themen.toppings}</summary>
           <div class="b-topic__body">
             <p>{t.toppings.text}</p>
-            <ul role="list" class="b-toppings">
+            <ul role="list" class="b-extras">
               {
                 t.toppings.items.map((item) => (
-                  <li class:list={['b-topping', { 'is-tipp': (a.empfohlen ?? []).includes(item.nr) }]}>
-                    <span class="b-topping__head">
-                      <b>{item.title}</b>
-                      {(a.empfohlen ?? []).includes(item.nr) && <span class="b-topping__tipp">{t.toppings.empfohlen}</span>}
+                  <li class:list={['b-extra', { 'is-tipp': (a.empfohlen ?? []).includes(item.nr) }]}>
+                    <span class="b-extra__main">
+                      <span class="b-extra__name">
+                        <b>{item.title}</b>
+                        {(a.empfohlen ?? []).includes(item.nr) && <span class="b-extra__tipp">{t.toppings.empfohlen}</span>}
+                      </span>
+                      <span class="b-extra__text">{item.text}</span>
                     </span>
-                    <span>{item.text}</span>
-                    <span class="b-topping__price">{item.preis}</span>
+                    <span class="b-extra__price">{item.preis.replace(/€ /g, "€\u00a0")}</span>
                   </li>
                 ))
               }
@@ -510,20 +498,14 @@ const path = `/angebot/brief/${a.slug}/`;
   .b-topic__body p + ul {
     margin-top: 0.9em;
   }
-  .b-parts,
-  .b-steps,
-  .b-toppings {
+  .b-points,
+  .b-steps {
     display: grid;
     gap: 0.75rem;
   }
-  .b-parts li {
-    display: grid;
-    gap: 0.1rem;
-  }
-  .b-parts__name {
-    font-family: var(--f-display);
-    font-style: italic;
-    font-size: 1.0625rem;
+  .b-points li {
+    padding-left: 1rem;
+    border-left: 1px solid currentColor;
   }
   .b-steps li {
     display: grid;
@@ -534,31 +516,49 @@ const path = `/angebot/brief/${a.slug}/`;
     font-family: var(--f-display);
     color: var(--c-ink-soft);
   }
-  .b-topping {
+  /* Extras als übersichtliche Preisliste (Variante B) */
+  .b-extras {
+    border-top: 1px solid rgb(0 0 0 / 0.12);
+  }
+  .b-extra {
     display: grid;
-    gap: 0.2rem;
-    padding: 0.9rem 1rem;
-    border-radius: var(--radius);
-    background: var(--c-bg);
+    gap: 0.35rem 1.5rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid rgb(0 0 0 / 0.12);
   }
-  .b-topping.is-tipp {
-    outline: 1px solid currentColor;
+  .b-extra__main {
+    display: grid;
+    gap: 0.15rem;
   }
-  .b-topping__head {
+  .b-extra__name {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
   }
-  .b-topping__tipp {
-    padding: 0.1rem 0.6rem;
+  .b-extra__tipp {
+    padding: 0.05rem 0.6rem;
     border-radius: 999px;
     background: var(--c-accent);
     font-size: 0.75rem;
   }
-  .b-topping__price {
+  .b-extra__text {
     font-size: 0.875rem;
+    line-height: 1.55;
     color: var(--c-ink-soft);
+  }
+  .b-extra__price {
+    font-size: 0.9375rem;
+    font-weight: var(--w-bold);
+  }
+  @media (min-width: 40rem) {
+    .b-extra {
+      grid-template-columns: 1fr 13rem;
+      align-items: baseline;
+    }
+    .b-extra__price {
+      text-align: right;
+    }
   }
   /* ---------- Das sind wir (wie /angebot/<kunde>/) ---------- */
   .b-team-block {

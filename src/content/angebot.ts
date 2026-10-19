@@ -191,7 +191,7 @@ export const angebot = {
     absaetze: (firma: string) => [
       `danke für das schöne Gespräch! Es hat uns große Freude gemacht, mehr über dich und ${firma} zu erfahren – und ehrlich gesagt hatten wir dabei schon die ersten Bilder im Kopf.`,
       'Wir haben uns Gedanken gemacht, wie dein neuer Webauftritt aussehen kann: ein Onepager, der auf den ersten Blick zeigt, wer du bist und was dich besonders macht. Klar, persönlich und mit Style – am Handy genauso wie am Desktop. Kein Baukasten, sondern eine Website, die wir ganz individuell für dich gestalten.',
-      'Unten findest du dein Angebot. Wenn du magst, kannst du dir darunter noch in Ruhe ansehen, wie wir arbeiten, wie dein Onepager aufgebaut ist und welche Extras es gibt.',
+      'Unten findest du dein Angebot. Wenn du magst, kannst du dir darunter noch in Ruhe ansehen, was hinter dem Smart Website Concept steckt, wie wir arbeiten und welche Extras es gibt.',
       'Wir freuen uns darauf, deine Marke ins Rampenlicht zu bringen!',
     ],
     gruss: 'Alles Liebe',
@@ -200,9 +200,17 @@ export const angebot = {
     inklusiveTitel: 'Das ist alles drin',
     tipp: 'Unser Tipp für dich',
     mehrTitel: 'Good to know. The details.',
+    /** „Was ist das Smart Website Concept?“ – ersetzt im Brief „Warum ein Onepager?“ */
+    konzept: {
+      text: 'Das Smart Website Concept ist unser Weg zu deinem neuen Webauftritt: <b>eine Website, die klar, persönlich und mit Style zeigt, wer du bist.</b> Kein Website-Wahnsinn, kein Textfriedhof – sondern genau das, was deine Kund:innen wirklich interessiert: wer du bist, was du drauf hast und warum genau du die richtige Wahl für sie bist.',
+      punkte: [
+        ['Smart.', 'Alles Wichtige auf einer Seite, mit einer Menüführung, die smooth zu allen Bereichen scrollt. Schnell, klar und userfreundlich – am Handy genauso wie am Desktop.'],
+        ['Make it boutique.', 'Kein Baukasten, keine Vorlage von der Stange. Wir gestalten und entwickeln deine Website ganz individuell – mit offenem Ohr, viel Feingefühl und dem Blick fürs Wesentliche.'],
+        ['Zum Fixpreis.', 'Du weißt von Anfang an, was deine Website kostet. Und wenn dein Business wächst, wächst sie einfach mit.'],
+      ],
+    },
     themen: {
-      warum: 'Warum ein Onepager?',
-      aufbau: 'So ist dein Onepager aufgebaut',
+      warum: 'Was ist das Smart Website Concept?',
       ablauf: 'So läuft unsere Zusammenarbeit ab',
       technik: 'Technik, Hosting & Domain',
       toppings: 'Extras zum Dazubuchen',
