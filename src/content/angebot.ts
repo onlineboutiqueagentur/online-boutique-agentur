@@ -226,7 +226,7 @@ export const angebot = {
       ],
     },
     themen: {
-      warum: 'Was ist: The Smart Website Concept',
+      warum: 'The Smart Website Concept',
       ablauf: 'Zusammenarbeit. The boutique way.',
       technik: 'Technik, Hosting & Domain',
       toppings: 'Extras zum Dazubuchen',
