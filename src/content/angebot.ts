@@ -203,7 +203,6 @@ export const angebot = {
       text: 'Ca. 3 Wochen ab dem Kick-off, sobald alle Unterlagen bei uns sind. Dann ist deine Website bereit für den großen Auftritt.',
     },
     inklusive: ['Kick-off Call', 'Konzept & Design', 'Individuelle Umsetzung', 'SEO-Basics', 'Optimiert für Handy & Desktop', 'DSGVO-ready', 'Go Live & Übergabe'],
-    inklusiveTitel: 'All inclusive. The boutique way.',
     tipp: 'Unser Tipp für dich',
     mehrTitel: 'Good to know. The details.',
     /** Extras zum Anhaken – werden beim „Angebot annehmen“ mitgeschickt */

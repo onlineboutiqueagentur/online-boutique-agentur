@@ -66,7 +66,6 @@ const path = `/angebot/brief/${a.slug}/`;
             </dt>
             <dd>{euro(p.onepager)}</dd>
             <dd class="b-incl">
-              <p class="b-incl__title">{b.inklusiveTitel}</p>
               <ul role="list" class="b-incl__list">
                 {b.inklusive.map((item) => <li>{item}</li>)}
               </ul>
@@ -430,10 +429,6 @@ const path = `/angebot/brief/${a.slug}/`;
     margin-inline-start: 0;
     margin-top: 1.25rem;
     white-space: normal;
-  }
-  .b-incl__title {
-    margin-bottom: 0.6rem;
-    font-weight: var(--w-bold);
   }
   .b-incl__list {
     display: flex;
