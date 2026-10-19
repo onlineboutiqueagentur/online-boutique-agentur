@@ -200,8 +200,7 @@ export const angebot = {
     /** Go Live als eigene Zeile im Angebotskasten */
     golive: {
       titel: 'Timing',
-      wert: 'in ca. 3 Wochen',
-      text: 'Ab dem Kick-off, sobald alle Unterlagen bei uns sind. Dann ist deine Website bereit für den großen Auftritt.',
+      text: 'Ca. 3 Wochen ab dem Kick-off, sobald alle Unterlagen bei uns sind. Dann ist deine Website bereit für den großen Auftritt.',
     },
     inklusive: ['Kick-off Call', 'Konzept & Design', 'Individuelle Umsetzung', 'SEO-Basics', 'Optimiert für Handy & Desktop', 'DSGVO-ready', 'Go Live & Übergabe'],
     inklusiveTitel: 'All inclusive. The boutique way.',
