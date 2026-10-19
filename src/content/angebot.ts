@@ -104,7 +104,7 @@ export const angebot = {
       ['Konzeption & Design', 'Gemeinsam legen wir die passenden Sektionen fest und entwickeln ein stylisches Design, das perfekt zu deiner Marke passt.'],
       ['Content & Text', 'Bilder und Texte kommen nach Absprache und einer gemeinsam definierten Checkliste von dir. Wir integrieren sie ansprechend und passend ins Design.'],
       ['Technische Umsetzung', 'Deine Website wird individuell für dich entwickelt – kein Baukasten, keine Vorlage von der Stange. Blitzschnell, sicher verschlüsselt und optimiert für Handy und Desktop.'],
-      ['Aufbau', 'Dein Onepager ist smart aufgebaut – mit einer Menüführung, die smooth zu allen wichtigen Bereichen scrollt. Klar, modern und userfreundlich.'],
+      ['Aufbau', 'Deine Website ist smart aufgebaut – mit einer klaren Menüführung, die zu allen wichtigen Bereichen führt. Modern und userfreundlich.'],
       ['SEO-Basics', 'Grundlegende Suchmaschinenoptimierung für bessere Auffindbarkeit: aussagekräftige Seitentitel, Meta-Beschreibungen, Verlinkungen und Headlines.'],
       ['DSGVO-ready', 'Datenschutz inklusive: Cookie-Hinweis, Impressum und Datenschutzerklärung sind selbstverständlich integriert.'],
       ['Go Live & Übergabe Call', 'Der letzte Feinschliff. Gemeinsam checken wir alles durch, klären offene Fragen und machen deine Seite bereit für den großen Auftritt.'],
@@ -190,7 +190,7 @@ export const angebot = {
     anrede: (name: string) => `Hallo ${name},`,
     absaetze: (firma: string) => [
       `danke für das schöne Gespräch! Es hat uns große Freude gemacht, mehr über dich und ${firma} zu erfahren – und ehrlich gesagt hatten wir dabei schon die ersten Bilder im Kopf.`,
-      'Wir haben uns Gedanken gemacht, wie dein neuer Webauftritt aussehen kann: ein Onepager, der auf den ersten Blick zeigt, wer du bist und was dich besonders macht. Klar, persönlich und mit Style – am Handy genauso wie am Desktop. Kein Baukasten, sondern eine Website, die wir ganz individuell für dich gestalten.',
+      'Wir haben uns Gedanken gemacht, wie dein neuer Webauftritt aussehen kann: eine Website, die auf den ersten Blick zeigt, wer du bist und was dich besonders macht. Klar, persönlich und mit Style – am Handy genauso wie am Desktop. Kein Baukasten, sondern eine Website, die wir ganz individuell für dich gestalten.',
       'Unten findest du dein Angebot. Wenn du magst, kannst du dir darunter noch in Ruhe ansehen, was hinter dem Smart Website Concept steckt, wie wir arbeiten und welche Extras es gibt.',
       'Wir freuen uns darauf, deine Marke ins Rampenlicht zu bringen!',
     ],
@@ -202,9 +202,9 @@ export const angebot = {
     mehrTitel: 'Good to know. The details.',
     /** „Was ist das Smart Website Concept?“ – ersetzt im Brief „Warum ein Onepager?“ */
     konzept: {
-      text: 'Smart, modern und ein bisschen très chic: <b>Das Smart Website Concept ist unsere Art, Websites zu machen.</b> Klar im Aufbau, stylisch im Look und technisch auf dem neuesten Stand. Für alle, die online nicht einfach nur da sein, sondern einen echten Auftritt hinlegen wollen.',
+      text: 'Smart, modern und ein bisschen très chic: <b>The Smart Website Concept ist unsere Art, dich sichtbar zu machen.</b> Klar im Aufbau, stylisch im Look und technisch auf dem neuesten Stand. Für alle, die online nicht einfach nur da sein, sondern einen echten Auftritt hinlegen wollen.',
       punkte: [
-        ['Smart.', 'Alles Wichtige auf einen Blick, mit einer Menüführung, die smooth zu allen Bereichen scrollt. Schnell geladen, klar strukturiert und intuitiv – am Handy genauso wie am Desktop.'],
+        ['Smart.', 'Klar strukturiert, schnell geladen und intuitiv zu bedienen. Deine Besucher:innen finden sofort, was sie suchen – am Handy genauso wie am Desktop.'],
         ['Modern umgesetzt.', 'Kein Baukasten, keine Vorlage von der Stange. Wir entwickeln deine Website mit aktueller Technik: blitzschnell, sicher verschlüsselt und so gebaut, dass sie mit deinem Business wachsen kann.'],
         ['Make it boutique.', 'Design mit Gefühl für Details: Farben, Schriften und Bilder, die zu deiner Marke passen. Stylisch, persönlich und mit genau der Portion Eleganz, die man sich merkt.'],
       ],
