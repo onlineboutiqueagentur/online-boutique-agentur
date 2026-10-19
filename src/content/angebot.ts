@@ -1,7 +1,7 @@
 /**
  * ANGEBOT – persönliche Angebotsseiten unter /angebot/<kunde>/
  * --------------------------------------------------------------
- * Grundlage: „The Onepage Concept“ (ehemals Canva-PDF), überarbeitet ohne Wix.
+ * Grundlage: „The Smart Website Concept“ (früher „The Onepage Concept“, ehemals Canva-PDF), überarbeitet ohne Wix.
  *
  * Angebote entstehen im CRM (Leads → Angebot erstellen) und sind sofort online,
  * ohne neues Hochladen der Website (functions/angebot/[[path]].ts).
@@ -76,7 +76,8 @@ export const angebote: Angebot[] = [
 
 // ---------- Texte (für alle Angebote gleich) ----------
 export const angebot = {
-  eyebrow: 'The Onepage Concept',
+  eyebrow: 'The Smart Website Concept',
+  tagline: 'Made Boutique.',
   gruss: 'schön, dass du da bist! Hier findest du alles, was dein neuer Webauftritt braucht. Scroll in Ruhe durch und melde dich, wenn du Fragen hast.',
   hero: {
     title: 'Dein stylisches Web-Statement,',

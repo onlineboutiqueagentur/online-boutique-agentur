@@ -94,9 +94,9 @@ function fuellen(response: Response, a: AngebotDaten): Response {
     .on('[data-a="name"]', wert(a.name))
     .on('[data-a="company"]', wert(a.firma))
     .on('[data-a="email"]', wert(a.email))
-    .on('[data-a="message"]', wert(`The Onepage Concept · ${euro(gesamt)} · ${a.zusatzSeiten} Zusatzseite(n)`))
+    .on('[data-a="message"]', wert(`The Smart Website Concept · ${euro(gesamt)} · ${a.zusatzSeiten} Zusatzseite(n)`))
     .on('[data-a="slug"]', wert(a.slug))
-    .on('[data-a="note"]', text(`The Onepage Concept · ${euro(gesamt)}`))
+    .on('[data-a="note"]', text(`The Smart Website Concept · ${euro(gesamt)}`))
     .on('[data-a="gueltig"]', text(gueltigText(datum(a.gueltigBis))))
     .on('[data-a="online"]', text(`Online: www.online-boutique-agentur.at${pfad}`))
     .transform(response);

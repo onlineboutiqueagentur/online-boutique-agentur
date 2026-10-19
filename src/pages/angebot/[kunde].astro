@@ -1,6 +1,6 @@
 ---
 /**
- * /angebot/<kunde>/ – persönliche Angebotsseite „The Onepage Concept“.
+ * /angebot/<kunde>/ – persönliche Angebotsseite „The Smart Website Concept“.
  * Angebote aus dem CRM: functions/angebot/[[path]].ts füllt die Vorlage /angebot/_vorlage/ mit den Daten
  * aus dem Speicher (Stellen mit data-a="…"). Feste Angebote (z. B. „beispiel“) stehen in src/content/angebot.ts.
  * Nicht indexiert (noindex + X-Robots-Tag in public/_headers), nicht in der Sitemap.
@@ -41,7 +41,7 @@ const tw = intro.typewriter;
 const twSteps = tw.words.map((word) => ({ word }));
 
 const title = `Dein Angebot, ${a.anrede} | Online Boutique Agentur`;
-const description = `The Onepage Concept für ${a.firma} – dein persönliches Website-Angebot von Pia & Nina.`;
+const description = `The Smart Website Concept für ${a.firma} – dein persönliches Website-Angebot von Pia & Nina.`;
 const path = `/angebot/${a.slug}/`;
 ---
 
@@ -55,7 +55,7 @@ const path = `/angebot/${a.slug}/`;
     <!-- 1 · Persönlicher Einstieg -->
     <section class="a-hero container" aria-labelledby="a-title">
       <div class="a-hero__text">
-        <p class="a-eyebrow">{t.eyebrow} · für <span data-a="firma">{a.firma}</span></p>
+        <p class="a-eyebrow">{t.eyebrow}. {t.tagline}<br />für <span data-a="firma">{a.firma}</span></p>
         <h1 class="a-title" id="a-title">{t.hero.title}<br /><em>{t.hero.titleSecond}</em></h1>
         <p class="a-greeting">
           <span class="a-greeting__hello" data-a="hallo">Hallo {a.anrede},</span>
