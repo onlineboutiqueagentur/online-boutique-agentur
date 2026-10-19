@@ -197,6 +197,8 @@ export const angebot = {
     gruss: 'Alles Liebe',
     angebotTitel: 'Angebot für',
     gesamtTitel: 'Gesamtkosten',
+    /** nur im PDF */
+    pdf: { inklusive: 'Inklusive', angenommen: 'Angebot angenommen', ort: 'Ort, Datum', unterschrift: 'Unterschrift' },
     /** Timing – Klappbox bei „Good to know. The details.“ */
     golive: {
       titel: 'Timing & Go Live',

@@ -89,6 +89,7 @@ const path = `/angebot/brief/${a.slug}/`;
             </dt>
             <dd data-a="onepager">{euro(p.onepager)}</dd>
             <dd class="b-incl">
+              <p class="b-print b-print__label">{b.pdf.inklusive}</p>
               <ul role="list" class="b-incl__list">
                 {b.inklusive.map((item) => <li><a href="#zusammenarbeit" data-open-topic>{item}</a></li>)}
               </ul>
@@ -137,6 +138,19 @@ const path = `/angebot/brief/${a.slug}/`;
             <p class="form__msg form__msg--err" hidden data-err>{t.final.form.error}</p>
           </div>
         </form>
+
+        <!-- nur im PDF: Timing und Unterschrift -->
+        <div class="b-print b-print__timing">
+          <p class="b-print__label">{b.golive.titel}</p>
+          <p>{b.golive.text}</p>
+        </div>
+        <div class="b-print b-print__sign">
+          <p class="b-print__label">{b.pdf.angenommen}</p>
+          <div class="b-print__sign-lines">
+            <span>{b.pdf.ort}</span>
+            <span>{b.pdf.unterschrift}</span>
+          </div>
+        </div>
 
         <p class="b-direct">
           Noch Fragen?<br /><a href={agency.whatsapp} target="_blank" rel="noopener">WhatsApp</a> ·
@@ -740,11 +754,25 @@ const path = `/angebot/brief/${a.slug}/`;
   @media print {
     @page {
       size: A4;
-      margin: 14mm 16mm;
+      margin: 14mm 18mm 12mm;
     }
     :global(html),
     :global(body) {
       background: #fff;
+    }
+    .brief,
+    .b-offer {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      font-size: 10.5pt;
+    }
+    /* A4-Seite: Kopf, Angebot, Fuß */
+    .b-offer {
+      display: flex;
+      flex-direction: column;
+      min-height: 266mm;
+      break-inside: avoid;
     }
     .b-print {
       display: block;
@@ -752,64 +780,178 @@ const path = `/angebot/brief/${a.slug}/`;
     .b-print__head {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: flex-end;
       gap: 2rem;
-      margin-bottom: 10mm;
+      padding-bottom: 5mm;
+      border-bottom: 1px solid #000;
     }
     .b-print__brand {
       font-family: var(--f-display);
-      font-size: 1.5rem;
+      font-size: 17pt;
+      line-height: 1;
     }
     .b-print__from {
-      font-size: 0.8125rem;
+      font-size: 8pt;
       line-height: 1.5;
       text-align: right;
+      color: var(--c-ink-soft);
+    }
+    .b-print__label {
+      margin-bottom: 2.5mm;
+      font-size: 7.5pt;
+      font-weight: var(--w-bold);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--c-ink-soft);
     }
     .b-print__foot {
-      margin-top: 8mm;
-      padding-top: 4mm;
+      margin-top: 6mm;
+      padding-top: 3mm;
       border-top: 1px solid rgb(0 0 0 / 0.15);
-      font-size: 0.6875rem;
+      font-size: 7.5pt;
       white-space: nowrap;
       text-align: center;
       color: var(--c-ink-soft);
     }
-    .brief {
-      width: 100%;
-      padding: 0;
-    }
-    /* Kasten füllt die A4-Seite, Kontakt steht unten */
-    .b-offer {
-      display: flex;
-      flex-direction: column;
-      min-height: 262mm;
-    }
+    /* kein Kasten: das Blatt selbst ist das Angebot */
     .b-offer__card {
       flex: 1;
       display: flex;
       flex-direction: column;
-      padding: 12mm 12mm 8mm;
-      font-size: 1.0625rem;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
     }
-    .b-offer__card .b-form {
-      margin-top: auto;
-    }
+    /* Titel groß und links, mit senkrechtem Strich wie bei den Headlines */
     .b-offer__title {
-      font-size: 1rem;
-      margin-bottom: 18mm;
+      margin: 0 0 8mm;
+      padding-top: 20mm;
+      position: relative;
+      font-size: 9pt;
+      text-align: left;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-family: var(--f-body);
+      font-weight: var(--w-bold);
     }
-    .b-concept__name {
-      font-size: 1.625rem;
+    .b-offer__title::before {
+      content: '';
+      position: absolute;
+      top: 7mm;
+      left: 0;
+      height: 10mm;
+      border-left: 1px solid #000;
     }
-    /* ohne Hintergrundfarben im Druck: Buttons mit feiner Kontur */
-    .b-incl__list a {
-      border: 1px solid rgb(0 0 0 / 0.2);
+    .b-offer__firma {
+      margin-top: 2mm;
+      font-family: var(--f-display);
+      font-weight: var(--w-regular);
+      font-size: 24pt;
+      line-height: 1.2;
+      letter-spacing: 0;
+      text-transform: none;
+      color: #000;
+    }
+    .b-offer__date {
+      margin-top: 2mm;
+      font-size: 8.5pt;
+      font-weight: var(--w-regular);
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .b-lines {
+      border-top: 1px solid rgb(0 0 0 / 0.15);
     }
     .b-line {
-      padding: 1.1rem 0;
+      padding: 5mm 0;
+    }
+    .b-concept__name {
+      font-size: 15pt;
+    }
+    .b-concept__tag {
+      font-size: 10pt;
     }
     .b-line .b-incl {
-      margin-top: 1.75rem;
+      margin-top: 6mm;
+    }
+    /* Leistungen als zweispaltige Liste statt Buttons */
+    .b-incl__list {
+      display: grid;
+      grid-template-rows: repeat(4, auto);
+      grid-auto-flow: column;
+      gap: 2mm 8mm;
+    }
+    .b-incl__list a {
+      display: flex;
+      gap: 2.5mm;
+      align-items: baseline;
+      padding: 0;
+      border-radius: 0;
+      background: none;
+      font-size: 9.5pt;
+    }
+    .b-incl__list a::before {
+      content: '';
+      flex: none;
+      width: 1.6mm;
+      height: 1.6mm;
+      border-radius: 50%;
+      background: var(--c-accent);
+      transform: translateY(-0.4mm);
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+    /* Gesamtkosten als Band */
+    .b-line--total {
+      margin-top: 4mm;
+      padding: 4mm 5mm;
+      border: 0;
+      border-radius: 2mm;
+      background: var(--c-bg);
+      font-size: 12.5pt;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+    /* dazugebuchte Extras kommen mit ins PDF */
+    .b-form {
+      margin-top: 5mm;
+      text-align: left;
+    }
+    .b-picked {
+      font-size: 9.5pt;
+    }
+    .b-print__timing {
+      margin-top: 8mm;
+      font-size: 9.5pt;
+      line-height: 1.55;
+    }
+    .b-print__timing p:last-child {
+      max-width: 125mm;
+    }
+    .b-print__sign {
+      margin-top: auto;
+      padding-top: 8mm;
+    }
+    .b-print__sign-lines {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 12mm;
+      margin-top: 12mm;
+    }
+    .b-print__sign-lines span {
+      padding-top: 1.5mm;
+      border-top: 1px solid #000;
+      font-size: 7.5pt;
+      color: var(--c-ink-soft);
+    }
+    .b-valid,
+    .b-tax {
+      margin-top: 8mm;
+      text-align: left;
+      font-size: 7.5pt;
+    }
+    .b-tax {
+      margin-top: 0.5mm;
     }
     :global(body > *:not(main)),
     .brief > :not(.b-offer),
@@ -818,16 +960,6 @@ const path = `/angebot/brief/${a.slug}/`;
     .b-form .form__status,
     .b-direct {
       display: none !important;
-    }
-    /* dazugebuchte Extras kommen mit ins PDF */
-    .b-form {
-      margin-top: 1.5rem;
-      text-align: left;
-    }
-    .b-offer {
-      margin: 0;
-      padding: 0;
-      break-inside: avoid;
     }
   }
 
