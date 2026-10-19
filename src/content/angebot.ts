@@ -167,7 +167,7 @@ export const angebot = {
     items: [
       { nr: '01', title: 'Wort & Bild', text: 'Professionelle Texte und Bilder, die deine Botschaft emotional und klar transportieren.', preis: 'Auf Stundenbasis à € 85,–' },
       { nr: '02', title: 'Schnittstellen', text: 'Anbindung und Integration von Tools wie Newsletter-Systemen, Buchungsplattformen oder Social Media Feeds.', preis: 'Ab € 170,–' },
-      { nr: '03', title: 'Pflege-Paket', text: 'Du möchtest Texte oder Bilder ändern? Schick uns einfach eine Nachricht, wir setzen es um. Zwei Stunden pro Quartal, ohne Stundenzettel.', preis: 'Pauschal € 170,– pro Quartal' },
+      { nr: '03', title: 'Technik-Service', text: 'Zweimal im Jahr gehen wir für dich über alles Technische: Sicherheit, Server und Updates. Wir prüfen, ob alles aktuell ist und rund läuft, damit du dich um nichts kümmern musst.', preis: 'Pauschal € 170,– pro Halbjahr' },
       { nr: '04', title: 'Online Marketing', text: 'Suchmaschinenwerbung mit strategischen Kampagnen auf Google & Co., um deine Sichtbarkeit gezielt zu pushen.', preis: 'Setup ab € 425,–' },
       { nr: '05', title: 'Content & Updates', text: 'Laufende Anpassungen und Erweiterungen – flexibel und nach Aufwand.', preis: 'Auf Stundenbasis à € 85,–' },
       { nr: '06', title: 'Analytics & Reporting', text: 'Einrichtung von Google Analytics und regelmäßige Auswertung, damit du deine Website-Besucher:innen genau verstehst.', preis: 'Setup ab € 170,–' },
