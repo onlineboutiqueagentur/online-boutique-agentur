@@ -197,6 +197,12 @@ export const angebot = {
     gruss: 'Alles Liebe',
     angebotTitel: 'Unser Angebot für',
     gesamtTitel: 'Gesamtkosten',
+    /** Go Live als eigene Zeile im Angebotskasten */
+    golive: {
+      titel: 'Dein Go Live',
+      wert: 'in ca. 3 Wochen',
+      text: 'Ab dem Kick-off, sobald alle Unterlagen bei uns sind. Dann ist deine Website bereit für den großen Auftritt.',
+    },
     inklusive: ['Kick-off Call', 'Konzept & Design', 'Individuelle Umsetzung', 'SEO-Basics', 'Optimiert für Handy & Desktop', 'DSGVO-ready', 'Go Live & Übergabe'],
     inklusiveTitel: 'All inclusive. The boutique way.',
     tipp: 'Unser Tipp für dich',

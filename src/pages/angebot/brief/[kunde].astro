@@ -90,7 +90,11 @@ const path = `/angebot/brief/${a.slug}/`;
           <ul role="list" class="b-incl__list">
             {b.inklusive.map((item) => <li>{item}</li>)}
           </ul>
-          <p class="b-small">{t.preis.timing.text}</p>
+        </div>
+
+        <div class="b-golive">
+          <p class="b-golive__row"><span>{b.golive.titel}</span><span>{b.golive.wert}</span></p>
+          <p class="b-small">{b.golive.text}</p>
         </div>
 
 
@@ -363,7 +367,7 @@ const path = `/angebot/brief/${a.slug}/`;
   }
   /* klein, rechts oben in der Ecke */
   .b-offer__title {
-    margin: -0.75rem -0.75rem 1.5rem 0;
+    margin: -0.75rem -0.75rem 2.5rem 0;
     font-family: var(--f-display);
     font-weight: var(--w-regular);
     font-size: 0.875rem;
@@ -422,7 +426,18 @@ const path = `/angebot/brief/${a.slug}/`;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 1.5rem;
+  }
+  .b-golive {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgb(0 0 0 / 0.12);
+  }
+  .b-golive__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.2rem;
+    font-weight: var(--w-bold);
   }
   .b-incl__list li {
     padding: 0.3rem 0.8rem;
