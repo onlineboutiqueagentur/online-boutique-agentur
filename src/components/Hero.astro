@@ -18,7 +18,7 @@ const e = entdecken.hero;
     <HeroPicture />
   </div>
 
-  <Navigation logo={text === 'entdecken'} />
+  <Navigation logoHref={text === 'entdecken' ? '#top' : undefined} />
 
   <div class="hero__badge">
     <DesignSwitch variant="twins" />
@@ -29,8 +29,7 @@ const e = entdecken.hero;
       <div class="hero__content hero__content--entdecken parallax-hero">
         <a class="hero__brand" href="/">Online <em>Boutique</em> Agentur<sup aria-hidden="true">2</sup></a>
         <h1 class="hero__title" set:html={e.titleHtml} />
-        <p class="hero__sub">{e.sub}</p>
-        <a class="btn hero__btn" href="#leistungen">{e.cta}</a>
+        <p class="hero__sub">{e.subHome}</p>
       </div>
     ) : (
       <div class="hero__content parallax-hero">
@@ -196,10 +195,12 @@ const e = entdecken.hero;
   }
   /* Louder: Text bleibt links neben den Zwillingen, nicht über den Gesichtern */
   @media (min-width: 48rem) {
-    /* Design-Typ-Switch wandert nach rechts, links steht der Text */
+    /* Design-Typ-Switch rechts unten (bei den Händen), links steht der Text – nicht vor den Gesichtern */
     :global(:root[data-design='louder']) .hero--entdecken .hero__badge {
+      top: auto;
+      bottom: clamp(2.5rem, 8vh, 5rem);
       left: auto;
-      right: clamp(1rem, 13vw, 14rem);
+      right: clamp(1rem, 8vw, 9rem);
     }
     :global(:root[data-design='louder']) .hero__content--entdecken .hero__title,
     :global(:root[data-design='louder']) .hero__content--entdecken .hero__sub {

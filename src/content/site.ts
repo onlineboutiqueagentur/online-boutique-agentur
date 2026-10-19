@@ -37,7 +37,7 @@ import iconNewsletter from '../assets/images/icons/newsletter-marketing.png';
 import iconBrand from '../assets/images/icons/brand-design-ci.png';
 import iconKi from '../assets/images/icons/ki-kompetenz.png';
 import logoFh from '../assets/images/logos/logo-fh-oberoesterreich.png';
-import logoAgenturen from '../assets/images/logos/logos-reichlundpartner-smec.png';
+import logoAgenturen from '../assets/images/logos/logos-reichlundpartner-smec-gross.png';
 import logoUnternehmen from '../assets/images/logos/logos-ooenachrichten-ewe.png';
 import logoEternalFlame from '../assets/images/logos/logo-eternal-flame.png';
 import logoBfi from '../assets/images/logos/logo-bfi-oberoesterreich.png';
@@ -98,11 +98,10 @@ export const seo = {
 
 // ---------- Navigation ----------
 export const navigation = [
-  { label: 'Online Boutique Agentur', href: '#boutiqueagentur' },
+  { label: 'Online Boutique Agentur', href: '/' },
+  { label: 'Behind the Boutique', href: '/behind-the-boutique/' },
   { label: 'Leistungen', href: '#leistungen' },
-  { label: 'Erfahrungen', href: '#erfahrungen' },
-  { label: 'Kundenstimmen', href: '#kundenstimmen' },
-  { label: 'Das Croissant-Prinzip', href: '/croissant/' },
+  { label: 'Das Croissant-Prinzip', href: '/das-croissant-prinzip/' },
   { label: 'Kontakt', href: '/kontakt/' },
 ] as const;
 
@@ -200,6 +199,8 @@ export const experience = {
 export const designType = {
   title: 'Welcher Design-Typ bist du?',
   claim: 'Twins-Look: Gleiche DNA. Zwei Perspektiven.',
+  /** Startseite: „Gleiche DNA.“ gerade, „Zwei Perspektiven.“ kursiv */
+  claimHtml: 'Twins-Look: Gleiche DNA. <em>Zwei Perspektiven.</em>',
   paragraphs: [
     'Unser Webdesign lebt ganz Twins-like: Gleiche Basis – zwei Designwelten. Aus derselben Idee geboren, doch auf eine individuelle Art umgesetzt.',
     'Ruhig, klar, minimalistisch – oder etwas lauter, bunter und voller Bewegung. Du entscheidest, in welcher Welt du dich wohler fühlst.',
@@ -280,6 +281,12 @@ export const insights = {
 export const contact = {
   titleHtml: 'Erzähl uns von dir.',
   text: 'Wenn du dich hier wohl fühlst und du unser Match spüren kannst, dann schreib uns gerne. Erzähl uns von dir, deinen Ideen oder dem, was dich gerade bewegt. Wir freuen uns darauf, dich kennenzulernen und gemeinsam etwas Schönes entstehen zu lassen.',
+  /** Test-Startseite (/startseite-neu/): Einladung zum virtuellen Frühstück */
+  breakfast: {
+    titleHtml: 'Lass uns gemeinsam frühstücken.',
+    textHtml:
+      'Hast du Lust auf das gewisse Extra bekommen? Nehmen wir uns gemeinsam 30 Minuten Zeit für ein virtuelles Frühstück. Wir lernen uns kennen, deine Marke und alles, was sie besonders macht. Wir stellen Fragen, hören zu und schauen gemeinsam, wo noch ein bisschen mehr drinsteckt. Ganz entspannt und ohne Verpflichtungen.',
+  },
   video: {
     src: '/media/online-boutique-agentur-websites-content-social-media.mp4',
     label: 'Kurzes Video: Einblicke in die Arbeit der Online Boutique Agentur',

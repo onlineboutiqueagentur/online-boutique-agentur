@@ -1,20 +1,46 @@
 ---
 import { contact } from '../content/site';
 import ContactForm from './ContactForm.astro';
+import BreakfastForm from './BreakfastForm.astro';
+import SectionHead from './SectionHead.astro';
+
+interface Props {
+  /** Test-Startseite: Frühstücks-Einladung – Überschrift zentriert mit Strich über der Sektion,
+      darunter Video + Formular der Croissant-Seite */
+  breakfast?: boolean;
+}
+const { breakfast = false } = Astro.props;
+const b = contact.breakfast;
 ---
 
-<section class="contact" id="kontakt" aria-labelledby="kontakt-title">
-  <div class="contact__media">
-    <video class="contact__video" muted loop playsinline preload="none" data-src={contact.video.src} aria-label={contact.video.label}></video>
-  </div>
+{
+  breakfast ? (
+    <section class="contact-b" id="kontakt" aria-labelledby="kontakt-title">
+      <SectionHead id="kontakt-title" titleHtml={b.titleHtml} textHtml={b.textHtml} />
+      <div class="contact contact--b">
+        <div class="contact__media">
+          <video class="contact__video" muted loop playsinline preload="none" data-src={contact.video.src} aria-label={contact.video.label}></video>
+        </div>
+        <div class="contact__main">
+          <BreakfastForm />
+        </div>
+      </div>
+    </section>
+  ) : (
+    <section class="contact" id="kontakt" aria-labelledby="kontakt-title">
+      <div class="contact__media">
+        <video class="contact__video" muted loop playsinline preload="none" data-src={contact.video.src} aria-label={contact.video.label}></video>
+      </div>
 
-  <div class="contact__main">
-    <h2 class="heading heading--serif contact__title" id="kontakt-title" set:html={contact.titleHtml} />
-    <p class="lead-text">{contact.text}</p>
+      <div class="contact__main">
+        <h2 class="heading heading--serif contact__title" id="kontakt-title" set:html={contact.titleHtml} />
+        <p class="lead-text">{contact.text}</p>
 
-    <ContactForm />
-  </div>
-</section>
+        <ContactForm />
+      </div>
+    </section>
+  )
+}
 
 <script>
 
@@ -60,6 +86,32 @@ import ContactForm from './ContactForm.astro';
     object-fit: cover;
     border-radius: var(--radius);
     background: rgb(0 0 0 / 0.08);
+  }
+  /* Frühstücks-Variante: einspaltig und zentriert – Überschrift, Video, Formular */
+  .contact-b :global(.section-head__text) {
+    max-width: 34rem;
+    margin-inline: auto;
+    text-wrap: pretty;
+  }
+  .contact.contact--b {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: clamp(2rem, 4vw, 3rem);
+    padding-top: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .contact--b .contact__video {
+    width: min(100%, 24rem);
+  }
+  .contact--b .contact__main {
+    width: min(100%, 34rem);
+    text-align: center;
+  }
+  .contact--b .contact__main :global(.form__field),
+  .contact--b .contact__main :global(.form__privacy) {
+    text-align: left;
+  }
+  .contact--b .contact__main :global(.form__actions) {
+    justify-content: center;
   }
   .contact__title {
     font-size: var(--fs-h2-lg);

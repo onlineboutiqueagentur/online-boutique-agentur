@@ -13,11 +13,10 @@ const f = entdecken.final;
     <div class="e-final__text">
       {f.paragraphsHtml.map((p) => <p set:html={p} />)}
     </div>
-    <a class="btn btn--solid e-cta" href="/croissant/">
+    <a class="btn btn--solid e-cta" href="/das-croissant-prinzip/">
       <CroissantArt mini class="e-cta__icon" />
       {f.cta}
     </a>
-    <a class="e-principle" href="/croissant/">{f.link}</a>
   </div>
 </section>
 
@@ -74,11 +73,5 @@ const f = entdecken.final;
   }
   .e-cta:hover :global(.e-cta__icon) {
     transform: rotate(-12deg) scale(1.08);
-  }
-  .e-principle {
-    border-bottom: 1px solid;
-    font-size: 0.9375rem;
-    font-weight: var(--w-regular);
-    text-decoration: none;
   }
 </style>

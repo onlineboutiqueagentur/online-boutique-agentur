@@ -40,8 +40,7 @@ const ways = [
   path="/kontakt/"
 >
   <header class="k-head" id="top">
-    <Navigation base="/" />
-    <a class="k-head__home" href="/">Online <em>Boutique</em> Agentur<sup aria-hidden="true">²</sup></a>
+    <Navigation base="/" designSwitch />
   </header>
 
   <main id="inhalt" class="k" tabindex="-1">
@@ -127,12 +126,12 @@ const ways = [
     <aside class="k-croissant container--text" aria-label="The Boutique Croissant">
       <CroissantArt mini class="k-croissant__art" />
       <p class="k-croissant__text">{k.croissant}</p>
-      <a class="k-croissant__link" href="/croissant/">{k.croissantCta} <span aria-hidden="true">→</span></a>
+      <a class="k-croissant__link" href="/das-croissant-prinzip/">{k.croissantCta} <span aria-hidden="true">→</span></a>
     </aside>
   </main>
 
   <!-- Runde Einladung → Anfang der Croissant-Seite; ausgeblendet im Einstieg und beim Croissant-Hinweis unten -->
-  <StickyInvite href="/croissant/" label={croissantTeaser.sticky.label} meta={croissantTeaser.sticky.meta} hideNear={['.k-hero', '.k-croissant']} />
+  <StickyInvite href="/das-croissant-prinzip/" label={croissantTeaser.sticky.label} meta={croissantTeaser.sticky.meta} hideNear={['.k-hero', '.k-croissant']} />
 
   <Footer contact={false} />
 </Base>
@@ -166,22 +165,6 @@ const ways = [
     --c-ink-hero: var(--c-ink);
     padding-bottom: 1rem;
     text-align: center;
-  }
-  .k-head__home {
-    display: inline-block;
-    margin-top: 1.5rem;
-    font-family: var(--f-display);
-    font-size: 1.5rem;
-    text-decoration: none;
-  }
-  :global(:root[data-design='louder']) .k-head__home {
-    font-family: var(--f-bold);
-    font-size: 2rem;
-    letter-spacing: 1px;
-    color: var(--c-accent);
-  }
-  :global(:root[data-design='louder']) .k-head__home em {
-    font-style: normal;
   }
   .k:focus {
     outline: none;

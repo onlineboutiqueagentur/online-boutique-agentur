@@ -1,9 +1,49 @@
 ---
+/**
+ * STARTSEITE (seit 15.10.2026): Header + Abschnitte der Landingpage /entdecken/ + Abschnitte der
+ * bisherigen Startseite. Die alte Startseite liegt für den Notfall in src/components/Home.astro
+ * (ansehbar unter /startseite-alt/, noindex).
+ */
 import Base from '../layouts/Base.astro';
-import Home from '../components/Home.astro';
+import Hero from '../components/Hero.astro';
+import EStatement from '../components/entdecken/EStatement.astro';
+import EProblems from '../components/entdecken/EProblems.astro';
+import EWorlds from '../components/entdecken/EWorlds.astro';
+import ESolution from '../components/entdecken/ESolution.astro';
+import CroissantTeaser from '../components/CroissantTeaser.astro';
+import DesignType from '../components/DesignType.astro';
+import DesignTypeB from '../components/DesignTypeB.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Contact from '../components/Contact.astro';
+import Thoughts from '../components/Thoughts.astro';
+import StickyInvite from '../components/StickyInvite.astro';
+import Footer from '../components/Footer.astro';
 import { seo } from '../content/site';
+import { croissantTeaser } from '../content/croissant';
 ---
 
 <Base title={seo.title} description={seo.description} path="/" structuredData>
-  <Home />
+  <!-- 1 · Header der Startseite -->
+  <Hero text="entdecken" />
+  <main id="inhalt" tabindex="-1" class="home-neu">
+    <!-- 2–5 · Abschnitte der Landingpage /entdecken/ -->
+    <EStatement />
+    <EProblems />
+    <EWorlds pinned />
+    <ESolution home />
+    <!-- 6–10 · Abschnitte der Startseite -->
+    <CroissantTeaser text="entdecken" />
+    <DesignTypeB />
+    <Testimonials line />
+    <Contact breakfast />
+    <Thoughts />
+  </main>
+  <StickyInvite href="/das-croissant-prinzip/" label={croissantTeaser.sticky.label} meta={croissantTeaser.sticky.meta} hideNear={['.hero', '.teaser', '#kontakt']} />
+  <Footer contact={false} />
 </Base>
+
+<style>
+  .home-neu:focus {
+    outline: none;
+  }
+</style>

@@ -1,8 +1,8 @@
 ---
 /**
- * /croissant – The Boutique Croissant
+ * /das-croissant-prinzip – The Boutique Croissant
  * Eine kleine digitale Einladung (Mobile First). Zwei Einstiege:
- *  - über den QR-Code auf der Croissant-Verpackung (/croissant/?qr=1) → „Du hast ein Croissant bekommen.“
+ *  - über den QR-Code auf der Croissant-Verpackung (/das-croissant-prinzip/?qr=1) → „Du hast ein Croissant bekommen.“
  *  - über Website, Google oder Social Media → „Noch kein Croissant bekommen?“
  * Beide landen beim gleichen CTA: der Frühstücks-Einladung (Formular unten, Versand über /api/contact).
  * Gestaltung mit den bestehenden Design-Elementen – funktioniert in beiden Designwelten.
@@ -27,8 +27,8 @@ const jsonLd = {
   '@graph': [
     {
       '@type': 'WebPage',
-      '@id': `${agency.url}/croissant/#seite`,
-      url: `${agency.url}/croissant/`,
+      '@id': `${agency.url}/das-croissant-prinzip/#seite`,
+      url: `${agency.url}/das-croissant-prinzip/`,
       name: croissantSeo.title,
       description: croissantSeo.description,
       inLanguage: 'de-AT',
@@ -56,8 +56,7 @@ const jsonLd = {
 
 <Base title={croissantSeo.title} description={croissantSeo.description} path={croissantSeo.path} extraJsonLd={jsonLd} noindex>
   <header class="c-head" id="top">
-    <Navigation base="/" />
-    <a class="c-head__brand" href="/">Online <em>Boutique</em> Agentur<sup aria-hidden="true">²</sup></a>
+    <Navigation base="/" designSwitch />
   </header>
 
   <!-- Einstieg per QR-Code erkennen, bevor der Hero gezeichnet wird (kein Flackern, kein Cookie) -->
@@ -80,7 +79,7 @@ const jsonLd = {
     <!-- 2 · Einstieg: Warum ein Croissant … (Header mit vollflächigem Bild) -->
     <section class="c-why1" id="warum" aria-labelledby="c-why1">
       <div class="c-why1__media">
-        <Picture src={img.header.src} alt="" widths={[828, 1400, 2086]} sizes="100vw" formats={['avif', 'webp']} loading="eager" fetchpriority="high" decoding="async" />
+        <Picture src={img.header.src} alt={img.header.alt} widths={[828, 1200, 1600]} sizes="100vw" formats={['avif', 'webp']} loading="eager" fetchpriority="high" decoding="async" />
       </div>
       <div class="container--text c-why1__inner parallax-hero">
         <h1 class="c-why1__title" id="c-why1">
@@ -343,22 +342,6 @@ const jsonLd = {
     padding-bottom: 1.5rem;
     text-align: center;
   }
-  .c-head__brand {
-    display: inline-block;
-    margin-top: 1.25rem;
-    font-family: var(--f-display);
-    font-size: 1.25rem;
-    text-decoration: none;
-  }
-  :global(:root[data-design='louder']) .c-head__brand {
-    font-family: var(--f-bold);
-    color: var(--c-accent);
-    font-size: 1.75rem;
-    letter-spacing: 1px;
-  }
-  :global(:root[data-design='louder']) .c-head__brand em {
-    font-style: normal;
-  }
 
   /* ---------- Bausteine ---------- */
   .c-eyebrow {
@@ -407,6 +390,27 @@ const jsonLd = {
   .c-hero__art {
     width: min(78%, 22rem);
     margin-inline: auto;
+  }
+  /* beim Drüberfahren wackelt das Croissant – wie die kleinen Croissants weiter unten */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .c-hero__art:hover {
+      animation: c-wiggle 0.9s var(--ease);
+    }
+  }
+  @keyframes c-wiggle {
+    0%,
+    100% {
+      transform: none;
+    }
+    25% {
+      transform: rotate(-8deg) scale(1.04);
+    }
+    50% {
+      transform: rotate(5deg) scale(1.04);
+    }
+    75% {
+      transform: rotate(-3deg) scale(1.02);
+    }
   }
   .c-hero__text {
     display: grid;

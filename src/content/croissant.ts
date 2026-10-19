@@ -8,14 +8,14 @@ import cafeImg from '../assets/images/croissant/croissant-cafe-la-vie-est-belle.
 import zutatenImg from '../assets/images/croissant/croissant-zutaten-einer-marke.jpg';
 import verpackungImg from '../assets/images/croissant/boutique-croissant-verpackung.jpg';
 import fruehstueckImg from '../assets/images/croissant/franzoesisches-fruehstueck-kaffee-croissant.jpg';
-import headerImg from '../assets/images/croissant/croissant-goldener-croissant-sonnenlicht.jpg';
+import headerImg from '../assets/images/croissant/croissant-prinzip-butter-croissant-teller-sonnenlicht.jpg';
 
 /** Bilder der Croissant-Seite (Zwischenlösung aus dem Moodboard – später durch echte Fotos ersetzen). */
 export const croissantImages = {
-  /** Header-Bild (breit, dekorativ) */
+  /** Header-Bild (breit) – seit 19.10.2026 mit Alt-Text für die Bildersuche */
   header: {
     src: headerImg,
-    alt: '',
+    alt: 'Goldbraunes Butter-Croissant auf einem hellen Keramikteller im warmen Sonnenlicht mit Blätterschatten – Sinnbild für das Croissant-Prinzip der Online Boutique Agentur',
   },
   cafe: {
     src: cafeImg,
@@ -39,7 +39,7 @@ export const croissantSeo = {
   title: 'The Boutique Croissant – ein kleines Extra | Online Boutique Agentur, Linz',
   description:
     'Für ausgewählte Marken bringen Nina & Pia ein Croissant persönlich vorbei – und laden zum Frühstück ein: 30 Minuten Kaffee, Croissant und ein gutes Gespräch über deine Marke. Kostenlos, live oder virtuell.',
-  path: '/croissant/',
+  path: '/das-croissant-prinzip/',
   ogAlt: 'The Boutique Croissant – eine Einladung der Online Boutique Agentur',
 } as const;
 
@@ -50,7 +50,7 @@ export const croissantTeaser = {
   text: 'Was ein Croissant mit deiner Marke zu tun hat – und warum genau das deinen Unternehmensauftritt entscheidend verändern kann.',
   spoiler: 'Achtung kleiner Spoiler: Eine Frühstückseinladung ist inklusive.',
   cta: 'Entdecke unser Croissant-Prinzip',
-  href: '/croissant/',
+  href: '/das-croissant-prinzip/',
   /** Texte der runden schwebenden Einladung (Start- und Kontaktseite) */
   sticky: {
     label: 'Eine Einladung für dich',

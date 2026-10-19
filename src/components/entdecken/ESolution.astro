@@ -35,8 +35,17 @@ const textHtml = home ? entdecken.solutionHome.textHtml : s.textHtml;
         )
       }
       <p set:html={textHtml} />
-      <a class="btn btn--solid e-solution__btn" href={s.cta.href}>{s.cta.label}</a>
-      <a class="e-principle e-solution__link" href={s.link.href}>{s.link.label}</a>
+      {home && <p set:html={entdecken.solutionHome.text2Html} />}
+      {
+        home ? (
+          <a class="e-principle e-solution__link e-solution__more" href={s.cta.href}>{s.cta.label}</a>
+        ) : (
+          <>
+            <a class="btn btn--solid e-solution__btn" href={s.cta.href}>{s.cta.label}</a>
+            <a class="e-principle e-solution__link" href={s.link.href}>{s.link.label}</a>
+          </>
+        )
+      }
     </div>
   </div>
 </section>
@@ -96,6 +105,9 @@ const textHtml = home ? entdecken.solutionHome.textHtml : s.textHtml;
   }
   .e-solution__btn {
     justify-self: start;
+    margin-top: 0.75rem;
+  }
+  .e-solution__more {
     margin-top: 0.75rem;
   }
   .e-principle {

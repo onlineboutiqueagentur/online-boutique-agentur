@@ -62,7 +62,7 @@ async function sendMail(env: Env, a: Anfrage, adminUrl: string): Promise<boolean
   const angebot = a.quelle === 'angebot';
   const zeilen = [
     croissant
-      ? '🥐 Frühstücks-Einladung angenommen – über www.online-boutique-agentur.at/croissant'
+      ? '🥐 Frühstücks-Einladung angenommen – über www.online-boutique-agentur.at/das-croissant-prinzip'
       : angebot
         ? `✨ Angebot angenommen – www.online-boutique-agentur.at/angebot/${a.angebot}/`
         : 'Neue Anfrage über www.online-boutique-agentur.at',
