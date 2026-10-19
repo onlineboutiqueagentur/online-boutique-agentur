@@ -66,8 +66,7 @@ export const angebote: Angebot[] = [
     email: 'lisa@beispiel.at',
     grussHtml:
       'schön, dass wir uns kennenlernen durften! Wie versprochen haben wir dir hier alles zusammengestellt, was dein neuer Webauftritt braucht. <b>Nimm dir einen Kaffee, scroll in Ruhe durch</b> und melde dich, wenn du Fragen hast.',
-    zusatzSeiten: 1,
-    zusatzSeitenNotiz: 'z. B. eine eigene Seite für deine Leistungen',
+    zusatzSeiten: 0,
     empfohlen: ['01', '03'],
     erstellt: '2026-10-13',
     gueltigBis: '2026-12-31',
@@ -200,8 +199,7 @@ export const angebot = {
     inklusive: ['Kick-off Call', 'Konzept & Design', 'Individuelle Umsetzung', 'Optimiert für Handy & Desktop', 'SEO-Basics', 'DSGVO-ready', 'Go Live & Übergabe'],
     inklusiveTitel: 'Das ist alles drin',
     tipp: 'Unser Tipp für dich',
-    mehrTitel: 'Wenn du mehr wissen möchtest',
-    mehrText: 'Tipp einfach auf ein Thema – alles andere bleibt zu.',
+    mehrTitel: 'Good to know. The details.',
     themen: {
       warum: 'Warum ein Onepager?',
       aufbau: 'So ist dein Onepager aufgebaut',

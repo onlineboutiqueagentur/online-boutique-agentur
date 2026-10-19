@@ -57,16 +57,14 @@ const path = `/angebot/brief/${a.slug}/`;
     <!-- 2 · Das Angebot -->
     <section class="b-offer" id="annehmen" aria-labelledby="b-offer">
       <div class="b-offer__card">
-        <p class="b-concept">
-          <span class="b-concept__name">{t.eyebrow}.</span>
-          <span class="b-concept__tag">{t.tagline}</span>
-          <span class="b-concept__for">für {a.firma}</span>
-        </p>
         <h2 class="b-offer__title" id="b-offer">{b.angebotTitel}</h2>
 
         <dl class="b-lines">
           <div class="b-line">
-            <dt>{t.preis.onepager}</dt>
+            <dt class="b-concept">
+              <span class="b-concept__name">{t.eyebrow}.</span>
+              <span class="b-concept__tag">{t.tagline}</span>
+            </dt>
             <dd>{euro(p.onepager)}</dd>
           </div>
           {
@@ -147,7 +145,6 @@ const path = `/angebot/brief/${a.slug}/`;
     <!-- 3 · Mehr Infos zum Aufklappen -->
     <section class="b-more" aria-labelledby="b-more">
       <h2 class="b-more__title" id="b-more">{b.mehrTitel}</h2>
-      <p class="b-more__text">{b.mehrText}</p>
 
       <div class="b-topics">
         <details class="b-topic">
@@ -239,7 +236,6 @@ const path = `/angebot/brief/${a.slug}/`;
         <Picture src={img.team.src} alt={img.team.alt} widths={[500, 800, 1100]} sizes="(min-width: 48rem) 32rem, 90vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
       </figure>
       <div class="b-team__text">
-        <p class="b-team__eyebrow">{t.team.eyebrow}</p>
         <h2 class="heading b-team__title" id="b-team">
           <span class="sr-only">{intro.headingStatic}</span>
           <span aria-hidden="true" data-typewriter={JSON.stringify(twSteps)}>
@@ -357,22 +353,21 @@ const path = `/angebot/brief/${a.slug}/`;
   }
   .b-concept__name {
     font-family: var(--f-display);
-    font-size: clamp(1.375rem, 1.15rem + 0.8vw, 1.75rem);
+    font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
     line-height: 1.2;
     color: var(--c-heading, inherit);
   }
-  .b-concept__tag,
-  .b-concept__for {
+  .b-concept__tag {
     font-family: var(--f-display);
     font-style: italic;
     font-size: 0.875rem;
     color: var(--c-ink-soft);
   }
   .b-offer__title {
-    margin: 1.25rem 0 1.5rem;
+    margin: 0 0 1.25rem;
     font-family: var(--f-display);
     font-weight: var(--w-regular);
-    font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 1.875rem);
     line-height: 1.2;
   }
   .b-lines {
@@ -460,13 +455,10 @@ const path = `/angebot/brief/${a.slug}/`;
     margin-top: clamp(3rem, 7vw, 4.5rem);
   }
   .b-more__title {
+    margin-bottom: 1.25rem;
     font-family: var(--f-display);
     font-weight: var(--w-regular);
     font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
-  }
-  .b-more__text {
-    margin: 0.25rem 0 1.25rem;
-    color: var(--c-ink-soft);
   }
   .b-topics {
     display: grid;
@@ -588,11 +580,6 @@ const path = `/angebot/brief/${a.slug}/`;
     display: grid;
     gap: 0.9rem;
   }
-  .b-team__eyebrow {
-    font-family: var(--f-display);
-    font-style: italic;
-    color: var(--c-ink-soft);
-  }
   .b-team__title {
     text-align: left;
     font-size: var(--fs-typing);
@@ -606,7 +593,6 @@ const path = `/angebot/brief/${a.slug}/`;
   }
   .b-statement__quote p {
     font-family: var(--f-display);
-    font-style: italic;
     font-size: clamp(1.375rem, 1.1rem + 1.2vw, 2rem);
     line-height: 1.45;
     text-wrap: balance;
@@ -620,8 +606,7 @@ const path = `/angebot/brief/${a.slug}/`;
   @media print {
     .b-head button,
     .b-form,
-    .b-direct a,
-    .b-more__text {
+    .b-direct a {
       display: none;
     }
     .b-letter {
