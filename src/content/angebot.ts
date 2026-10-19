@@ -148,7 +148,7 @@ export const angebot = {
     steuer: 'Keine Umsatzsteuer laut Kleinunternehmerregelung (§ 6 Abs. 1 Z 27 UStG).',
     timing: {
       title: 'Timing.',
-      text: 'Dein Onepager ist ca. 2–3 Wochen nach dem Kick-off und der Übermittlung aller Unterlagen bereit für den großen Auftritt.',
+      text: 'Deine Website ist ca. 3 Wochen nach dem Kick-off und der Übermittlung aller Unterlagen bereit für den großen Auftritt.',
     },
     laufend: {
       title: 'Laufende Kosten.',
