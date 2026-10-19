@@ -26,6 +26,7 @@ const gesamt = p.onepager + zusatzSumme;
 // Überschrift im Team-Abschnitt: „Wir lieben/leben Boutique Agentur.“ wie auf der Startseite (Schreibmaschine)
 const tw = intro.typewriter;
 const twSteps = tw.words.map((word) => ({ word }));
+const extras = [...t.toppings.items].sort((x, y) => b.extras.reihenfolge.indexOf(x.nr) - b.extras.reihenfolge.indexOf(y.nr));
 
 const title = `Für ${a.anrede}: dein Angebot | Online Boutique Agentur`;
 const description = `Ein persönliches Angebot für ${a.firma} von Pia & Nina.`;
@@ -184,7 +185,7 @@ const path = `/angebot/brief/${a.slug}/`;
             <p>{t.toppings.text}</p>
             <ul role="list" class="b-toppings">
               {
-                t.toppings.items.map((item) => (
+                extras.map((item) => (
                   <li class:list={['b-topping', { 'is-tipp': (a.empfohlen ?? []).includes(item.nr) }]}>
                     <span class="b-topping__head">
                       <b>{item.title}</b>

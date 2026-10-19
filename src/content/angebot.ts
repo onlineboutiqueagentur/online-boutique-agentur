@@ -210,6 +210,8 @@ export const angebot = {
       hinweis: 'Lust auf Extras? Unter „Extras zum Dazubuchen“ kannst du einfach auswählen.',
       gewaehlt: 'Dazugebucht:',
       anhaken: 'Dazubuchen',
+      /** Reihenfolge der Extras im Brief (Nummern aus `toppings`) */
+      reihenfolge: ['01', '02', '05', '06', '04', '03'],
     },
     technikSorglos: 'Um Technik, Hosting und Sicherheit musst du dich nicht kümmern. Das übernehmen wir. Du lehnst dich zurück, deine Website läuft.',
     /** Abschluss-Statement ganz unten */
