@@ -147,11 +147,11 @@ const hrefOf = (href: string, i: number) => (isLogo(i) && logoHref ? logoHref : 
     vertical-align: 0.75em;
   }
 
-  /* Twin-Switch auf Unterseiten: links, kompakt, ohne Beschriftung */
+  /* Twin-Switch auf Unterseiten: rechts, kompakt, ohne Beschriftung (mobil links neben „Menü“) */
   .nav-switch {
     position: absolute;
     top: 1.15rem;
-    left: var(--gutter);
+    right: var(--gutter);
     --twins-size: 2.75rem;
   }
   .nav-switch :global(.twins__label) {
@@ -160,7 +160,11 @@ const hrefOf = (href: string, i: number) => (isLogo(i) && logoHref ? logoHref : 
   @media (max-width: 63.99rem) {
     .nav-switch {
       position: static;
-      order: -1;
+      margin-left: auto;
+      margin-right: 1rem;
+    }
+    .nav-switch + .nav-toggle {
+      margin-left: 0;
     }
   }
 
