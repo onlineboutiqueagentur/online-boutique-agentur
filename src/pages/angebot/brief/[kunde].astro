@@ -179,8 +179,8 @@ const path = `/angebot/brief/${a.slug}/`;
         <details class="b-topic">
           <summary>{b.themen.technik}</summary>
           <div class="b-topic__body">
-            {t.technik.paragraphs.map((html) => <p set:html={html} />)}
-            <p><b>{t.preis.laufend.betreuung} · {euro(p.betreuungMonat)} / Monat.</b> {t.preis.laufend.betreuungText}</p>
+            <p set:html={t.technik.paragraphs[0]} />
+            <p>{b.technikSorglos}</p>
             <p><b>{t.technik.domain.title}</b> {t.technik.domain.text} {t.preis.laufend.domainText}</p>
           </div>
         </details>

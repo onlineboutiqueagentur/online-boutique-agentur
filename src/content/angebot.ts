@@ -200,6 +200,7 @@ export const angebot = {
     inklusiveTitel: 'All inclusive. The boutique way.',
     tipp: 'Unser Tipp für dich',
     mehrTitel: 'Good to know. The details.',
+    technikSorglos: 'Um Technik, Hosting und Sicherheit musst du dich nicht kümmern. Das übernehmen wir. Du lehnst dich zurück, deine Website läuft.',
     /** Abschluss-Statement ganz unten */
     statement: {
       lead: 'Als kleine Boutique-Agentur lieben wir’s persönlich – kreativ – exklusiv.',
