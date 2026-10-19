@@ -207,7 +207,7 @@ export const angebot = {
     mehrTitel: 'Good to know. The details.',
     /** Extras zum Anhaken – werden beim „Angebot annehmen“ mitgeschickt */
     extras: {
-      hinweis: 'Lust auf Extras? Unter „Extras zum Dazubuchen“ kannst du einfach auswählen.',
+      hinweis: 'Lust auf Extras? Unter <a href="#extras">„Extras zum Dazubuchen“</a> kannst du einfach auswählen.',
       gewaehlt: 'Dazugebucht:',
       anhaken: 'Dazubuchen',
       /** Reihenfolge der Extras im Brief (Nummern aus `toppings`) */

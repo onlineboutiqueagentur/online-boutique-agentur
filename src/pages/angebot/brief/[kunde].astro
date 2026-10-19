@@ -68,7 +68,7 @@ const path = `/angebot/brief/${a.slug}/`;
             <dd>{euro(p.onepager)}</dd>
             <dd class="b-incl">
               <ul role="list" class="b-incl__list">
-                {b.inklusive.map((item) => <li>{item}</li>)}
+                {b.inklusive.map((item) => <li><a href="#zusammenarbeit" data-open-topic>{item}</a></li>)}
               </ul>
             </dd>
           </div>
@@ -107,7 +107,7 @@ const path = `/angebot/brief/${a.slug}/`;
             <input type="hidden" name="angebot" value={a.slug} />
             <input type="hidden" name="design" value="" data-design-field />
             <p class="b-picked" hidden data-picked>{b.extras.gewaehlt} <span data-picked-list></span></p>
-            <p class="b-small b-pick-hint" data-pick-hint>{b.extras.hinweis}</p>
+            <p class="b-small b-pick-hint" data-pick-hint set:html={b.extras.hinweis} />
             <button class="btn btn--solid b-form__btn" type="submit" data-label={t.final.form.submit} data-sending={t.final.form.sending}>{t.final.form.submit}</button>
           </div>
           <div class="form__status" role="status" aria-live="polite" tabindex="-1" data-form-status>
@@ -147,7 +147,7 @@ const path = `/angebot/brief/${a.slug}/`;
           </div>
         </details>
 
-        <details class="b-topic">
+        <details class="b-topic" id="zusammenarbeit">
           <summary>{b.themen.ablauf}</summary>
           <div class="b-topic__body">
             <ol role="list" class="b-steps">
@@ -179,7 +179,7 @@ const path = `/angebot/brief/${a.slug}/`;
           </div>
         </details>
 
-        <details class="b-topic">
+        <details class="b-topic" id="extras">
           <summary>{b.themen.toppings}</summary>
           <div class="b-topic__body">
             <p>{t.toppings.text}</p>
@@ -263,6 +263,17 @@ const path = `/angebot/brief/${a.slug}/`;
   extras.forEach((x) => x.addEventListener('change', aktualisieren));
   aktualisieren();
 
+  // Leistungs-Buttons öffnen unten „Zusammenarbeit“ und springen hin
+  document.querySelectorAll<HTMLAnchorElement>('[data-open-topic], [data-pick-hint] a').forEach((link) =>
+    link.addEventListener('click', (e) => {
+      const ziel = document.querySelector<HTMLDetailsElement>(link.hash);
+      if (!ziel) return;
+      e.preventDefault();
+      ziel.open = true;
+      ziel.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+      ziel.querySelector('summary')?.focus({ preventScroll: true });
+    }),
+  );
   document.querySelectorAll<HTMLButtonElement>('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));
 </script>
 
@@ -432,11 +443,23 @@ const path = `/angebot/brief/${a.slug}/`;
     flex-wrap: wrap;
     gap: 0.5rem;
   }
-  .b-incl__list li {
+  .b-incl__list a {
+    display: block;
     padding: 0.3rem 0.8rem;
     border-radius: 999px;
     background: var(--c-card);
     font-size: 0.875rem;
+    color: inherit;
+    text-decoration: none;
+    transition: background var(--t-fast) var(--ease);
+  }
+  .b-incl__list a:hover {
+    background: var(--c-ink);
+    color: var(--c-card);
+  }
+  .b-incl__list a:focus-visible {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 2px;
   }
   .b-form {
     margin-top: 2.75rem;
@@ -576,6 +599,11 @@ const path = `/angebot/brief/${a.slug}/`;
     margin-bottom: 0.75rem;
     font-size: 0.9375rem;
     font-weight: var(--w-bold);
+  }
+  .b-pick-hint :global(a) {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
   }
   .b-pick-hint {
     margin-bottom: 1.75rem;
