@@ -12,7 +12,7 @@ interface Props {
   path: string;
   noindex?: boolean;
   structuredData?: boolean;
-  /** Zusätzliche strukturierte Daten einer Unterseite (z. B. /croissant) */
+  /** Zusätzliche strukturierte Daten einer Unterseite (z. B. /das-croissant-prinzip) */
   extraJsonLd?: Record<string, unknown>;
 }
 const { title, description, path, noindex = false, structuredData = false, extraJsonLd } = Astro.props;

@@ -105,8 +105,7 @@ export const entdecken = {
       'Ein frischer Blick. Eine neue Idee. Oder zwei kreative Köpfe, die genau das Potenzial sehen, das in deinem Unternehmen steckt.',
       '<b>Und was das alles mit einem Croissant zu tun hat?<br />Mehr, als du vielleicht denkst.</b>',
     ],
-    cta: 'Ein Croissant. Viele Möglichkeiten.',
-    link: 'Was hinter unserem Croissant-Prinzip steckt →',
+    cta: 'Was hinter unserem Croissant-Prinzip steckt',
   },
 
   invite: {

@@ -1,7 +1,7 @@
 ---
 /**
  * Startseiten-Teaser „The Boutique Croissant“ – erzählt nicht die ganze Geschichte,
- * sondern macht nur neugierig und führt auf /croissant/.
+ * sondern macht nur neugierig und führt auf /das-croissant-prinzip/.
  * Bestehende Design-Elemente; in beiden Designwelten.
  */
 import { Picture } from 'astro:assets';
@@ -54,7 +54,6 @@ const f = entdecken.final;
               <CroissantArt mini class="teaser__icon" />
               {f.cta}
             </a>
-            <a class="teaser__link" href={t.href}>{f.link}</a>
           </div>
         </div>
       ) : (
@@ -158,13 +157,6 @@ const f = entdecken.final;
   }
   :global(:root[data-design='louder']) .teaser__title--extra :global(em) {
     font-style: normal;
-  }
-  .teaser__link {
-    margin-top: 0.5rem;
-    border-bottom: 1px solid;
-    font-size: 0.9375rem;
-    font-weight: var(--w-regular);
-    text-decoration: none;
   }
   .teaser__copy {
     max-width: 36rem;

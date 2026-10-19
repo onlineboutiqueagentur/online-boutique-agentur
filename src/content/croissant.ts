@@ -39,7 +39,7 @@ export const croissantSeo = {
   title: 'The Boutique Croissant – ein kleines Extra | Online Boutique Agentur, Linz',
   description:
     'Für ausgewählte Marken bringen Nina & Pia ein Croissant persönlich vorbei – und laden zum Frühstück ein: 30 Minuten Kaffee, Croissant und ein gutes Gespräch über deine Marke. Kostenlos, live oder virtuell.',
-  path: '/croissant/',
+  path: '/das-croissant-prinzip/',
   ogAlt: 'The Boutique Croissant – eine Einladung der Online Boutique Agentur',
 } as const;
 
@@ -50,7 +50,7 @@ export const croissantTeaser = {
   text: 'Was ein Croissant mit deiner Marke zu tun hat – und warum genau das deinen Unternehmensauftritt entscheidend verändern kann.',
   spoiler: 'Achtung kleiner Spoiler: Eine Frühstückseinladung ist inklusive.',
   cta: 'Entdecke unser Croissant-Prinzip',
-  href: '/croissant/',
+  href: '/das-croissant-prinzip/',
   /** Texte der runden schwebenden Einladung (Start- und Kontaktseite) */
   sticky: {
     label: 'Eine Einladung für dich',

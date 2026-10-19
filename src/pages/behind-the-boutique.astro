@@ -27,7 +27,6 @@ import { harmony, headHeart } from '../content/site';
 >
   <header class="u-head" id="top">
     <Navigation base="/" />
-    <a class="u-head__home" href="/">Online <em>Boutique</em> Agentur<sup aria-hidden="true">2</sup></a>
   </header>
 
   <main id="inhalt" class="u" tabindex="-1">
@@ -56,7 +55,7 @@ import { harmony, headHeart } from '../content/site';
     <Contact breakfast />
   </main>
 
-  <StickyInvite href="/croissant/" label={croissantTeaser.sticky.label} meta={croissantTeaser.sticky.meta} hideNear={['.u-hero', '.teaser', '#kontakt']} />
+  <StickyInvite href="/das-croissant-prinzip/" label={croissantTeaser.sticky.label} meta={croissantTeaser.sticky.meta} hideNear={['.u-hero', '.teaser', '#kontakt']} />
   <Footer contact={false} />
 </Base>
 
@@ -64,26 +63,6 @@ import { harmony, headHeart } from '../content/site';
   .u-head {
     --c-ink-hero: var(--c-ink);
     text-align: center;
-  }
-  .u-head__home {
-    display: inline-block;
-    margin-top: 1.5rem;
-    font-family: var(--f-display);
-    font-size: 1.5rem;
-    text-decoration: none;
-  }
-  .u-head__home sup {
-    font-size: 0.6em;
-    vertical-align: 0.75em;
-  }
-  :global(:root[data-design='louder']) .u-head__home {
-    font-family: var(--f-bold);
-    font-size: 2rem;
-    letter-spacing: 1px;
-    color: var(--c-accent);
-  }
-  :global(:root[data-design='louder']) .u-head__home em {
-    font-style: normal;
   }
   .u:focus {
     outline: none;

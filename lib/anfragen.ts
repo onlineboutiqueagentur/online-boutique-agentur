@@ -16,7 +16,7 @@ export interface Anfrage {
   nachricht: string;
   /** Designwelt beim Absenden: minimal, louder oder unbekannt (z. B. ohne JavaScript) */
   design?: 'minimal' | 'louder' | 'unbekannt';
-  /** Herkunft: normales Kontaktformular, Croissant-Einladung (/croissant) oder angenommenes Angebot (/angebot/…) */
+  /** Herkunft: normales Kontaktformular, Croissant-Einladung (/das-croissant-prinzip) oder angenommenes Angebot (/angebot/…) */
   quelle?: 'website' | 'croissant' | 'angebot';
   /** Nur Angebot: Kennung (slug) des angenommenen Angebots */
   angebot?: string;

@@ -12,7 +12,7 @@ import MiniHero from './MiniHero.astro';
   <div class="v-line" aria-hidden="true"></div>
   <div class="design-type-b__inner container--text">
     <h2 class="design-type-b__title flash" id="design-typ-title">{designType.title}</h2>
-    <p class="design-type-b__claim">{designType.claim}</p>
+    <p class="design-type-b__claim" set:html={designType.claimHtml} />
     <div class="design-type-b__text">
       {designType.paragraphs.map((p) => <p>{p}</p>)}
     </div>
@@ -92,16 +92,15 @@ import MiniHero from './MiniHero.astro';
   }
   .design-type-b__claim {
     font-family: var(--f-display);
-    font-style: italic;
     font-size: clamp(1.2rem, 1rem + 0.7vw, 1.5rem);
     line-height: 1.4;
   }
   .design-type-b__text {
     display: grid;
     gap: 1rem;
-    max-width: 36rem;
-    font-size: 1.125rem;
-    line-height: 1.54;
+    max-width: 38rem;
+    font-size: 1.0625rem;
+    line-height: 1.7;
     text-wrap: pretty;
   }
   /* ---------- Vorher/Nachher-Regler ---------- */
@@ -238,9 +237,7 @@ import MiniHero from './MiniHero.astro';
     letter-spacing: 1px;
     text-transform: lowercase;
   }
-  @media (max-width: 47.99rem) {
-    .design-type-b__text {
-      font-size: 1rem;
-    }
+  :global(:root[data-design='louder']) .design-type-b__claim :global(em) {
+    font-style: normal;
   }
 </style>
