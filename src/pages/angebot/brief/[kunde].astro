@@ -90,12 +90,6 @@ const path = `/angebot/brief/${a.slug}/`;
         <p class="b-small b-tax">{t.preis.steuer}</p>
 
 
-        <details class="b-topic b-golive">
-          <summary>{b.golive.titel}</summary>
-          <div class="b-topic__body">
-            <p>{b.golive.text}</p>
-          </div>
-        </details>
 
 
         <form class="form b-form" action="/api/contact" method="post" novalidate data-contact-form>
@@ -165,6 +159,13 @@ const path = `/angebot/brief/${a.slug}/`;
                 ))
               }
             </ol>
+          </div>
+        </details>
+
+        <details class="b-topic">
+          <summary>{b.golive.titel}</summary>
+          <div class="b-topic__body">
+            <p>{b.golive.text}</p>
           </div>
         </details>
 
@@ -436,10 +437,6 @@ const path = `/angebot/brief/${a.slug}/`;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-  }
-  /* Timing als Klappbox wie bei „Good to know“ */
-  .b-golive {
-    margin-top: 2.25rem;
   }
   .b-incl__list li {
     padding: 0.3rem 0.8rem;

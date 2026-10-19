@@ -197,7 +197,7 @@ export const angebot = {
     gruss: 'Alles Liebe',
     angebotTitel: 'Unser Angebot für',
     gesamtTitel: 'Gesamtkosten',
-    /** Go Live als eigene Zeile im Angebotskasten */
+    /** Timing – Klappbox bei „Good to know. The details.“ */
     golive: {
       titel: 'Timing',
       text: 'Ca. 3 Wochen ab dem Kick-off, sobald alle Unterlagen bei uns sind. Dann ist deine Website bereit für den großen Auftritt.',
