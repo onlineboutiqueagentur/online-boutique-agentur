@@ -17,11 +17,17 @@
 
 import heroImg from '../assets/images/entdecken/leistung-webdesign-laptop-schreibtisch.jpg';
 import teamImg from '../assets/images/minimal/pia-nina-zwillinge-boutique-agentur-schwarzweiss.jpg';
+import teamFarbeImg from '../assets/images/shared/pia-nina-zwillinge-boutique-agentur-team-farbe.jpg';
+import grussImg from '../assets/images/shared/pia-nina-zwillinge-boutique-agentur-farbe.jpg';
 import { preise, euro, zusatzText, gueltigText, growText } from '../../lib/angebot-daten';
 
 export const angebotImages = {
   hero: { src: heroImg, alt: 'Laptop auf einem Travertin-Block im Sonnenlicht, darauf eine elegante Website' },
   team: { src: teamImg, alt: 'Pia und Nina, die Zwillingsschwestern hinter der Online Boutique Agentur' },
+  /** Brief: farbiges Foto beim Gruß (Ausschnitt aus dem Hero-Bild) */
+  gruss: { src: grussImg, alt: 'Pia und Nina nebeneinander' },
+  /** Brief: Teamfoto in Farbe, gleicher Ausschnitt wie das s/w Bild */
+  teamFarbe: { src: teamFarbeImg, alt: 'Pia und Nina, die Zwillingsschwestern hinter der Online Boutique Agentur' },
 } as const;
 
 // ---------- Preise (in Euro) ----------
@@ -76,7 +82,7 @@ export const angebote: Angebot[] = [
 // ---------- Texte (für alle Angebote gleich) ----------
 export const angebot = {
   eyebrow: 'The Smart Website Concept',
-  tagline: 'Make it boutique.',
+  tagline: 'A lot of boutique inside.',
   gruss: 'schön, dass du da bist! Hier findest du alles, was dein neuer Webauftritt braucht. Scroll in Ruhe durch und melde dich, wenn du Fragen hast.',
   hero: {
     title: 'Dein stylisches Web-Statement,',
@@ -195,17 +201,31 @@ export const angebot = {
       'Wir freuen uns darauf, deine Marke ins Rampenlicht zu bringen!',
     ],
     gruss: 'Alles Liebe',
-    angebotTitel: 'Unser Angebot für',
-    inklusive: ['Kick-off Call', 'Konzept & Design', 'Individuelle Umsetzung', 'Optimiert für Handy & Desktop', 'SEO-Basics', 'DSGVO-ready', 'Go Live & Übergabe'],
-    inklusiveTitel: 'All inclusive. The boutique way.',
+    angebotTitel: 'Angebot für',
+    gesamtTitel: 'Gesamtkosten',
+    /** nur im PDF */
+    pdf: { inklusive: 'Inklusive', angenommen: 'Angebot angenommen', ort: 'Ort, Datum', unterschrift: 'Unterschrift' },
+    /** Timing – Klappbox bei „Good to know. The details.“ */
+    golive: {
+      titel: 'Timing & Go Live',
+      text: 'Ca. 3 Wochen ab dem Kick-off, sobald alle Unterlagen bei uns sind. Dann ist deine Website bereit für den großen Auftritt.',
+    },
+    inklusive: ['Kick-off Call', 'Konzept & Design', 'Individuelle Umsetzung', 'SEO-Basics', 'Optimiert für Handy & Desktop', 'DSGVO-ready', 'Go Live & Übergabe'],
     tipp: 'Unser Tipp für dich',
     mehrTitel: 'Good to know. The details.',
+    /** Extras zum Anhaken – werden beim „Angebot annehmen“ mitgeschickt */
+    extras: {
+      hinweis: 'Lust auf Extras? Unter <a href="#extras">„Extras zum Dazubuchen“</a> kannst du einfach auswählen.',
+      gewaehlt: 'Dazugebucht:',
+      anhaken: 'Dazubuchen',
+      /** Reihenfolge der Extras im Brief (Nummern aus `toppings`) */
+      reihenfolge: ['01', '02', '05', '06', '04', '03'],
+    },
     technikSorglos: 'Um Technik, Hosting und Sicherheit musst du dich nicht kümmern. Das übernehmen wir. Du lehnst dich zurück, deine Website läuft.',
     /** Abschluss-Statement ganz unten */
     statement: {
-      lead: 'Als kleine Boutique-Agentur lieben wir’s persönlich – kreativ – exklusiv.',
+      lead: 'Wir lieben’s persönlich – kreativ – exklusiv.',
       zeilen: ['Individuell statt Standard.', 'Direkt statt Umwege.', 'Gespräche statt Tickets.'],
-      claim: 'Modern. Smart. Stylish.',
       schluss: 'Boutique eben.',
     },
     /** „Was ist das Smart Website Concept?“ – ersetzt im Brief „Warum ein Onepager?“ */
@@ -216,8 +236,8 @@ export const angebot = {
       ],
     },
     themen: {
-      warum: 'Was ist: The Smart Website Concept',
-      ablauf: 'So läuft unsere Zusammenarbeit ab',
+      warum: 'The Smart Website Concept',
+      ablauf: 'Zusammenarbeit. The boutique way.',
       technik: 'Technik, Hosting & Domain',
       toppings: 'Extras zum Dazubuchen',
       team: 'Wer wir sind',
