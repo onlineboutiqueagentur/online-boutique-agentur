@@ -17,6 +17,7 @@
 
 import heroImg from '../assets/images/entdecken/leistung-webdesign-laptop-schreibtisch.jpg';
 import teamImg from '../assets/images/minimal/pia-nina-zwillinge-boutique-agentur-schwarzweiss.jpg';
+import teamFarbeImg from '../assets/images/shared/pia-nina-zwillinge-boutique-agentur-team-farbe.jpg';
 import grussImg from '../assets/images/shared/pia-nina-zwillinge-boutique-agentur-farbe.jpg';
 import { preise, euro, zusatzText, gueltigText, growText } from '../../lib/angebot-daten';
 
@@ -25,6 +26,8 @@ export const angebotImages = {
   team: { src: teamImg, alt: 'Pia und Nina, die Zwillingsschwestern hinter der Online Boutique Agentur' },
   /** Brief: farbiges Foto beim Gruß (Ausschnitt aus dem Hero-Bild) */
   gruss: { src: grussImg, alt: 'Pia und Nina nebeneinander' },
+  /** Brief: Teamfoto in Farbe, gleicher Ausschnitt wie das s/w Bild */
+  teamFarbe: { src: teamFarbeImg, alt: 'Pia und Nina, die Zwillingsschwestern hinter der Online Boutique Agentur' },
 } as const;
 
 // ---------- Preise (in Euro) ----------
