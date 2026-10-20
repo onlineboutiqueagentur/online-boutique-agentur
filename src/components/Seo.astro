@@ -12,7 +12,7 @@ interface Props {
   path: string;
   noindex?: boolean;
   structuredData?: boolean;
-  /** Zusätzliche strukturierte Daten einer Unterseite (z. B. /croissant) */
+  /** Zusätzliche strukturierte Daten einer Unterseite (z. B. /das-croissant-prinzip) */
   extraJsonLd?: Record<string, unknown>;
 }
 const { title, description, path, noindex = false, structuredData = false, extraJsonLd } = Astro.props;
@@ -47,8 +47,6 @@ const jsonLd = {
       slogan: 'Gleiche DNA. Zwei Perspektiven.',
       address: {
         '@type': 'PostalAddress',
-        streetAddress: agency.address.street,
-        postalCode: agency.address.zip,
         addressLocality: agency.address.city,
         addressRegion: agency.address.region,
         addressCountry: agency.address.country,
@@ -82,6 +80,8 @@ const jsonLd = {
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
 <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
+<!-- Google Search Console (Property https://www.online-boutique-agentur.at/) – nicht entfernen, sonst verfällt die Bestätigung -->
+<meta name="google-site-verification" content="AzF-bwiJuCFjr5G692Z16f6WgbKmtt1kwwxJpVIgp8s" />
 
 <meta property="og:type" content="website" />
 <meta property="og:locale" content={seo.locale} />

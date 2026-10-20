@@ -26,6 +26,13 @@ https://:project.pages.dev/*
 /api/*
   Cache-Control: no-store
 
+/angebot/*
+  X-Robots-Tag: noindex, nofollow
+
 /admin/*
   X-Robots-Tag: noindex, nofollow
   Cache-Control: no-store
+
+# Kunden-Vorschauen nicht indexieren
+/vorschau/*
+  X-Robots-Tag: noindex, nofollow

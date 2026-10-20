@@ -1,0 +1,175 @@
+---
+/**
+ * „Unser Gedanke für dich“ – ein wechselnder Spruch zu Branding & Online Marketing.
+ * Bei jedem Besuch ein anderer (nie zweimal hintereinander derselbe), per Klick ein neuer,
+ * der wie mit der Schreibmaschine erscheint. Ohne JavaScript steht der erste Spruch da.
+ */
+import { thoughts } from '../content/site';
+
+const [first] = thoughts.items;
+---
+
+<section class="thought" aria-labelledby="thought-title">
+  <div class="v-line" aria-hidden="true"></div>
+  <div class="thought__inner container--text">
+    <h2 class="thought__eyebrow" id="thought-title">{thoughts.eyebrow}</h2>
+    <span class="thought__mark" aria-hidden="true">„</span>
+    <blockquote class="thought__quote">
+      <p data-thought={JSON.stringify(thoughts.items)} aria-live="polite">{first}</p>
+    </blockquote>
+    <p class="thought__sig">– {thoughts.signature}</p>
+    <button class="btn btn--sm thought__next" type="button" data-thought-next hidden>
+      {thoughts.next} <span class="thought__spin" aria-hidden="true">↻</span>
+    </button>
+  </div>
+</section>
+
+<script>
+  const LAST_KEY = 'oba-thought';
+  const TYPE_MS = 32;
+
+  const el = document.querySelector<HTMLElement>('[data-thought]');
+  const button = document.querySelector<HTMLButtonElement>('[data-thought-next]');
+
+  if (el && button) {
+    const items: string[] = JSON.parse(el.dataset.thought ?? '[]');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let current = -1;
+    let timer = 0;
+
+    const pick = () => {
+      let last = current;
+      if (last < 0) {
+        try {
+          last = Number(localStorage.getItem(LAST_KEY) ?? -1);
+        } catch {
+          // Speicher nicht verfügbar – dann eben ganz zufällig
+        }
+      }
+      let index = Math.floor(Math.random() * items.length);
+      if (index === last) index = (index + 1) % items.length;
+      try {
+        localStorage.setItem(LAST_KEY, String(index));
+      } catch {
+        // ignorieren
+      }
+      return index;
+    };
+
+    const show = (typed: boolean) => {
+      current = pick();
+      const text = items[current];
+      window.clearTimeout(timer);
+      if (!typed || reduced) {
+        el.textContent = text;
+        return;
+      }
+      // Schreibmaschine: Screenreader bekommen den ganzen Satz auf einmal
+      el.setAttribute('aria-label', text);
+      let chars = 0;
+      const tick = () => {
+        chars++;
+        el.textContent = text.slice(0, chars);
+        if (chars < text.length) timer = window.setTimeout(tick, TYPE_MS);
+        else el.removeAttribute('aria-label');
+      };
+      tick();
+    };
+
+    show(false);
+    button.hidden = false;
+    button.addEventListener('click', () => {
+      button.classList.remove('is-turning');
+      void button.offsetWidth;
+      button.classList.add('is-turning');
+      show(true);
+    });
+  }
+</script>
+
+<style>
+  .thought {
+    padding-bottom: clamp(4.5rem, 10vw, 8rem);
+    text-align: center;
+  }
+  .thought__inner {
+    display: grid;
+    justify-items: center;
+  }
+  .thought__eyebrow {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-weight: var(--w-regular);
+    font-size: 1rem;
+    color: var(--c-ink-soft);
+  }
+  .thought__mark {
+    margin-top: 1.25rem;
+    height: 0.55em;
+    font-family: var(--f-display);
+    font-size: clamp(4rem, 3rem + 4vw, 6rem);
+    line-height: 0;
+    /* Minimal: schwarz, Louder: Orange */
+    color: var(--c-ink);
+  }
+  .thought__quote {
+    margin: 0.5rem 0 0;
+  }
+  .thought__quote p {
+    /* Platz für zwei Zeilen, damit beim Wechsel nichts springt */
+    min-height: 2.5em;
+    max-width: 24ch;
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: var(--fs-h2-lg);
+    line-height: 1.25;
+    letter-spacing: var(--ls-display);
+    color: var(--c-heading);
+    text-wrap: balance;
+  }
+  /* gleiche Schrift wie „Eine gute Marke erkennt man nicht nur.“ auf der Croissant-Seite */
+  .thought__sig {
+    margin-top: 1.25rem;
+    font-family: var(--f-body);
+    font-size: 0.8125rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--c-ink);
+  }
+  .thought__next {
+    margin-top: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .thought__spin {
+    display: inline-block;
+    font-size: 1.15em;
+  }
+  .thought__next.is-turning .thought__spin {
+    animation: thought-turn 0.6s var(--ease);
+  }
+  @keyframes thought-turn {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  :global(:root[data-design='louder']) .thought__eyebrow {
+    font-family: var(--f-bold);
+    font-style: normal;
+    text-transform: lowercase;
+    letter-spacing: 1px;
+    color: #000;
+  }
+  :global(:root[data-design='louder']) .thought__mark {
+    font-family: var(--f-bold);
+    color: var(--c-accent);
+  }
+  :global(:root[data-design='louder']) .thought__quote p {
+    font-family: var(--f-bold);
+    font-size: var(--fs-h2);
+    line-height: 1.15;
+    letter-spacing: 1px;
+    text-transform: lowercase;
+  }
+</style>

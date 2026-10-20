@@ -3,25 +3,43 @@ import { hero } from '../content/site';
 import HeroPicture from './HeroPicture.astro';
 import Navigation from './Navigation.astro';
 import DesignSwitch from './DesignSwitch.astro';
+import { entdecken } from '../content/entdecken';
+
+interface Props {
+  /** 'entdecken': Text aus dem Header der Landingpage (Test-Startseite /startseite-neu/) */
+  text?: 'home' | 'entdecken';
+}
+const { text = 'home' } = Astro.props;
+const e = entdecken.hero;
 ---
 
-<header class="hero" id="top">
+<header class:list={['hero', { 'hero--entdecken': text === 'entdecken' }]} id="top">
   <div class="hero__media">
     <HeroPicture />
   </div>
 
-  <Navigation />
+  <Navigation logoHref={text === 'entdecken' ? '#top' : undefined} />
 
   <div class="hero__badge">
     <DesignSwitch variant="twins" />
   </div>
 
-  <div class="hero__content parallax-hero">
-    <h1 class="hero__title">
-      <Fragment set:html={hero.titleHtml} /><sup aria-hidden="true">²</sup>
-    </h1>
-    <p class="hero__sub" set:html={hero.subtitleHtml} />
-  </div>
+  {
+    text === 'entdecken' ? (
+      <div class="hero__content hero__content--entdecken parallax-hero">
+        <a class="hero__brand" href="/">Online <em>Boutique</em> Agentur<sup aria-hidden="true">2</sup></a>
+        <h1 class="hero__title" set:html={e.titleHtml} />
+        <p class="hero__sub">{e.subHome}</p>
+      </div>
+    ) : (
+      <div class="hero__content parallax-hero">
+        <h1 class="hero__title">
+          <Fragment set:html={hero.titleHtml} /><sup aria-hidden="true">²</sup>
+        </h1>
+        <p class="hero__sub" set:html={hero.subtitleHtml} />
+      </div>
+    )
+  }
 </header>
 
 <style>
@@ -123,6 +141,102 @@ import DesignSwitch from './DesignSwitch.astro';
     color: #3f3f3f;
   }
 
+  /* ---------- Text der Landingpage (Test-Startseite) ---------- */
+  .hero__content--entdecken {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: center;
+    width: min(100%, 52rem);
+    margin-inline: auto;
+  }
+  /* Bildausschnitt etwas höher: Köpfe rücken nach oben, mehr Platz für den Text darunter */
+  .hero--entdecken .hero__media :global(img) {
+    height: calc(100% + 9vh);
+    margin-top: -9vh;
+  }
+
+  /* tiefer gesetzt, damit der längere Text nicht über den Gesichtern steht */
+  .hero--entdecken .hero__content {
+    padding-bottom: clamp(3rem, 8vh, 5.5rem);
+  }
+  .hero__brand {
+    font-family: var(--f-display);
+    font-size: 1.05rem;
+    text-decoration: none;
+  }
+  /* ² gut erkennbar (bei 0.5em in der Serifenschrift kaum sichtbar) */
+  .hero__brand sup {
+    font-size: 0.6em;
+    vertical-align: 0.75em;
+  }
+  .hero__content--entdecken .hero__title {
+    line-height: 1.12;
+  }
+  .hero__content--entdecken .hero__sub {
+    max-width: 38rem;
+    margin-top: 0;
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+  .hero__btn {
+    margin-top: 0.5rem;
+    border-color: currentColor;
+    color: inherit;
+    text-shadow: none;
+  }
+  .hero__btn:hover {
+    background: #fff;
+    border-color: #fff;
+    color: #000;
+  }
+  :global(:root[data-design='louder']) .hero__content--entdecken {
+    justify-items: start;
+    padding-top: clamp(7rem, 16vh, 10rem);
+  }
+  /* Louder: Text bleibt links neben den Zwillingen, nicht über den Gesichtern */
+  @media (min-width: 48rem) {
+    /* Design-Typ-Switch rechts unten (bei den Händen), links steht der Text – nicht vor den Gesichtern */
+    :global(:root[data-design='louder']) .hero--entdecken .hero__badge {
+      top: auto;
+      bottom: clamp(2.5rem, 8vh, 5rem);
+      left: auto;
+      right: clamp(1rem, 8vw, 9rem);
+    }
+    :global(:root[data-design='louder']) .hero__content--entdecken .hero__title,
+    :global(:root[data-design='louder']) .hero__content--entdecken .hero__sub {
+      max-width: min(30rem, 36vw);
+    }
+  }
+  :global(:root[data-design='louder']) .hero__brand {
+    font-family: var(--f-bold);
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    color: var(--c-heading);
+  }
+  :global(:root[data-design='louder']) .hero__brand em {
+    font-style: normal;
+  }
+  :global(:root[data-design='louder']) .hero__content--entdecken .hero__title {
+    font-size: clamp(2.6rem, 1.6rem + 4vw, 4.75rem);
+    line-height: 1.05;
+    letter-spacing: 1px;
+    text-transform: lowercase;
+    color: #000;
+  }
+  :global(:root[data-design='louder']) .hero__content--entdecken .hero__title :global(em) {
+    color: var(--c-heading);
+  }
+  :global(:root[data-design='louder']) .hero__btn {
+    border-color: var(--c-accent);
+    background: var(--c-accent);
+    color: #000;
+  }
+  :global(:root[data-design='louder']) .hero__btn:hover {
+    border-color: #000;
+    background: #000;
+    color: var(--c-accent);
+  }
+
   @media (max-width: 47.99rem) {
     .hero__badge {
       top: auto;
@@ -131,8 +245,17 @@ import DesignSwitch from './DesignSwitch.astro';
       right: var(--gutter);
       --twins-size: 3.5rem;
     }
+    .hero--entdecken .hero__content,
+    :global(:root[data-design='louder']) .hero--entdecken .hero__content {
+      padding-bottom: 7.5rem;
+    }
+    .hero--entdecken .hero__title,
+    :global(:root[data-design='louder']) .hero__content--entdecken .hero__title {
+      font-size: clamp(2.1rem, 9vw, 2.5rem);
+    }
+    /* Minimal: Headline + Subline etwas höher, mehr Luft zum Design-Typ-Switch */
     .hero__content {
-      padding-bottom: 9rem;
+      padding-bottom: 11rem;
     }
     :global(:root[data-design='louder']) .hero__content {
       align-self: end;

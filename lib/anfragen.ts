@@ -11,20 +11,22 @@ export interface Anfrage {
   gelesen: boolean;
   name: string;
   firma: string;
-  /** Optional: Website der anfragenden Marke */
-  webseite?: string;
   email: string;
   telefon: string;
   nachricht: string;
   /** Designwelt beim Absenden: minimal, louder oder unbekannt (z. B. ohne JavaScript) */
   design?: 'minimal' | 'louder' | 'unbekannt';
-  /** Herkunft: normales Kontaktformular oder Croissant-Einladung (/croissant) */
-  quelle?: 'website' | 'croissant';
+  /** Herkunft: normales Kontaktformular, Croissant-Einladung (/das-croissant-prinzip) oder angenommenes Angebot (/angebot/…) */
+  quelle?: 'website' | 'croissant' | 'angebot';
+  /** Nur Angebot: Kennung (slug) des angenommenen Angebots */
+  angebot?: string;
   /** Nur Croissant-Einladung: Wo frühstücken wir? / Wann passt es? */
   format?: string;
   wunschtermin?: string;
-  /** Nur Croissant-Einladung: im Quiz angetippte Aussagen */
-  quiz?: string[];
+  /** Nur Croissant-Einladung: Website der Marke (optional) */
+  webseite?: string;
+  /** Nur Croissant-Einladung: im Quiz angetippte Aussagen (eine pro Zeile) */
+  quiz?: string;
   mail: 'gesendet' | 'fehlgeschlagen' | 'nicht eingerichtet';
 }
 

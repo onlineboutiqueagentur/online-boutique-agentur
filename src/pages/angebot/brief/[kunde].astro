@@ -1,0 +1,966 @@
+---
+/**
+ * /angebot/brief/<kunde>/ – Vorschlag 2: das Angebot als persönlicher Brief.
+ * Oben ein Brief an den Kunden, gleich darunter das Angebot mit „Angebot annehmen“.
+ * Weitere Infos (Warum Onepager, Aufbau, Ablauf, Technik, Extras) zum gezielten Aufklappen,
+ * zum Schluss „Das sind wir“ als eigene Sektion wie auf /angebot/<kunde>/.
+ * Gleiche Daten und Texte wie /angebot/<kunde>/ (src/content/angebot.ts), nicht indexiert.
+ */
+import Base from '../../../layouts/Base.astro';
+import Footer from '../../../components/Footer.astro';
+import CroissantArt from '../../../components/CroissantArt.astro';
+import { Picture } from 'astro:assets';
+import { agency, intro } from '../../../content/site';
+import { angebot as t, angebote, angebotImages as img, preise as standardPreise, euro, type Angebot } from '../../../content/angebot';
+import { datum } from '../../../../lib/angebot-daten';
+
+export function getStaticPaths() {
+  /** Platzhalter für die Vorlage – functions/angebot/[[path]].ts ersetzt alle data-a-Stellen mit den CRM-Daten. */
+  const vorlage: Angebot = {
+    slug: '_vorlage',
+    anrede: 'Vorname',
+    firma: 'Firma',
+    name: 'Name',
+    email: 'mail@example.at',
+    zusatzSeiten: 1,
+    zusatzSeitenNotiz: 'Notiz',
+    erstellt: '2026-01-01',
+    gueltigBis: '2026-01-31',
+  };
+  return [...angebote, vorlage].map((a) => ({ params: { kunde: a.slug }, props: { a } }));
+}
+
+const { a } = Astro.props as { a: Angebot };
+const b = t.brief;
+const p = { ...standardPreise, ...a.preise };
+const zusatzSumme = a.zusatzSeiten * p.zusatzSeite;
+const gesamt = p.onepager + zusatzSumme;
+// Überschrift im Team-Abschnitt: „Wir lieben/leben Boutique Agentur.“ wie auf der Startseite (Schreibmaschine)
+const tw = intro.typewriter;
+const twSteps = tw.words.map((word) => ({ word }));
+const extras = [...t.toppings.items].sort((x, y) => b.extras.reihenfolge.indexOf(x.nr) - b.extras.reihenfolge.indexOf(y.nr));
+
+const title = `Für ${a.anrede}: dein Angebot | Online Boutique Agentur`;
+const description = `Ein persönliches Angebot für ${a.firma} von Pia & Nina.`;
+const path = `/angebot/brief/${a.slug}/`;
+---
+
+<Base title={title} description={description} path={path} noindex>
+  <header class="b-head">
+    <a class="b-head__brand" href="/">Online <em>Boutique</em> Agentur<sup aria-hidden="true">²</sup></a>
+    <button type="button" class="btn btn--sm" data-print>{t.final.pdf}</button>
+  </header>
+
+  <main id="inhalt" tabindex="-1" class="brief">
+    <!-- 1 · Der Brief -->
+    <article class="b-letter" aria-label={`Brief an ${a.anrede}`} data-a="brief">
+      <h1 class="b-letter__hello" data-a="brief-hallo">{a.briefAnrede || b.anrede(a.anrede)}</h1>
+      <!-- erster Absatz: persönlicher Gruß aus dem CRM, sonst der Standardtext (FIRMA wird ersetzt) -->
+      <p data-a="brief-gruss" data-standard={b.absaetze('FIRMA')[0]} set:html={a.grussHtml || b.absaetze(a.firma)[0]} />
+      {b.absaetze(a.firma).slice(1).map((text) => <p>{text}</p>)}
+
+      <div class="b-letter__sign">
+        <figure class="b-letter__photo">
+          <Picture src={img.gruss.src} alt={img.gruss.alt} widths={[240, 480]} sizes="7.5rem" formats={['avif', 'webp']} loading="eager" decoding="async" />
+        </figure>
+        <p>{b.gruss},<br /><span class="b-letter__names">Pia & Nina</span></p>
+      </div>
+    </article>
+
+    <!-- 2 · Das Angebot -->
+    <section class="b-offer" id="annehmen" aria-labelledby="b-offer">
+      <!-- nur im PDF: Logo und Absender -->
+      <div class="b-print b-print__head" aria-hidden="true">
+        <p class="b-print__brand">Online <em>Boutique</em> Agentur<sup>²</sup></p>
+        <p class="b-print__from">
+          {agency.name}<br />
+          {agency.address.street}<br />
+          {agency.address.zip} {agency.address.city}, {agency.address.countryName}
+        </p>
+      </div>
+      <div class="b-offer__card">
+        <h2 class="b-offer__title" id="b-offer">{b.angebotTitel} <span class="b-offer__firma" data-a="firma">{a.firma}</span><span class="b-offer__date" data-a="datum">{datum(a.erstellt)}</span></h2>
+
+        <dl class="b-lines">
+          <div class="b-line b-line--concept">
+            <dt class="b-concept">
+              <span class="b-concept__name">{t.eyebrow}.</span>
+              <span class="b-concept__tag">{t.tagline}</span>
+            </dt>
+            <dd data-a="onepager">{euro(p.onepager)}</dd>
+            <dd class="b-incl">
+              <p class="b-print b-print__label">{b.pdf.inklusive}</p>
+              <ul role="list" class="b-incl__list">
+                {b.inklusive.map((item) => <li><a href="#zusammenarbeit" data-open-topic>{item}</a></li>)}
+              </ul>
+            </dd>
+          </div>
+          {
+            a.zusatzSeiten > 0 && (
+              <div class="b-line" data-a="zusatz">
+                <dt>
+                  <span data-a="zusatz-text">{t.preis.zusatz(a.zusatzSeiten)}</span>
+                  {a.zusatzSeitenNotiz && <span class="b-line__note" data-a="zusatz-notiz">{a.zusatzSeitenNotiz}</span>}
+                </dt>
+                <dd data-a="zusatz-summe">{euro(zusatzSumme)}</dd>
+              </div>
+            )
+          }
+          <div class="b-line b-line--total">
+            <dt>{b.gesamtTitel}</dt>
+            <dd data-a="gesamt">{euro(gesamt)}</dd>
+          </div>
+        </dl>
+
+
+
+
+        <form class="form b-form" action="/api/contact" method="post" novalidate data-contact-form>
+          <div data-form-fields>
+            <input type="hidden" name="name" value={a.name} data-a="name" />
+            <input type="hidden" name="company" value={a.firma} data-a="company" />
+            <input type="hidden" name="email" value={a.email} data-a="email" />
+            <input type="hidden" name="message" value={`${t.eyebrow} · ${euro(gesamt)} · ${a.zusatzSeiten} Zusatzseite(n)`} data-message data-a="message" />
+            <div class="form__hp" aria-hidden="true">
+              <label for="b-website">Website</label>
+              <input id="b-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+            <input type="hidden" name="ts" value="" data-ts />
+            <input type="hidden" name="quelle" value="angebot" />
+            <input type="hidden" name="angebot" value={a.slug} data-a="slug" />
+            <input type="hidden" name="design" value="" data-design-field />
+            <p class="b-picked" hidden data-picked>{b.extras.gewaehlt} <span data-picked-list></span></p>
+            <p class="b-small b-pick-hint" data-pick-hint set:html={b.extras.hinweis} />
+            <button class="btn btn--solid b-form__btn" type="submit" data-label={t.final.form.submit} data-sending={t.final.form.sending}>{t.final.form.submit}</button>
+          </div>
+          <div class="form__status" role="status" aria-live="polite" tabindex="-1" data-form-status>
+            <p class="form__msg form__msg--ok b-form__ok" hidden data-ok>{t.final.form.success}</p>
+            <p class="form__msg form__msg--err" hidden data-err>{t.final.form.error}</p>
+          </div>
+        </form>
+
+        <!-- nur im PDF: Timing und Unterschrift -->
+        <div class="b-print b-print__timing">
+          <p class="b-print__label">{b.golive.titel}</p>
+          <p>{b.golive.text}</p>
+        </div>
+        <div class="b-print b-print__sign">
+          <p class="b-print__label">{b.pdf.angenommen}</p>
+          <div class="b-print__sign-lines">
+            <span>{b.pdf.ort}</span>
+            <span>{b.pdf.unterschrift}</span>
+          </div>
+        </div>
+
+        <p class="b-direct">
+          Noch Fragen?<br /><a href={agency.whatsapp} target="_blank" rel="noopener">WhatsApp</a> ·
+          <a href={`tel:${agency.phoneE164}`}>{agency.phone}</a> ·
+          <a href={`mailto:${agency.email}`}>E-Mail</a>
+        </p>
+        <p class="b-small b-valid" data-a="gueltig">{t.final.gueltig(datum(a.gueltigBis))}</p>
+        <p class="b-small b-tax">{t.preis.steuer}</p>
+      </div>
+      <!-- nur im PDF: Kontaktdaten -->
+      <p class="b-print b-print__foot" aria-hidden="true">
+        {agency.name} · Pia & Nina · {agency.phone} · {agency.email} · {agency.url.replace('https://', '')}
+      </p>
+    </section>
+
+    <!-- 3 · Mehr Infos zum Aufklappen -->
+    <section class="b-more" aria-labelledby="b-more">
+      <h2 class="b-more__title" id="b-more">{b.mehrTitel}</h2>
+
+      <div class="b-topics">
+        <details class="b-topic">
+          <summary>{b.themen.warum}</summary>
+          <div class="b-topic__body">
+            <p set:html={b.konzept.text} />
+            <ul role="list" class="b-points">
+              {
+                b.konzept.punkte.map(([name, text]) => (
+                  <li>
+                    <b>{name}</b> {text}
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </details>
+
+        <details class="b-topic" id="zusammenarbeit">
+          <summary>{b.themen.ablauf}</summary>
+          <div class="b-topic__body">
+            <ol role="list" class="b-steps">
+              {
+                t.ablauf.steps.map(([name, text], i) => (
+                  <li>
+                    <span class="b-steps__nr" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                    <span><b>{name}</b> {text}</span>
+                  </li>
+                ))
+              }
+            </ol>
+          </div>
+        </details>
+
+        <details class="b-topic">
+          <summary>{b.themen.technik}</summary>
+          <div class="b-topic__body">
+            <p set:html={t.technik.paragraphs[0]} />
+            <p>{b.technikSorglos}</p>
+            <p><b>{t.technik.domain.title}</b> {t.technik.domain.text} {t.preis.laufend.domainText}</p>
+          </div>
+        </details>
+
+        <details class="b-topic">
+          <summary>{b.golive.titel}</summary>
+          <div class="b-topic__body">
+            <p>{b.golive.text}</p>
+          </div>
+        </details>
+
+        <details class="b-topic" id="extras">
+          <summary>{b.themen.toppings}</summary>
+          <div class="b-topic__body">
+            <p>{t.toppings.text}</p>
+            <ul role="list" class="b-toppings">
+              {
+                extras.map((item) => (
+                  <li class:list={['b-topping', { 'is-tipp': (a.empfohlen ?? []).includes(item.nr) }]} data-brief-topping={item.nr}>
+                    <span class="b-topping__head" data-brief-tipp={item.nr} data-tipp-text={t.toppings.empfohlen}>
+                      <b>{item.title}</b>
+                      {(a.empfohlen ?? []).includes(item.nr) && <span class="b-topping__tipp">{t.toppings.empfohlen}</span>}
+                    </span>
+                    <span>{item.text}</span>
+                    <span class="b-topping__price">{item.preis}</span>
+                    <label class="b-topping__pick">
+                      <input type="checkbox" data-extra={`${item.title} (${item.preis})`} />
+                      {b.extras.anhaken}
+                    </label>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </details>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- 4 · Das sind wir -->
+  <section class="b-team-block" aria-labelledby="b-team">
+    <div class="v-line" aria-hidden="true"></div>
+    <div class="b-team container">
+      <figure class="b-team__media reveal">
+        <Picture src={img.teamFarbe.src} alt={img.teamFarbe.alt} widths={[500, 780]} sizes="(min-width: 48rem) 32rem, 90vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
+      </figure>
+      <div class="b-team__text">
+        <h2 class="heading b-team__title" id="b-team">
+          <span class="sr-only">{intro.headingStatic}</span>
+          <span aria-hidden="true" data-typewriter={JSON.stringify(twSteps)}>
+            {tw.before} <span data-tw-word>{tw.words[1]}</span><span class="cursor">|</span>{tw.after}
+          </span>
+        </h2>
+        {t.team.paragraphs.map((html) => <p set:html={html} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · Zum Schluss: unser Statement -->
+  <section class="b-statement" aria-label="Unser Statement">
+    <div class="v-line" aria-hidden="true"></div>
+    <CroissantArt draw class="b-statement__art" label="Feine Linienzeichnung eines Croissants" />
+    <p class="b-statement__text">
+      <span class="b-statement__lead">{b.statement.lead}</span>
+      <span class="b-statement__lead">{b.statement.zeilen.map((z, i) => <>{i > 0 && <br />}{z}</>)}</span>
+      <em>{b.statement.schluss}</em>
+    </p>
+  </section>
+
+  <Footer contact={false} />
+</Base>
+
+<script>
+  import '../../../scripts/contact-form';
+  import '../../../scripts/typewriter';
+
+  // Angehakte Extras gehen beim „Angebot annehmen“ in der Nachricht mit
+  const message = document.querySelector<HTMLInputElement>('[data-message]');
+  const picked = document.querySelector<HTMLElement>('[data-picked]');
+  const pickedList = document.querySelector<HTMLElement>('[data-picked-list]');
+  const hint = document.querySelector<HTMLElement>('[data-pick-hint]');
+  const extras = [...document.querySelectorAll<HTMLInputElement>('[data-extra]')];
+  const basis = message?.value ?? '';
+  const aktualisieren = () => {
+    const gewaehlt = extras.filter((x) => x.checked).map((x) => x.dataset.extra ?? '');
+    if (message) message.value = gewaehlt.length ? `${basis} · Extras: ${gewaehlt.join(', ')}` : basis;
+    if (pickedList) pickedList.textContent = gewaehlt.map((g) => g.replace(/ \(.*\)$/, '')).join(', ');
+    if (picked) picked.hidden = gewaehlt.length === 0;
+    if (hint) hint.hidden = gewaehlt.length > 0;
+    extras.forEach((x) => x.closest('.b-topping')?.classList.toggle('is-picked', x.checked));
+  };
+  extras.forEach((x) => x.addEventListener('change', aktualisieren));
+  aktualisieren();
+
+  // Leistungs-Buttons öffnen unten „Zusammenarbeit“ und springen hin
+  document.querySelectorAll<HTMLAnchorElement>('[data-open-topic], [data-pick-hint] a').forEach((link) =>
+    link.addEventListener('click', (e) => {
+      const ziel = document.querySelector<HTMLDetailsElement>(link.hash);
+      if (!ziel) return;
+      e.preventDefault();
+      ziel.open = true;
+      ziel.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+      ziel.querySelector('summary')?.focus({ preventScroll: true });
+    }),
+  );
+  document.querySelectorAll<HTMLButtonElement>('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));
+</script>
+
+<style>
+  .b-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: min(100% - 2 * var(--gutter), 44rem);
+    margin: 0 auto;
+    padding: 1.25rem 0;
+  }
+  .b-head__brand {
+    font-family: var(--f-display);
+    font-size: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  .brief {
+    width: min(100% - 2 * var(--gutter), 44rem);
+    margin: 0 auto;
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+
+  /* ---------- Brief ---------- */
+  .b-letter {
+    padding: clamp(1.75rem, 5vw, 3.5rem);
+    background: var(--c-card);
+    border-radius: var(--radius);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 40px rgb(0 0 0 / 0.05);
+    font-size: 0.9375rem;
+    line-height: 1.75;
+  }
+  .b-letter p + p {
+    margin-top: 1em;
+  }
+  .b-letter__hello {
+    margin: 0 0 1rem;
+    font-family: var(--f-display);
+    font-style: italic;
+    font-weight: var(--w-regular);
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 1.875rem);
+    line-height: 1.3;
+  }
+  .b-letter__sign {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2.25rem;
+  }
+  .b-letter__photo {
+    flex: none;
+    width: 7.5rem;
+  }
+  .b-letter__photo :global(img) {
+    width: 7.5rem;
+    height: 7.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .b-letter__names {
+    font-family: var(--f-display);
+    font-size: 1.375rem;
+  }
+
+  /* ---------- Angebot ---------- */
+  .b-offer {
+    margin-top: clamp(1.5rem, 4vw, 2.5rem);
+  }
+  .b-offer__card {
+    padding: clamp(1.75rem, 5vw, 3rem);
+    padding-bottom: clamp(1.25rem, 3vw, 1.75rem);
+    border: 1px solid currentColor;
+    border-radius: var(--radius);
+  }
+  .b-concept {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .b-concept__name {
+    font-family: var(--f-display);
+    font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+    line-height: 1.2;
+    color: var(--c-heading, inherit);
+  }
+  .b-concept__tag {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 0.875rem;
+    color: var(--c-ink-soft);
+  }
+  /* klein, rechts oben in der Ecke */
+  .b-offer__title {
+    margin: -0.75rem -0.75rem 3.5rem 0;
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: 0.875rem;
+    line-height: 1.35;
+    text-align: right;
+    color: var(--c-ink-soft);
+  }
+  .b-offer__firma {
+    display: block;
+  }
+  .b-offer__date {
+    display: block;
+    margin-top: 0.35rem;
+    font-family: var(--f-body);
+    font-size: 0.75rem;
+  }
+  .b-lines {
+    display: grid;
+  }
+  .b-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid rgb(0 0 0 / 0.12);
+  }
+  .b-line dd {
+    white-space: nowrap;
+  }
+  .b-line__note {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--c-ink-soft);
+  }
+  .b-line--total {
+    border-bottom: 0;
+    padding-top: 1.1rem;
+    padding-bottom: 0.35rem;
+    font-size: 1.1875rem;
+    font-weight: var(--w-bold);
+  }
+  .b-line--total dt {
+    white-space: nowrap;
+  }
+  .b-small {
+    font-size: 0.8125rem;
+    color: var(--c-ink-soft);
+  }
+  /* hängt direkt unter den Gesamtkosten, danach mehr Luft */
+  .b-tax {
+    margin-top: 0.25rem;
+    text-align: center;
+  }
+  /* All inclusive direkt unter dem Konzept, volle Breite */
+  .b-line--concept {
+    flex-wrap: wrap;
+    padding-bottom: 1.5rem;
+  }
+  .b-line--concept > dt {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .b-line .b-incl {
+    flex-basis: 100%;
+    margin-inline-start: 0;
+    margin-top: 1.25rem;
+    white-space: normal;
+  }
+  .b-incl__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .b-incl__list a {
+    display: block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    background: var(--c-card);
+    font-size: 0.875rem;
+    color: inherit;
+    text-decoration: none;
+    transition: background var(--t-fast) var(--ease);
+  }
+  .b-incl__list a:hover {
+    background: var(--c-ink);
+    color: var(--c-card);
+  }
+  .b-incl__list a:focus-visible {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 2px;
+  }
+  .b-form {
+    margin-top: 2.75rem;
+    text-align: center;
+  }
+  /* Button nur so breit wie der Schriftzug, mittig */
+  .b-form__btn {
+    display: flex;
+    width: fit-content;
+    margin-inline: auto;
+    min-height: 56px;
+    padding-inline: 2.5rem;
+    font-size: 1rem;
+  }
+  .b-form__ok {
+    white-space: pre-line;
+    text-align: center;
+  }
+  .b-direct {
+    margin-top: 2rem;
+    text-wrap: balance;
+    text-align: center;
+    font-size: 0.9375rem;
+  }
+  .b-valid {
+    margin-top: 1.75rem;
+    text-align: center;
+    font-size: 0.75rem;
+  }
+
+  /* ---------- Mehr erfahren ---------- */
+  .b-more {
+    margin-top: clamp(3rem, 7vw, 4.5rem);
+  }
+  .b-more__title {
+    margin-bottom: 1.25rem;
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  }
+  .b-topics {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .b-topic {
+    background: var(--c-card);
+    border-radius: var(--radius);
+  }
+  .b-topic summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1.4rem;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--f-display);
+    font-size: 1.1875rem;
+  }
+  .b-topic summary::-webkit-details-marker {
+    display: none;
+  }
+  .b-topic summary::after {
+    content: '+';
+    flex: none;
+    font-family: var(--f-body);
+    font-size: 1.5rem;
+    line-height: 1;
+    transition: transform var(--t-fast) var(--ease);
+  }
+  .b-topic[open] summary::after {
+    transform: rotate(45deg);
+  }
+  .b-topic summary:focus-visible {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius);
+  }
+  .b-topic__body {
+    padding: 0 1.4rem 1.4rem;
+    line-height: 1.7;
+  }
+  .b-topic__body p + p,
+  .b-topic__body ul + p,
+  .b-topic__body p + ul {
+    margin-top: 0.9em;
+  }
+  .b-points,
+  .b-steps,
+  .b-toppings {
+    display: grid;
+    gap: 0.75rem;
+  }
+  /* senkrechter Strich über dem Punkt, wie über den Headlines */
+  .b-points li::before {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 2rem;
+    margin: 0.5rem auto 0.75rem;
+    background: currentColor;
+  }
+  .b-steps li {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 0.5rem;
+  }
+  .b-steps__nr {
+    font-family: var(--f-display);
+    color: var(--c-ink-soft);
+  }
+  .b-topping {
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius);
+    background: var(--c-bg);
+  }
+  .b-topping__pick {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+  .b-topping__pick input {
+    width: 1.125rem;
+    height: 1.125rem;
+    accent-color: var(--c-ink, #111);
+    cursor: pointer;
+  }
+  .b-topping.is-picked {
+    outline: 2px solid currentColor;
+  }
+  .b-picked {
+    margin-bottom: 0.75rem;
+    font-size: 0.9375rem;
+    font-weight: var(--w-bold);
+  }
+  .b-pick-hint :global(a) {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+  .b-pick-hint {
+    margin-bottom: 1.75rem;
+  }
+  .b-topping.is-tipp {
+    outline: 1px solid currentColor;
+  }
+  .b-topping__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .b-topping__tipp {
+    padding: 0.1rem 0.6rem;
+    border-radius: 999px;
+    background: var(--c-accent);
+    font-size: 0.75rem;
+  }
+  .b-topping__price {
+    font-size: 0.875rem;
+    color: var(--c-ink-soft);
+  }
+  /* ---------- Das sind wir (wie /angebot/<kunde>/) ---------- */
+  .b-team-block {
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+  .b-team {
+    display: grid;
+    gap: clamp(2rem, 5vw, 3.5rem);
+    align-items: center;
+    width: min(100% - 2 * var(--gutter), 72rem);
+  }
+  .b-team__media {
+    margin: 0 auto;
+    width: min(100%, 32rem);
+  }
+  .b-team__media :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+  }
+  .b-team__text {
+    display: grid;
+    gap: 0.9rem;
+  }
+  .b-team__title {
+    text-align: left;
+    font-size: var(--fs-typing);
+    line-height: 1.54;
+  }
+  .b-statement {
+    width: min(100% - 2 * var(--gutter), 46rem);
+    margin: 0 auto;
+    padding: 0 0 clamp(3rem, 7vw, 5rem);
+    text-align: center;
+  }
+  .b-statement .v-line {
+    margin-top: 0;
+    margin-bottom: clamp(1.25rem, 3vw, 2rem);
+  }
+  .b-statement :global(.b-statement__art) {
+    width: min(45%, 10rem);
+    margin: 0 auto clamp(1rem, 3vw, 1.5rem);
+    color: var(--c-ink);
+  }
+  /* beim Drüberfahren wackelt das Croissant – wie auf „Das Croissant-Prinzip“ */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .b-statement :global(.b-statement__art:hover) {
+      animation: b-wiggle 0.9s var(--ease);
+    }
+  }
+  @keyframes b-wiggle {
+    0%,
+    100% {
+      transform: none;
+    }
+    25% {
+      transform: rotate(-8deg) scale(1.04);
+    }
+    50% {
+      transform: rotate(5deg) scale(1.04);
+    }
+    75% {
+      transform: rotate(-3deg) scale(1.02);
+    }
+  }
+  .b-statement__text {
+    font-family: var(--f-display);
+    font-size: clamp(1.1875rem, 1rem + 0.8vw, 1.625rem);
+    line-height: 1.35;
+    text-wrap: balance;
+  }
+  .b-statement__lead {
+    display: block;
+    margin: 0 auto 0.4em;
+  }
+  @media (min-width: 48rem) {
+    .b-team {
+      grid-template-columns: 1.1fr 1fr;
+    }
+  }
+
+  .b-print {
+    display: none;
+  }
+  /* Im PDF nur der Angebotskasten, mit Logo/Absender oben und Kontakt unten */
+  @media print {
+    @page {
+      size: A4;
+      margin: 14mm 18mm 12mm;
+    }
+    :global(html),
+    :global(body) {
+      background: #fff;
+    }
+    .brief,
+    .b-offer {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      font-size: 10.5pt;
+    }
+    /* A4-Seite: Kopf, Angebot, Fuß */
+    .b-offer {
+      display: flex;
+      flex-direction: column;
+      min-height: 266mm;
+      break-inside: avoid;
+    }
+    .b-print {
+      display: block;
+    }
+    .b-print__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 2rem;
+      padding-bottom: 5mm;
+      border-bottom: 1px solid #000;
+    }
+    .b-print__brand {
+      font-family: var(--f-display);
+      font-size: 17pt;
+      line-height: 1;
+    }
+    .b-print__from {
+      font-size: 8pt;
+      line-height: 1.5;
+      text-align: right;
+      color: var(--c-ink-soft);
+    }
+    .b-print__label {
+      margin-bottom: 2.5mm;
+      font-size: 7.5pt;
+      font-weight: var(--w-bold);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--c-ink-soft);
+    }
+    .b-print__foot {
+      margin-top: 6mm;
+      padding-top: 3mm;
+      border-top: 1px solid rgb(0 0 0 / 0.15);
+      font-size: 7.5pt;
+      white-space: nowrap;
+      text-align: center;
+      color: var(--c-ink-soft);
+    }
+    /* kein Kasten: das Blatt selbst ist das Angebot */
+    .b-offer__card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+    }
+    /* Titel groß und links, mit senkrechtem Strich wie bei den Headlines */
+    .b-offer__title {
+      margin: 0 0 8mm;
+      padding-top: 20mm;
+      position: relative;
+      font-size: 9pt;
+      text-align: left;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-family: var(--f-body);
+      font-weight: var(--w-bold);
+    }
+    .b-offer__title::before {
+      content: '';
+      position: absolute;
+      top: 7mm;
+      left: 0;
+      height: 10mm;
+      border-left: 1px solid #000;
+    }
+    .b-offer__firma {
+      margin-top: 2mm;
+      font-family: var(--f-display);
+      font-weight: var(--w-regular);
+      font-size: 24pt;
+      line-height: 1.2;
+      letter-spacing: 0;
+      text-transform: none;
+      color: #000;
+    }
+    .b-offer__date {
+      margin-top: 2mm;
+      font-size: 8.5pt;
+      font-weight: var(--w-regular);
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .b-lines {
+      border-top: 1px solid rgb(0 0 0 / 0.15);
+    }
+    .b-line {
+      padding: 5mm 0;
+    }
+    .b-concept__name {
+      font-size: 15pt;
+    }
+    .b-concept__tag {
+      font-size: 10pt;
+    }
+    .b-line .b-incl {
+      margin-top: 6mm;
+    }
+    /* Leistungen als zweispaltige Liste statt Buttons */
+    .b-incl__list {
+      display: grid;
+      grid-template-rows: repeat(4, auto);
+      grid-auto-flow: column;
+      gap: 2mm 8mm;
+    }
+    .b-incl__list a {
+      display: flex;
+      gap: 2.5mm;
+      align-items: baseline;
+      padding: 0;
+      border-radius: 0;
+      background: none;
+      font-size: 9.5pt;
+    }
+    .b-incl__list a::before {
+      content: '';
+      flex: none;
+      width: 1.6mm;
+      height: 1.6mm;
+      border-radius: 50%;
+      background: var(--c-accent);
+      transform: translateY(-0.4mm);
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+    /* Gesamtkosten als Band */
+    .b-line--total {
+      margin-top: 4mm;
+      padding: 4mm 5mm;
+      border: 0;
+      border-radius: 2mm;
+      background: var(--c-bg);
+      font-size: 12.5pt;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+    /* dazugebuchte Extras kommen mit ins PDF */
+    .b-form {
+      margin-top: 5mm;
+      text-align: left;
+    }
+    .b-picked {
+      font-size: 9.5pt;
+    }
+    .b-print__timing {
+      margin-top: 8mm;
+      font-size: 9.5pt;
+      line-height: 1.55;
+    }
+    .b-print__timing p:last-child {
+      max-width: 125mm;
+    }
+    .b-print__sign {
+      margin-top: auto;
+      padding-top: 8mm;
+    }
+    .b-print__sign-lines {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 12mm;
+      margin-top: 12mm;
+    }
+    .b-print__sign-lines span {
+      padding-top: 1.5mm;
+      border-top: 1px solid #000;
+      font-size: 7.5pt;
+      color: var(--c-ink-soft);
+    }
+    .b-valid,
+    .b-tax {
+      margin-top: 8mm;
+      text-align: left;
+      font-size: 7.5pt;
+    }
+    .b-tax {
+      margin-top: 0.5mm;
+    }
+    :global(body > *:not(main)),
+    .brief > :not(.b-offer),
+    .b-pick-hint,
+    .b-form__btn,
+    .b-form .form__status,
+    .b-direct {
+      display: none !important;
+    }
+  }
+
+</style>

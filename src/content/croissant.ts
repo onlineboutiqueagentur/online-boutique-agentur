@@ -7,12 +7,16 @@
 import cafeImg from '../assets/images/croissant/croissant-cafe-la-vie-est-belle.jpg';
 import zutatenImg from '../assets/images/croissant/croissant-zutaten-einer-marke.jpg';
 import verpackungImg from '../assets/images/croissant/boutique-croissant-verpackung.jpg';
-import headerImg from '../assets/images/croissant/croissant-goldener-croissant-sonnenlicht.jpg';
-import teamImg from '../assets/images/shared/pia-nina-online-marketing-agentur-oberoesterreich.jpg';
 import fruehstueckImg from '../assets/images/croissant/franzoesisches-fruehstueck-kaffee-croissant.jpg';
+import headerImg from '../assets/images/croissant/croissant-prinzip-butter-croissant-teller-sonnenlicht.jpg';
 
 /** Bilder der Croissant-Seite (Zwischenlösung aus dem Moodboard – später durch echte Fotos ersetzen). */
 export const croissantImages = {
+  /** Header-Bild (breit) – seit 19.10.2026 mit Alt-Text für die Bildersuche */
+  header: {
+    src: headerImg,
+    alt: 'Goldbraunes Butter-Croissant auf einem hellen Keramikteller im warmen Sonnenlicht mit Blätterschatten – Sinnbild für das Croissant-Prinzip der Online Boutique Agentur',
+  },
   cafe: {
     src: cafeImg,
     alt: 'Cappuccino und Croissant auf einem Marmortisch in einem Straßencafé, dazu der Schriftzug „la vie est belle“',
@@ -25,14 +29,6 @@ export const croissantImages = {
     src: verpackungImg,
     alt: 'Croissant in einer Papierverpackung mit dem Aufdruck „The Boutique Croissant – A little extra for your brand“ und einem QR-Code',
   },
-  header: {
-    src: headerImg,
-    alt: 'Goldenes Croissant auf einem hellen Teller im warmen Sonnenlicht',
-  },
-  team: {
-    src: teamImg,
-    alt: 'Nina und Pia, die Gründerinnen der Online Boutique Agentur, lachend in hellen Blazern vor einem Leinenvorhang',
-  },
   fruehstueck: {
     src: fruehstueckImg,
     alt: 'Frühstückstisch mit Kaffeetassen, einem Croissant, Blumen und einem Laptop im Morgenlicht',
@@ -43,17 +39,23 @@ export const croissantSeo = {
   title: 'The Boutique Croissant – ein kleines Extra | Online Boutique Agentur, Linz',
   description:
     'Für ausgewählte Marken bringen Nina & Pia ein Croissant persönlich vorbei – und laden zum Frühstück ein: 30 Minuten Kaffee, Croissant und ein gutes Gespräch über deine Marke. Kostenlos, live oder virtuell.',
-  path: '/croissant/',
+  path: '/das-croissant-prinzip/',
   ogAlt: 'The Boutique Croissant – eine Einladung der Online Boutique Agentur',
 } as const;
 
 /** Startseiten-Teaser – kurz, macht nur neugierig. */
 export const croissantTeaser = {
   eyebrow: 'The Boutique Croissant',
-  title: 'Manchmal beginnt eine gute Zusammenarbeit mit einem kleinen Extra.',
-  textHtml: 'Ein Croissant vielleicht.<br /> Für Marken, bei denen wir das Gefühl haben: <em>Das könnte richtig gut passen.</em>',
-  cta: 'The Boutique Croissant',
-  href: '/croissant/',
+  title: 'Kennst du schon unser Croissant-Prinzip?',
+  text: 'Was ein Croissant mit deiner Marke zu tun hat – und warum genau das deinen Unternehmensauftritt entscheidend verändern kann.',
+  spoiler: 'Achtung kleiner Spoiler: Eine Frühstückseinladung ist inklusive.',
+  cta: 'Entdecke unser Croissant-Prinzip',
+  href: '/das-croissant-prinzip/',
+  /** Texte der runden schwebenden Einladung (Start- und Kontaktseite) */
+  sticky: {
+    label: 'Eine Einladung für dich',
+    meta: '30 Minuten · kostenlos · virtuell',
+  },
 } as const;
 
 export const croissant = {
@@ -66,24 +68,19 @@ export const croissant = {
       titleSecond: 'Jetzt weißt du auch warum.',
     },
     web: {
-      title: 'Hast du Gusto auf ein Croissant bekommen?',
+      title: 'Du hast Gusto auf ein Croissant bekommen?',
     },
     textHtml: 'Wir laden dich zu einem kostenlosen 30-Minuten-Gespräch ein – ein <em>ganz unkompliziertes, virtuelles Frühstück</em>.',
     tagline: '30 Minuten. Ein paar Fragen. Ein frischer Blick auf deine Marke.',
-    steps: [
-      'Wir lernen uns kennen.',
-      'Du erzählst uns von deiner Marke.',
-      'Wir stellen Fragen.',
-      'Wir geben dir erste Gedanken mit.',
-      'Wir schauen gemeinsam, wo Potenzial steckt.',
-    ],
     scroll: 'Warum ein Croissant?',
   },
 
   /** Einstieg nach dem Hero (Text von Nina & Pia, unverändert). Das 🥐 wird als kleine Zeichnung dargestellt. */
   why1: {
     titleBefore: 'Warum ein',
-    titleAfter: 'deinen Unternehmensauftritt verändern kann.',
+    /** Zeile 1 endet nach „deinen“, Zeile 2 ist der Rest – die Headline steht immer auf zwei Zeilen */
+    titleAfter: 'deinen',
+    titleSecondLine: 'Unternehmensauftritt verändern kann.',
     titleText: 'Warum ein Croissant deinen Unternehmensauftritt verändern kann.',
     subHtml: 'Über kleine Genussmomente,<br /> große Gefühle und den Unterschied,<br /> den das gewisse Extra ausmacht.',
   },
@@ -153,7 +150,7 @@ export const croissant = {
       {
         from: 1,
         title: 'Na, da hat wohl jemand ein kleines Bauchgefühl …',
-        text: "Und das täuscht selten. Vielleicht fehlt deiner Marke nur eine Kleinigkeit, damit sie sich wieder richtig nach dir anfühlt. Finden wir's gemeinsam heraus?",
+        text: 'Und das täuscht selten. Vielleicht fehlt deiner Marke nur eine Kleinigkeit, damit sie sich wieder richtig nach dir anfühlt. Finden wir’s gemeinsam heraus?',
       },
       {
         from: 3,
@@ -186,7 +183,8 @@ export const croissant = {
   final: {
     title: 'Lass uns gemeinsam frühstücken.',
     textHtml:
-      'Nehmen wir uns 30 Minuten Zeit für ein virtuelles Frühstück. Wir lernen uns kennen, deine Marke und alles, was sie besonders macht. Wir stellen Fragen, hören zu und schauen gemeinsam, wo noch ein bisschen mehr drinsteckt. Ganz entspannt und ohne Verpflichtungen. Wir freuen uns auf dich!',
+      'Nehmen wir uns 30 Minuten Zeit für ein virtuelles Frühstück. Wir lernen uns kennen, deine Marke und alles, was sie besonders macht. Wir stellen Fragen, hören zu und schauen gemeinsam, wo noch ein bisschen mehr drinsteckt. Ganz entspannt und ohne Verpflichtungen.',
+    teamAlt: 'Nina und Pia, die Gründerinnen der Online Boutique Agentur, lachend in hellen Blazern vor einem Leinenvorhang',
   },
 
   cta: {
@@ -195,19 +193,22 @@ export const croissant = {
   },
 
   form: {
-    title: 'Schön, dass du dabei bist.',
-    text: 'Verrate uns kurz, wer du bist. Wir melden uns gerne mit einem Terminvorschlag.',
+    textHtml: 'Verrate uns kurz, wer du bist. Wir melden uns gerne mit einem Terminvorschlag. <b>Wir freuen uns auf dich!</b>',
     fields: {
       name: 'Dein Name',
       company: 'Marke / Unternehmen',
       website: 'Website (optional)',
-      websitePlaceholder: 'z. B. www.deine-marke.at',
       email: 'E-Mail',
       phone: 'Telefon (optional)',
+      format: 'Wo frühstücken wir?',
       when: 'Wann passt es dir meistens? (optional)',
-      whenPlaceholder: 'z. B. vormittags, Di oder Do',
       message: 'Magst du uns schon etwas erzählen? (optional)',
     },
+    formats: [
+      { value: 'bei-uns', label: 'Bei euch in Pasching' },
+      { value: 'bei-mir', label: 'Bei mir' },
+      { value: 'virtuell', label: 'Virtuell' },
+    ],
     submit: 'Einladung annehmen',
     sending: 'Kaffee wird aufgesetzt …',
     success: 'Wunderbar – wir freuen uns auf dich!\nWir melden uns ganz bald mit einem Terminvorschlag.\nNina & Pia',

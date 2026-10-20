@@ -7,15 +7,19 @@
  */
 import { Picture } from 'astro:assets';
 import { designSwitch, designType, hero, navigation } from '../content/site';
+import { entdecken } from '../content/entdecken';
 
 interface Props {
   /** Welche Welt die Vorschau zeigt */
   shows: 'minimal' | 'louder';
+  /** 'entdecken': Header der neuen Startseite (Text der Landingpage) statt des bisherigen */
+  text?: 'home' | 'entdecken';
 }
-const { shows } = Astro.props;
+const { shows, text = 'home' } = Astro.props;
+const e = entdecken.hero;
 ---
 
-<span class:list={['mini-hero', `mini-hero--${shows}`]} aria-hidden="true">
+<span class:list={['mini-hero', `mini-hero--${shows}`, { 'mini-hero--e': text === 'entdecken' }]} aria-hidden="true">
   <Picture src={hero.image.src} alt="" widths={[480, 800, 1200, 1600]} sizes="(min-width: 48rem) 50vw, 100vw" formats={['avif', 'webp']} loading="lazy" decoding="async" class="mini-hero__img" />
 
   <span class="mini-hero__nav">
@@ -27,6 +31,16 @@ const { shows } = Astro.props;
     <span class:list={['mini-hero__circle', `mini-hero__circle--${shows}`]}>{designSwitch.names[shows]}</span>
   </span>
 
+  {
+    text === 'entdecken' ? (
+      <span class="mini-hero__content mini-hero__content--e">
+        <span class="mini-hero__brand">
+          Online <em>Boutique</em> Agentur<sup>2</sup>
+        </span>
+        <span class="mini-hero__title mini-hero__title--e" set:html={e.titleHtml} />
+        <span class="mini-hero__sub mini-hero__sub--e">{e.subHome}</span>
+      </span>
+    ) : (
   <span class="mini-hero__content">
     <span class="mini-hero__title">
       <span class="w">Online</span> <em class="w">Boutique</em> <span class="w">Agentur</span><sup>²</sup>
@@ -35,6 +49,8 @@ const { shows } = Astro.props;
       Online Marketing für Einzel-, Klein– oder<br class="louder-only" /> mittelständische Unternehmen
     </span>
   </span>
+    )
+  }
 </span>
 
 <style>
@@ -185,6 +201,80 @@ const { shows } = Astro.props;
   .mini-hero--louder .mini-hero__cta-label {
     color: #050505;
     text-shadow: none;
+  }
+
+  /* ---------- Header der neuen Startseite (Text der Landingpage) ---------- */
+  .mini-hero--e {
+    aspect-ratio: 16 / 10;
+  }
+  .mini-hero--e :global(.mini-hero__img) {
+    height: 110%;
+    top: -9%;
+  }
+  .mini-hero--e .mini-hero__nav {
+    justify-content: center;
+    padding-right: 0;
+  }
+  .mini-hero__content--e {
+    bottom: 7%;
+    gap: 1.3cqw;
+  }
+  .mini-hero__brand {
+    font-family: var(--f-display);
+    font-size: 1.2cqw;
+  }
+  .mini-hero__brand em {
+    font-style: italic;
+  }
+  .mini-hero__brand sup {
+    font-size: 0.6em;
+    vertical-align: 0.75em;
+  }
+  .mini-hero__title--e {
+    font-size: 3.5cqw;
+    line-height: 1.12;
+  }
+  .mini-hero__title--e :global(em) {
+    font-style: italic;
+  }
+  .mini-hero__sub--e {
+    max-width: 44cqw;
+    font-size: 1.35cqw;
+    line-height: 1.6;
+  }
+  .mini-hero--louder .mini-hero__content--e {
+    top: 24%;
+    bottom: auto;
+    left: 10%;
+    right: auto;
+    justify-items: start;
+    max-width: 38cqw;
+    text-align: left;
+    text-shadow: none;
+  }
+  .mini-hero--louder .mini-hero__brand {
+    font-family: var(--f-bold);
+    font-size: 1.7cqw;
+    letter-spacing: 0.07cqw;
+    color: var(--c-accent);
+  }
+  .mini-hero--louder .mini-hero__brand em,
+  .mini-hero--louder .mini-hero__title--e :global(em) {
+    font-style: normal;
+  }
+  .mini-hero--louder .mini-hero__title--e {
+    font-family: var(--f-bold);
+    font-size: 5.3cqw;
+    line-height: 1.05;
+    letter-spacing: 0.07cqw;
+    text-transform: lowercase;
+    color: #000;
+  }
+  .mini-hero--louder .mini-hero__title--e :global(em) {
+    color: var(--c-accent);
+  }
+  .mini-hero--louder .mini-hero__sub--e {
+    color: #3f3f3f;
   }
 
   /* Hover: Kreis wächst leicht, Foto zoomt sanft */

@@ -1,0 +1,38 @@
+---
+/**
+ * /entdecken/ – Landingpage „Deine Marke kann mehr.“ (z. B. für Social Media).
+ * Ursprünglich am zweiten Rechner entstanden, am 13.10.2026 in dieses Projekt übernommen.
+ * Nicht in der Sitemap, noindex (wie im Original).
+ */
+import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+import StickyInvite from '../components/StickyInvite.astro';
+import EHero from '../components/entdecken/EHero.astro';
+import EStatement from '../components/entdecken/EStatement.astro';
+import EProblems from '../components/entdecken/EProblems.astro';
+import EWorlds from '../components/entdecken/EWorlds.astro';
+import ESolution from '../components/entdecken/ESolution.astro';
+import EFinal from '../components/entdecken/EFinal.astro';
+import EInvite from '../components/entdecken/EInvite.astro';
+import { entdecken, entdeckenSeo } from '../content/entdecken';
+---
+
+<Base title={entdeckenSeo.title} description={entdeckenSeo.description} path={entdeckenSeo.path} noindex>
+  <EHero />
+  <main id="inhalt" tabindex="-1" class="entdecken">
+    <EStatement />
+    <EProblems />
+    <EWorlds />
+    <ESolution />
+    <EFinal />
+    <EInvite />
+  </main>
+  <StickyInvite href="#anfrage" label={entdecken.invite.submit} meta={entdecken.invite.meta} hideNear={['.e-hero', '.e-final .e-cta', '#anfrage']} />
+  <Footer contact={false} />
+</Base>
+
+<style>
+  .entdecken:focus {
+    outline: none;
+  }
+</style>

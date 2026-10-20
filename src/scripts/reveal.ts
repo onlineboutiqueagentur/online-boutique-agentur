@@ -18,8 +18,9 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 
   const check = () => {
     scheduled = false;
-    const limit = window.innerHeight * 0.9;
     pending = pending.filter((el) => {
+      // data-reveal-at="0.7": erst auslösen, wenn das Element weiter im Bild ist (Standard 90 %)
+      const limit = window.innerHeight * Number(el.dataset.revealAt ?? 0.9);
       const rect = el.getBoundingClientRect();
       if (rect.top < limit && rect.bottom > 0) {
         el.classList.add('is-in');

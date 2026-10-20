@@ -18,13 +18,13 @@
  */
 import { json, shortHash, type Context, type Env } from '../../lib/auth';
 import { speichern, type Anfrage } from '../../lib/anfragen';
+import { alsAngenommenMarkieren, SLUG_RE } from '../../lib/angebot-daten';
 import { sendSmtp } from '../../lib/smtp';
 
 const MIN_FILL_MS = 2500; // schneller ausgefüllt = sehr wahrscheinlich ein Bot
 const MAX_AGE_MS = 1000 * 60 * 60 * 24; // Formular älter als 24 h → neu laden
 const RATE_LIMIT = 5; // Anfragen pro Stunde und Absender
-const QUIZ_MAX = 6; // so viele Aussagen hat das Quiz
-const LIMITS = { quizAussage: 200, name: 120, firma: 160, webseite: 200, email: 200, telefon: 40, nachricht: 5000, wunschtermin: 200 } as const;
+const LIMITS = { name: 120, firma: 160, email: 200, telefon: 40, nachricht: 5000, wunschtermin: 200, webseite: 200, quiz: 1500 } as const;
 /** Croissant-Einladung: erlaubte Antworten auf „Wo frühstücken wir?“ */
 const FORMATE: Record<string, string> = { 'bei-uns': 'Bei euch in Pasching', 'bei-mir': 'Beim Kunden', virtuell: 'Virtuell' };
 const EMAIL_RE = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[a-z]{2,}$/i;
@@ -59,22 +59,23 @@ const clean = (value: FormDataEntryValue | null, max: number) =>
 
 async function sendMail(env: Env, a: Anfrage, adminUrl: string): Promise<boolean> {
   const croissant = a.quelle === 'croissant';
+  const angebot = a.quelle === 'angebot';
   const zeilen = [
-    croissant ? '🥐 Frühstücks-Einladung angenommen – über www.online-boutique-agentur.at/croissant' : 'Neue Anfrage über www.online-boutique-agentur.at',
+    croissant
+      ? '🥐 Frühstücks-Einladung angenommen – über www.online-boutique-agentur.at/das-croissant-prinzip'
+      : angebot
+        ? `✨ Angebot angenommen – www.online-boutique-agentur.at/angebot/brief/${a.angebot}/`
+        : 'Neue Anfrage über www.online-boutique-agentur.at',
     '',
     `Name: ${a.name}`,
     `Firma: ${a.firma}`,
-    a.webseite ? `Website: ${a.webseite}` : null,
     `E-Mail: ${a.email}`,
     a.telefon ? `Tel.: ${a.telefon}` : null,
-    croissant ? null : `Design: ${a.design === 'louder' ? 'Louder' : a.design === 'minimal' ? 'Minimal' : 'unbekannt'}`,
+    a.webseite ? `Website: ${a.webseite}` : null,
+    croissant || angebot ? null : `Design: ${a.design === 'louder' ? 'Louder' : a.design === 'minimal' ? 'Minimal' : 'unbekannt'}`,
+    croissant && a.format ? `Wo frühstücken wir: ${FORMATE[a.format] ?? a.format}` : null,
     croissant ? `Wann passt es: ${a.wunschtermin || '–'}` : null,
-    croissant ? '' : null,
-    croissant
-      ? a.quiz?.length
-        ? `Im Quiz angetippt (${a.quiz.length} von ${QUIZ_MAX}):\n${a.quiz.map((q) => `– ${q}`).join('\n')}`
-        : 'Im Quiz angetippt: nichts'
-      : null,
+    croissant && a.quiz ? `\nIm Quiz angetippt:\n${a.quiz.split('\n').map((z) => `• ${z}`).join('\n')}` : null,
     '',
     a.nachricht || '(keine Notizen)',
     '',
@@ -84,7 +85,11 @@ async function sendMail(env: Env, a: Anfrage, adminUrl: string): Promise<boolean
   ].filter((z): z is string => z !== null);
 
   const to = env.MAIL_TO!.split(',').map((s) => s.trim()).filter(Boolean);
-  const subject = croissant ? `🥐 Frühstücks-Einladung: ${a.name} · ${a.firma}` : `Neue Anfrage: ${a.name} · ${a.firma}`;
+  const subject = croissant
+    ? `🥐 Frühstücks-Einladung: ${a.name} · ${a.firma}`
+    : angebot
+      ? `✨ Angebot angenommen: ${a.name} · ${a.firma}`
+      : `Neue Anfrage: ${a.name} · ${a.firma}`;
 
   // Bevorzugt: Versand über das eigene Postfach bei World4You
   if (env.SMTP_USER && env.SMTP_PASSWORD) {
@@ -150,7 +155,6 @@ export const onRequestPost = async ({ request, env }: Context): Promise<Response
   const daten = {
     name: clean(form.get('name'), LIMITS.name),
     firma: clean(form.get('company'), LIMITS.firma),
-    webseite: clean(form.get('webseite'), LIMITS.webseite),
     email: clean(form.get('email'), LIMITS.email),
     telefon: clean(form.get('phone'), LIMITS.telefon),
     nachricht: clean(form.get('message'), LIMITS.nachricht),
@@ -183,13 +187,12 @@ export const onRequestPost = async ({ request, env }: Context): Promise<Response
           quelle: 'croissant' as const,
           format: FORMATE[String(form.get('format'))] ? String(form.get('format')) : undefined,
           wunschtermin: clean(form.get('when'), LIMITS.wunschtermin),
-          quiz: String(form.get('quiz') ?? '')
-            .split('\n')
-            .map((q) => clean(q, LIMITS.quizAussage))
-            .filter(Boolean)
-            .slice(0, QUIZ_MAX),
+          webseite: clean(form.get('webseite'), LIMITS.webseite) || undefined,
+          quiz: clean(form.get('quiz'), LIMITS.quiz).replace(/\r/g, '') || undefined,
         }
-      : { quelle: 'website' as const }),
+      : form.get('quelle') === 'angebot' && SLUG_RE.test(String(form.get('angebot')))
+        ? { quelle: 'angebot' as const, angebot: String(form.get('angebot')) }
+        : { quelle: 'website' as const }),
     mail: 'nicht eingerichtet',
   };
 
@@ -202,6 +205,10 @@ export const onRequestPost = async ({ request, env }: Context): Promise<Response
   }
 
   if (kv) await speichern(kv, anfrage);
+  // Angebot aus dem CRM: Annahme vermerken, das CRM zeigt das Angebot dann als „angenommen“
+  if (kv && anfrage.quelle === 'angebot' && anfrage.angebot) {
+    await alsAngenommenMarkieren(kv, anfrage.angebot, anfrage.eingang).catch((err) => console.error('contact: Angebot nicht markiert', err));
+  }
 
   // Erfolg, sobald die Anfrage sicher angekommen ist (gespeichert oder gemailt).
   const ok = Boolean(kv) || anfrage.mail === 'gesendet';

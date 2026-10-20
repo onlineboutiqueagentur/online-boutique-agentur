@@ -10,14 +10,15 @@ interface Props {
   path: string;
   heading: string;
   noindex?: boolean;
+  /** false: Kontaktblock im Footer ausblenden (z. B. auf /kontakt/, wo die Daten schon stehen) */
+  footerContact?: boolean;
 }
-const { heading, ...meta } = Astro.props;
+const { heading, footerContact = true, ...meta } = Astro.props;
 ---
 
 <Base {...meta}>
   <header class="page-head" id="top">
-    <Navigation base="/" />
-    <a class="page-head__home" href="/">Online <em>Boutique</em> Agentur<sup aria-hidden="true">²</sup></a>
+    <Navigation base="/" designSwitch />
   </header>
   <main id="inhalt" class="page container--text" tabindex="-1">
     <h1 class="page__title">{heading}</h1>
@@ -25,7 +26,7 @@ const { heading, ...meta } = Astro.props;
       <slot />
     </div>
   </main>
-  <Footer />
+  <Footer contact={footerContact} />
 </Base>
 
 <style>
@@ -34,22 +35,6 @@ const { heading, ...meta } = Astro.props;
     padding-bottom: 2rem;
     text-align: center;
     border-bottom: 1px solid rgb(0 0 0 / 0.1);
-  }
-  .page-head__home {
-    display: inline-block;
-    margin-top: 1.5rem;
-    font-family: var(--f-display);
-    font-size: 1.5rem;
-    text-decoration: none;
-  }
-  :global(:root[data-design='louder']) .page-head__home {
-    font-family: var(--f-bold);
-    color: var(--c-accent);
-    font-size: 2rem;
-    letter-spacing: 1px;
-  }
-  :global(:root[data-design='louder']) .page-head__home em {
-    font-style: normal;
   }
   .page {
     padding: 3.5rem 0 5rem;

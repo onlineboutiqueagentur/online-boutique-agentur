@@ -1,0 +1,99 @@
+---
+/**
+ * NUR TEST (/startseite-neu/): Umschalter für den Hintergrund der gepinnten Leistungen 01–03.
+ * Setzt data-bg auf der Sektion [data-pin]; die Auswahl merkt sich der Browser (localStorage).
+ */
+const options = [
+  { value: 'window', label: 'an' },
+  { value: 'none', label: 'aus' },
+];
+---
+
+<div class="bg-switch" role="group" aria-label="Hintergrund der Leistungen (Test)">
+  <span class="bg-switch__label">Lichtschatten Leistungen</span>
+  {
+    options.map((o, i) => (
+      <button type="button" class="bg-switch__opt" data-bg-set={o.value} aria-pressed={i === 0 ? 'true' : 'false'}>
+        {o.label}
+      </button>
+    ))
+  }
+</div>
+
+<script>
+  const KEY = 'oba-test-bg';
+  const section = document.querySelector<HTMLElement>('[data-pin]');
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-bg-set]')];
+
+  const apply = (value: string) => {
+    if (!section) return;
+    section.dataset.bg = value;
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.bgSet === value)));
+  };
+
+  let saved: string | null = null;
+  try {
+    saved = localStorage.getItem(KEY);
+  } catch {}
+  if (saved && buttons.some((b) => b.dataset.bgSet === saved)) apply(saved);
+
+  buttons.forEach((b) =>
+    b.addEventListener('click', () => {
+      const value = b.dataset.bgSet!;
+      apply(value);
+      try {
+        localStorage.setItem(KEY, value);
+      } catch {}
+      // direkt zu den Leistungen springen, damit man den Unterschied sieht
+      const pin = section?.querySelector<HTMLElement>('.e-pin');
+      if (pin && Math.abs(pin.getBoundingClientRect().top) > pin.offsetHeight) {
+        window.scrollTo({ top: pin.getBoundingClientRect().top + window.scrollY + 10, behavior: 'smooth' });
+      }
+    }),
+  );
+</script>
+
+<style>
+  .bg-switch {
+    position: fixed;
+    left: 1rem;
+    bottom: 1rem;
+    z-index: 40;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    max-width: calc(100vw - 8rem);
+    padding: 0.5rem 0.6rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.92);
+    box-shadow: 0 4px 18px rgb(0 0 0 / 0.12);
+    font-size: 0.75rem;
+    color: #000;
+  }
+  .bg-switch__label {
+    padding-inline: 0.4rem 0.2rem;
+    font-weight: var(--w-bold);
+  }
+  .bg-switch__opt {
+    padding: 0.3rem 0.7rem;
+    border: 1px solid rgb(0 0 0 / 0.25);
+    border-radius: 999px;
+    background: none;
+    cursor: pointer;
+  }
+  .bg-switch__opt[aria-pressed='true'] {
+    border-color: #000;
+    background: #000;
+    color: #fff;
+  }
+  @media (max-width: 47.99rem) {
+    .bg-switch {
+      left: 0.5rem;
+      bottom: 0.5rem;
+      flex-wrap: nowrap;
+      font-size: 0.6875rem;
+    }
+
+  }
+</style>

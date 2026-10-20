@@ -1,5 +1,5 @@
 # Cloudflare Pages – Online Boutique Agentur
-# Deploy: npm run build && npx wrangler pages deploy dist --project-name online-boutique-agentur --branch main
+# Deploy: automatisch über GitHub Actions (main → live), siehe docs/DEPLOYMENT.md
 # Geheime Werte (ADMIN_USER, ADMIN_PASSWORD, SESSION_SECRET, SMTP_PASSWORD) liegen NICHT hier,
 # sondern als Secrets bei Cloudflare: npx wrangler pages secret put NAME --project-name online-boutique-agentur
 name = "online-boutique-agentur"

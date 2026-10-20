@@ -1,17 +1,17 @@
 ---
 /**
- * feel – flow – grow – glow: versetzte Bildcollage.
- * Desktop: Positionen 1:1 aus dem Original (relativ zu einer 856 px breiten Fläche).
- * Mobil: zweispaltiges Raster ohne Überlappung (im Original überlappten die Bilder).
+ * feel – flow – grow: versetzte Bildcollage (drei Bilder; „glow“ wurde entfernt).
+ * Nebeneinander in drei Spalten, leicht höhenversetzt – auf allen Bildschirmen.
  */
 import { flowImages } from '../content/site';
 import ThemedPicture from './ThemedPicture.astro';
 
-// Scroll-Bewegung wie im Original: feel ↑ (+ Unschärfe beim Verlassen), flow ruhig, grow ↓, glow ↓
-const motion = ['parallax-up blur-out', '', 'parallax-down', 'parallax-down'];
+// Scroll-Bewegung wie im Original: feel ↑ (+ Unschärfe beim Verlassen), flow ruhig, grow ↓
+// parallax-mobile: Bewegung auch am Handy (dort mit kürzerem Weg)
+const motion = ['parallax-up blur-out parallax-mobile', '', 'parallax-down parallax-mobile'];
 ---
 
-<div class="collage" role="list" aria-label="feel – flow – grow – glow">
+<div class="collage" role="list" aria-label="feel – flow – grow">
   {
     flowImages.map((image, i) => (
       <figure class:list={['collage__item', `collage__item--${i + 1}`, motion[i]]} role="listitem">
@@ -24,14 +24,14 @@ const motion = ['parallax-up blur-out', '', 'parallax-down', 'parallax-down'];
 </div>
 
 <style>
+  /* Drei Bilder nebeneinander, leicht höhenversetzt (Collage-Charakter) */
   .collage {
-    position: relative;
-    width: min(100% - 2 * var(--gutter), 53.5rem);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(1rem, 2.5vw, 2rem);
+    align-items: start;
+    width: min(100% - 2 * var(--gutter), 66rem);
     margin: 0 auto;
-    aspect-ratio: 856 / 1076;
-  }
-  .collage__item {
-    position: absolute;
   }
   .collage__item :global(img) {
     width: 100%;
@@ -39,26 +39,15 @@ const motion = ['parallax-up blur-out', '', 'parallax-down', 'parallax-down'];
     object-fit: cover;
     border-radius: var(--radius);
   }
-  /* top in % der Höhe (1076 px), left/width in % der Breite (856 px) */
-  .collage__item--1 { left: 1.2%; top: 3.9%; width: 32.8%; }
-  .collage__item--2 { left: 42.9%; top: 0; width: 53.4%; }
-  .collage__item--3 { left: 0; top: 51.3%; width: 52.5%; }
-  .collage__item--4 { left: 58.8%; top: 55.6%; width: 41.2%; }
+  .collage__item--1 { margin-top: 2rem; }
+  .collage__item--2 { margin-top: 0; }
+  .collage__item--3 { margin-top: 4rem; }
 
   @media (max-width: 47.99rem) {
     .collage {
-      aspect-ratio: auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      align-items: start;
+      gap: 0.75rem;
     }
-    .collage__item {
-      position: static;
-      width: auto;
-    }
-    .collage__item:nth-child(even) {
-      margin-top: 2.5rem;
-    }
+    .collage__item--1 { margin-top: 1rem; }
+    .collage__item--3 { margin-top: 2rem; }
   }
 </style>

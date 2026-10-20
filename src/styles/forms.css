@@ -11,43 +11,51 @@
 .form label {
   font-size: 0.8125rem;
 }
+/* Eingabefelder ohne Fläche: Hintergrundfarbe der Seite, nur eine feine Schreiblinie */
 .form input,
 .form textarea {
   width: 100%;
   min-height: 2.25rem;
-  padding: 0.4rem 0.8rem;
-  border: 1px solid #fff;
+  padding: 0.4rem 0;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-ink) 60%, transparent);
   border-radius: 0;
-  background: #fff;
+  background: transparent;
+  color: var(--c-ink);
   font-size: 1rem; /* ≥16px verhindert Zoom auf iOS */
   font-weight: var(--w-regular);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .form textarea {
+  /* feste Starthöhe, damit der Feldname exakt auf dem unteren Strich sitzen kann */
+  height: 6rem;
   min-height: 6rem;
   resize: vertical;
 }
-.form input:focus-visible,
-.form textarea:focus-visible {
-  outline: 2px solid #000;
-  outline-offset: 0;
+/* Fokus: Linie wird kräftiger (2px, volle Farbe) */
+.form input:focus,
+.form textarea:focus {
+  outline: none;
+  border-bottom-color: var(--c-ink);
+  box-shadow: 0 1px 0 0 var(--c-ink);
 }
 .form [aria-invalid='true'] {
-  border-color: #a64242;
-  box-shadow: inset 0 0 0 1px #a64242;
+  border-bottom-color: #a64242;
+  box-shadow: 0 1px 0 0 #a64242;
 }
 .form__icon-input {
   position: relative;
 }
 .form__icon-input svg {
   position: absolute;
-  left: 0.7rem;
+  left: 0;
   top: 50%;
   width: 0.9rem;
   transform: translateY(-50%);
   color: #333;
 }
 .form__icon-input input {
-  padding-left: 2.1rem;
+  padding-left: 1.6rem;
 }
 .form__error {
   font-size: 0.8125rem;
@@ -134,4 +142,37 @@
 .form__choice input:focus-visible + span {
   outline: 2px solid var(--c-focus);
   outline-offset: 2px;
+}
+
+/*
+ * Feldnamen stehen auf der Linie (wie ein Platzhalter) und wandern beim Hineinklicken
+ * bzw. sobald etwas eingetragen ist klein nach oben. Die Felder brauchen dafür
+ * placeholder=" ". Felder mit echtem Platzhaltertext behalten den Namen immer oben.
+ * Der Feldname bleibt ein echtes <label> (Screenreader, Klickfläche).
+ */
+.form__field:has(> input, > textarea, > .form__icon-input) > label {
+  /* nur so breit wie der Text – sonst ragt das vergrößerte Label über den Rand (seitliches Scrollen am Handy) */
+  justify-self: start;
+  max-width: calc(100% / 1.18);
+  transform-origin: left top;
+  transition: transform 0.25s var(--ease), color 0.25s ease;
+  pointer-events: none;
+}
+.form__field:has(> input[placeholder=' ']:placeholder-shown:not(:focus)) > label {
+  transform: translateY(2.3rem) scale(1.18);
+  color: var(--c-ink-soft);
+}
+/* Notizfeld: Feldname ebenfalls auf dem unteren Strich (2.3rem + 6rem Feldhöhe − 2.25rem) */
+.form__field:has(> textarea[placeholder=' ']:placeholder-shown:not(:focus)) > label {
+  transform: translateY(6.05rem) scale(1.18);
+  color: var(--c-ink-soft);
+}
+.form__field:has(.form__icon-input input[placeholder=' ']:placeholder-shown:not(:focus)) > label {
+  transform: translate(1.6rem, 2.3rem) scale(1.18);
+  color: var(--c-ink-soft);
+}
+@media (prefers-reduced-motion: reduce) {
+  .form__field > label {
+    transition: none;
+  }
 }

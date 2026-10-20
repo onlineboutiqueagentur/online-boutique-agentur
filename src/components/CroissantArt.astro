@@ -73,17 +73,25 @@ const texture = [
 
 <svg
   class:list={['croissant-art', { 'croissant-art--draw': draw }, className]}
-  viewBox="0 0 400 230"
+  data-reveal-at={draw ? '0.7' : undefined}
+  viewBox={draw ? "18 20 364 176" : "0 0 400 230"}
   role={label ? 'img' : undefined}
   aria-label={label}
   aria-hidden={label ? undefined : 'true'}
   focusable="false"
 >
   <path class="croissant-art__fill" d={outline} />
-  <path class="croissant-art__line" d={outline} pathLength="1" style="--step:0" />
-  {(mini ? layers.slice(0, 4) : layers).map((l) => <path class="croissant-art__line" d={l.d} pathLength="1" style={`--step:${l.step}`} />)}
-  {!mini && texture.map((t) => <path class="croissant-art__line croissant-art__texture" d={t.d} pathLength="1" style={`--step:${t.step}`} />)}
+  <path class="croissant-art__line croissant-art__outline" d={outline} pathLength={draw ? undefined : 1} style="--step:0" />
+  {(mini ? layers.slice(0, 4) : layers).map((l) => <path class="croissant-art__line" d={l.d} pathLength={draw ? undefined : 1} style={`--step:${l.step}`} />)}
+  {!mini && texture.map((t) => <path class="croissant-art__line croissant-art__texture" d={t.d} pathLength={draw ? undefined : 1} style={`--step:${t.step}`} />)}
 </svg>
+
+<script>
+  // Länge jeder Linie messen, damit sie sich in jedem Browser vollständig zeichnet
+  document.querySelectorAll<SVGPathElement>('.croissant-art--draw .croissant-art__line').forEach((path) => {
+    path.style.setProperty('--len', String(Math.ceil(path.getTotalLength()) + 2));
+  });
+</script>
 
 <style>
   .croissant-art {
@@ -108,22 +116,39 @@ const texture = [
     opacity: 0.45;
   }
 
+  /*
+   * Gezeichnete Variante: ohne non-scaling-stroke (sonst erscheint die Linie nur in Bruchstücken).
+   * Die echte Länge jeder Linie misst ein kleines Skript (--len) – zuverlässiger als pathLength,
+   * das nicht jeder Browser beim Strichmuster berücksichtigt. Strichstärke in SVG-Einheiten (fein).
+   */
+  .croissant-art--draw .croissant-art__line {
+    vector-effect: none;
+    stroke-width: var(--croissant-stroke-draw, 1.2);
+  }
+
   @media (prefers-reduced-motion: no-preference) {
+    /* Startzustand sofort (ohne Übergang) unsichtbar … */
     :global(.anim-ready) .croissant-art--draw .croissant-art__line {
-      stroke-dasharray: 1;
-      stroke-dashoffset: 1;
-      transition: stroke-dashoffset 1.3s cubic-bezier(0.65, 0, 0.35, 1);
-      transition-delay: calc(var(--step) * 0.35s);
+      stroke-dasharray: var(--len, 2000);
+      stroke-dashoffset: var(--len, 2000);
     }
     :global(.anim-ready) .croissant-art--draw .croissant-art__fill {
       opacity: 0;
-      transition: opacity 1.2s ease 0.6s;
     }
+    /* … und erst beim Sichtbarwerden wie von Hand gemalt: in einem Zug die Kontur,
+       dann Schicht für Schicht von der Mitte nach außen */
     :global(.anim-ready) .croissant-art--draw:global(.is-in) .croissant-art__line {
       stroke-dashoffset: 0;
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.45, 0, 0.25, 1);
+      transition-delay: calc(1.2s + (var(--step) - 1) * 0.32s);
+    }
+    :global(.anim-ready) .croissant-art--draw:global(.is-in) .croissant-art__outline {
+      transition-duration: 1.6s;
+      transition-delay: 0.05s;
     }
     :global(.anim-ready) .croissant-art--draw:global(.is-in) .croissant-art__fill {
       opacity: 1;
+      transition: opacity 1s ease 1.6s;
     }
   }
 </style>
