@@ -5,6 +5,7 @@
  * (die Function antwortet dann mit einer Weiterleitung).
  * Die eigentliche Prüfung passiert immer serverseitig (functions/api/contact.ts).
  */
+import { kampagne } from './kampagne';
 
 function setup(form: HTMLFormElement) {
   const ts = form.querySelector<HTMLInputElement>('[data-ts]');
@@ -52,9 +53,12 @@ function setup(form: HTMLFormElement) {
     submit.disabled = true;
     submitText.textContent = submit.dataset.sending ?? '…';
     try {
+      const body = new FormData(form);
+      // Kam die Person über einen Werbelink (z. B. Instagram)? Dann die UTM-Parameter mitsenden.
+      for (const [feld, wert] of Object.entries(kampagne() ?? {})) body.set(feld, wert);
       const response = await fetch(form.action, {
         method: 'POST',
-        body: new FormData(form),
+        body,
         headers: { Accept: 'application/json' },
       });
       if (!response.ok) throw new Error(String(response.status));
