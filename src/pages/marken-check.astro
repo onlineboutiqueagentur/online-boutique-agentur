@@ -1,0 +1,559 @@
+---
+/**
+ * /marken-check – „Du darfst in deine Marke verliebt sein.“
+ * Selbst-Check für Einzelunternehmer:innen (Mobile First, etwa 2 Minuten):
+ * Einstieg → Wunschgefühl (1–2) → 10 Fragen mit Herz-Skala → Ergebnis mit Auswertung je Bereich.
+ *
+ * - Texte und Fragen: src/content/markencheck.ts
+ * - Auswertung läuft komplett im Browser. Anonyme Statistik (wie weit, wo abgebrochen) geht an
+ *   /api/marken-check – ohne Cookie, ohne IP, mit einer zufälligen id pro Durchlauf.
+ *   Browser im „internen Modus“ (?intern=1 bzw. im Admin angemeldet) zählen nicht mit.
+ * - Kontaktformular nach dem Ergebnis: /api/contact mit quelle=markencheck → Mail + /admin + CRM.
+ */
+import Base from '../layouts/Base.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import { markencheck as m, markencheckSeo } from '../content/markencheck';
+
+const k = m.kontakt;
+const herz =
+  'M12 20.5s-7.5-4.6-9.6-9.4C.9 7.6 3.1 4 6.6 4c2.1 0 3.6 1.2 4.4 2.6h2C13.8 5.2 15.3 4 17.4 4c3.5 0 5.7 3.6 4.2 7.1-2.1 4.8-9.6 9.4-9.6 9.4z';
+---
+
+<Base title={markencheckSeo.title} description={markencheckSeo.description} path={markencheckSeo.path} noindex>
+  <header class="mc-head">
+    <Navigation base="/" designSwitch />
+  </header>
+
+  <main id="inhalt" tabindex="-1" class="mc">
+    <div
+      class="mc-check container--text"
+      data-check
+      data-config={JSON.stringify({ fragen: m.fragen, bereiche: m.bereiche, ergebnisse: m.ergebnisse, auswertung: m.auswertung })}
+    >
+      <noscript>
+        <p class="mc-noscript">Der Marken-Check braucht JavaScript. Bitte aktiviere es in deinem Browser oder <a href="/kontakt/">schreib uns direkt</a>.</p>
+      </noscript>
+
+      <!-- Einstieg -->
+      <section class="mc-screen mc-intro is-active" data-screen="intro" aria-labelledby="mc-titel">
+        <svg class="mc-intro__herz" viewBox="0 0 24 24" aria-hidden="true"><path d={herz} /></svg>
+        <p class="mc-eyebrow">{m.intro.eyebrow}</p>
+        <h1 class="mc-titel" id="mc-titel" tabindex="-1">{m.intro.titel} <em>{m.intro.titelBetont}</em></h1>
+        <p class="mc-lead">{m.intro.text}</p>
+        <ul role="list" class="mc-punkte">
+          {m.intro.punkte.map((p) => <li>{p}</li>)}
+        </ul>
+        <button type="button" class="btn btn--solid mc-btn" data-start>{m.intro.start}</button>
+      </section>
+
+      <!-- Wunschgefühl -->
+      <section class="mc-screen" data-screen="gefuehl" aria-labelledby="mc-gefuehl" hidden>
+        <p class="mc-schritt">{m.intro.eyebrow}</p>
+        <h2 class="mc-frage" id="mc-gefuehl" tabindex="-1">{m.gefuehl.titel}</h2>
+        <p class="mc-hinweis" id="mc-gefuehl-hinweis">{m.gefuehl.hinweis}</p>
+        <ul role="list" class="mc-chips" aria-describedby="mc-gefuehl-hinweis">
+          {
+            m.gefuehl.optionen.map((g) => (
+              <li>
+                <button type="button" class="mc-chip" aria-pressed="false" data-gefuehl={g}>
+                  {g}
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="mc-nav">
+          <button type="button" class="mc-zurueck" data-zurueck>{m.navigation.zurueck}</button>
+          <button type="button" class="btn btn--solid mc-btn" data-gefuehl-weiter disabled>{m.gefuehl.weiter}</button>
+        </div>
+      </section>
+
+      <!-- Fragen -->
+      {
+        m.fragen.map((f, i) => (
+          <section class="mc-screen" data-screen={`frage-${i}`} aria-labelledby={`mc-f${i}`} hidden>
+            <div class="mc-fortschritt" aria-hidden="true">
+              <span style={`--p:${(i + 1) / m.fragen.length}`} />
+            </div>
+            <p class="mc-schritt">
+              {m.navigation.frage} {i + 1} {m.navigation.von} {m.fragen.length}
+              <span class="mc-schritt__bereich">· {m.bereiche[f.bereich].name}</span>
+            </p>
+            <h2 class="mc-frage" id={`mc-f${i}`} tabindex="-1" data-text={f.text}>
+              {f.text.replace('{gefuehl}', '…')}
+            </h2>
+            <div class="mc-skala" role="group" aria-labelledby={`mc-f${i}`}>
+              <div class="mc-herzen">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button type="button" class="mc-herz" data-wert={n} aria-pressed="false" aria-label={`${n} von 5 Herzen`}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d={herz} />
+                    </svg>
+                  </button>
+                ))}
+              </div>
+              <div class="mc-skala__labels" aria-hidden="true">
+                <span>{f.von}</span>
+                <span>{f.bis}</span>
+              </div>
+            </div>
+            <div class="mc-nav">
+              <button type="button" class="mc-zurueck" data-zurueck>
+                {m.navigation.zurueck}
+              </button>
+            </div>
+          </section>
+        ))
+      }
+
+      <!-- Ergebnis -->
+      <section class="mc-screen mc-ergebnis" data-screen="ergebnis" aria-labelledby="mc-ergebnis" hidden>
+        <p class="mc-symbol" aria-hidden="true" data-e-symbol></p>
+        <p class="mc-eyebrow">Dein Ergebnis</p>
+        <h2 class="mc-titel" id="mc-ergebnis" tabindex="-1" data-e-titel></h2>
+        <p class="mc-lead" data-e-text></p>
+
+        <div class="mc-auswertung">
+          <h3 class="mc-h3">{m.auswertung.titel}</h3>
+          <p class="mc-gefuehl-tag" data-e-gefuehl></p>
+          <ul role="list" class="mc-balken" data-e-balken></ul>
+          <p class="mc-satz" data-e-staerke></p>
+          <p class="mc-satz" data-e-potenzial></p>
+        </div>
+
+        <div class="mc-tipp">
+          <h3 class="mc-h3">{m.auswertung.tippTitel}</h3>
+          <p data-e-tipp></p>
+        </div>
+
+        <form class="form mc-form" action="/api/contact" method="post" novalidate data-contact-form data-check-form>
+          <h3 class="heading mc-form__titel">{k.titel}</h3>
+          <div class="mc-form__felder" data-form-fields>
+            <p class="mc-form__text">{k.text}</p>
+            <div class="form__field">
+              <label for="mc-name">{k.felder.name} <span aria-hidden="true">*</span></label>
+              <input id="mc-name" placeholder=" " name="name" type="text" autocomplete="given-name" required maxlength="120" aria-describedby="mc-name-err" />
+              <p class="form__error" id="mc-name-err" hidden>Verrätst du uns deinen Namen?</p>
+            </div>
+            <div class="form__field">
+              <label for="mc-email">{k.felder.email} <span aria-hidden="true">*</span></label>
+              <input id="mc-email" placeholder=" " name="email" type="email" autocomplete="email" required maxlength="200" aria-describedby="mc-email-err" />
+              <p class="form__error" id="mc-email-err" hidden>Bitte gib eine gültige E-Mail-Adresse an.</p>
+            </div>
+            <div class="form__field">
+              <label for="mc-firma">{k.felder.firma}</label>
+              <input id="mc-firma" placeholder=" " name="company" type="text" autocomplete="organization" maxlength="160" />
+            </div>
+            <div class="form__field">
+              <label for="mc-webseite">{k.felder.webseite}</label>
+              <input id="mc-webseite" placeholder=" " name="webseite" type="text" inputmode="url" autocomplete="url" maxlength="200" />
+            </div>
+            <div class="form__field">
+              <label for="mc-nachricht">{k.felder.nachricht}</label>
+              <textarea id="mc-nachricht" placeholder=" " name="message" rows="3" maxlength="5000"></textarea>
+            </div>
+
+            <div class="form__hp" aria-hidden="true">
+              <label for="mc-website">Website</label>
+              <input id="mc-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+            <input type="hidden" name="ts" value="" data-ts />
+            <input type="hidden" name="quelle" value="markencheck" />
+            <input type="hidden" name="check" value="" data-check-feld />
+            <input type="hidden" name="ergebnis" value="" data-ergebnis-feld />
+            <input type="hidden" name="design" value="" data-design-field />
+
+            <p class="form__privacy">
+              Mit dem Absenden werden deine Angaben und dein Check-Ergebnis zur Bearbeitung deiner Anfrage verwendet. Mehr dazu in der <a href="/datenschutz/">Datenschutzerklärung</a>.
+            </p>
+            <div class="form__actions">
+              <button class="btn btn--solid mc-btn" type="submit" data-label={k.absenden} data-sending={k.sendet}>
+                <span data-btn-text>{k.absenden}</span>
+              </button>
+            </div>
+            <p class="mc-meta">{k.meta}</p>
+          </div>
+          <div class="form__status" role="status" aria-live="polite" tabindex="-1" data-form-status>
+            <p class="form__msg form__msg--ok" hidden data-ok>{k.erfolg}</p>
+            <p class="form__msg form__msg--err" hidden data-err>{k.fehler}</p>
+          </div>
+        </form>
+
+        <p class="mc-nochmal"><button type="button" class="mc-zurueck" data-nochmal>{m.auswertung.nochmal}</button></p>
+      </section>
+    </div>
+  </main>
+
+  <Footer />
+</Base>
+
+<script>
+  import '../scripts/contact-form';
+  import { starteMarkencheck } from '../scripts/markencheck';
+
+  const root = document.querySelector<HTMLElement>('[data-check]');
+  if (root) starteMarkencheck(root);
+</script>
+
+<style>
+  .mc-head {
+    --c-ink-hero: var(--c-ink);
+    padding-bottom: 1rem;
+    text-align: center;
+  }
+  .mc {
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+  .mc-check {
+    max-width: 40rem;
+  }
+  .mc-noscript {
+    padding: 1rem 0;
+  }
+  .mc-screen {
+    display: grid;
+    gap: 1.1rem;
+    align-content: start;
+    min-height: min(36rem, calc(100svh - 10rem));
+    padding-top: clamp(1rem, 4vw, 2.5rem);
+  }
+  .mc-screen[hidden] {
+    display: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .mc-screen.is-active {
+      animation: mc-ein 0.45s var(--ease);
+    }
+  }
+  @keyframes mc-ein {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+  }
+  .mc-screen :is(h1, h2):focus {
+    outline: none;
+  }
+
+  /* ---------- Typo ---------- */
+  .mc-eyebrow,
+  .mc-schritt {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--c-ink-soft);
+  }
+  .mc-schritt__bereich {
+    font-style: normal;
+    font-family: var(--f-body);
+    font-size: 0.8125rem;
+  }
+  .mc-titel {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: var(--fs-hero);
+    line-height: 1.15;
+    letter-spacing: var(--ls-display);
+    text-wrap: balance;
+    color: var(--c-heading);
+  }
+  .mc-titel em {
+    display: block;
+  }
+  .mc-frage {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: clamp(1.375rem, 1.1rem + 1vw, 1.875rem);
+    line-height: 1.3;
+    text-wrap: balance;
+    min-height: 4.5em;
+  }
+  .mc-lead {
+    font-size: var(--fs-hero-sub);
+    text-wrap: pretty;
+  }
+  .mc-hinweis,
+  .mc-meta {
+    font-size: 0.875rem;
+    color: var(--c-ink-soft);
+  }
+  .mc-h3 {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  :global(:root[data-design='louder']) :is(.mc-titel, .mc-frage, .mc-h3) {
+    font-family: var(--f-bold);
+    text-transform: lowercase;
+    letter-spacing: 0;
+  }
+  :global(:root[data-design='louder']) .mc-titel em {
+    font-style: normal;
+    color: #000;
+  }
+
+  /* ---------- Einstieg ---------- */
+  .mc-intro__herz {
+    width: 3rem;
+    fill: var(--c-accent);
+    stroke: var(--c-ink);
+    stroke-width: 1;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .mc-intro__herz {
+      animation: mc-puls 2.4s var(--ease) infinite;
+    }
+  }
+  @keyframes mc-puls {
+    0%,
+    60%,
+    100% {
+      transform: scale(1);
+    }
+    15% {
+      transform: scale(1.12);
+    }
+    30% {
+      transform: scale(0.98);
+    }
+    45% {
+      transform: scale(1.08);
+    }
+  }
+  .mc-punkte {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0;
+    font-size: 0.9375rem;
+  }
+  .mc-punkte li::before {
+    content: '♡ ';
+    color: var(--c-ink-soft);
+  }
+  .mc-btn {
+    justify-self: start;
+    min-width: 12rem;
+    font-size: 0.9375rem;
+  }
+  .mc-btn[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* ---------- Wunschgefühl ---------- */
+  .mc-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+  }
+  .mc-chip {
+    min-height: 44px;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid var(--c-ink);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--c-ink);
+    font: inherit;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition:
+      background-color var(--t-fast) var(--ease),
+      color var(--t-fast) var(--ease);
+  }
+  .mc-chip[aria-pressed='true'] {
+    background: var(--c-ink);
+    color: var(--c-bg);
+  }
+  .mc-chip[aria-pressed='true']::before {
+    content: '♥ ';
+    color: var(--c-accent);
+  }
+  .mc-chip[aria-disabled='true'] {
+    opacity: 0.4;
+  }
+  :global(:root[data-design='louder']) .mc-chip {
+    border-radius: 0;
+  }
+
+  /* ---------- Fragen ---------- */
+  .mc-fortschritt {
+    height: 3px;
+    background: color-mix(in srgb, var(--c-ink) 12%, transparent);
+  }
+  .mc-fortschritt span {
+    display: block;
+    height: 100%;
+    width: calc(var(--p) * 100%);
+    background: var(--c-ink);
+    transition: width var(--t-med) var(--ease);
+  }
+  .mc-skala {
+    display: grid;
+    gap: 0.5rem;
+    max-width: 24rem;
+  }
+  .mc-herzen {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.25rem;
+  }
+  .mc-herz {
+    display: grid;
+    place-items: center;
+    width: clamp(3rem, 15vw, 4rem);
+    aspect-ratio: 1;
+    padding: 0.35rem;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mc-herz svg {
+    width: 100%;
+    fill: transparent;
+    stroke: var(--c-ink);
+    stroke-width: 1.1;
+    transition:
+      fill var(--t-fast) var(--ease),
+      transform var(--t-fast) var(--ease);
+  }
+  .mc-herz.is-an svg {
+    fill: var(--c-accent);
+  }
+  .mc-herz[aria-pressed='true'] svg {
+    transform: scale(1.12);
+  }
+  /* Vorschau beim Drüberfahren (nur mit Maus, damit am Handy nichts „hängen bleibt“) */
+  @media (hover: hover) and (pointer: fine) {
+    .mc-herzen:hover .mc-herz:not(.is-an) svg {
+      fill: color-mix(in srgb, var(--c-accent) 55%, transparent);
+    }
+    .mc-herzen .mc-herz:hover ~ .mc-herz:not(.is-an) svg {
+      fill: transparent;
+    }
+  }
+  .mc-herz:focus-visible {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 2px;
+    border-radius: 50%;
+  }
+  .mc-skala__labels {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.8125rem;
+    color: var(--c-ink-soft);
+  }
+  .mc-skala__labels span:last-child {
+    text-align: right;
+  }
+  .mc-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+  .mc-zurueck {
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--c-ink);
+    font: inherit;
+    font-size: 0.875rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  /* ---------- Ergebnis ---------- */
+  .mc-symbol {
+    font-size: 3rem;
+    line-height: 1;
+  }
+  .mc-auswertung,
+  .mc-tipp {
+    margin-top: 1rem;
+    padding: clamp(1.25rem, 4vw, 1.75rem);
+    border-radius: var(--radius);
+    background: var(--c-white);
+  }
+  :global(:root[data-design='louder']) :is(.mc-auswertung, .mc-tipp) {
+    background: #fff;
+  }
+  .mc-tipp {
+    background: color-mix(in srgb, var(--c-accent) 22%, var(--c-bg));
+  }
+  :global(:root[data-design='louder']) .mc-tipp {
+    background: var(--c-accent);
+  }
+  .mc-gefuehl-tag {
+    font-size: 0.875rem;
+    color: var(--c-ink-soft);
+    margin-bottom: 0.75rem;
+  }
+  .mc-balken {
+    display: grid;
+    gap: 0.8rem;
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+  .mc-balken :global(li) {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.3rem 1rem;
+    font-size: 0.9375rem;
+  }
+  .mc-balken :global(.mc-balken__spur) {
+    grid-column: 1 / -1;
+    height: 8px;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--c-ink) 10%, transparent);
+    overflow: hidden;
+  }
+  .mc-balken :global(.mc-balken__wert) {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: var(--c-ink);
+    transition: width 0.9s var(--ease);
+  }
+  .mc-balken :global(.mc-balken__frage) {
+    grid-column: 1 / -1;
+    font-size: 0.8125rem;
+    color: var(--c-ink-soft);
+    margin-top: -0.2rem;
+  }
+  .mc-satz {
+    font-size: 0.9375rem;
+  }
+  .mc-satz + .mc-satz {
+    margin-top: 0.35rem;
+  }
+  .mc-form {
+    margin-top: 2.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid color-mix(in srgb, var(--c-ink) 20%, transparent);
+  }
+  .mc-form__titel {
+    text-align: left;
+  }
+  .mc-form__felder {
+    display: grid;
+    gap: 0.85rem;
+  }
+  .mc-form__felder[hidden] {
+    display: none;
+  }
+  .mc-form .form__actions {
+    justify-content: flex-start;
+  }
+  .mc-nochmal {
+    margin-top: 1rem;
+  }
+</style>

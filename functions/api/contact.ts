@@ -1,5 +1,5 @@
 /**
- * POST /api/contact – Kontaktformular (Cloudflare Pages Function)
+ * POST /api/contact – Kontaktformular, Croissant-Einladung, Angebot annehmen und Marken-Check (Cloudflare Pages Function)
  *
  * Ablauf: Origin-Prüfung → Spam-Schutz (Honeypot, Ausfüllzeit, max. 5/Stunde je Absender)
  * → Validierung → Anfrage in KV speichern (Übersicht unter /admin) → Mail über World4You (SMTP)
@@ -16,7 +16,7 @@
  *   KV-Bindung      ANFRAGEN
  *   ALLOWED_ORIGINS optional, kommagetrennt (Standard: Produktions-Domains + *.pages.dev)
  */
-import { json, shortHash, type Context, type Env } from '../../lib/auth';
+import { isAllowedOrigin, json, shortHash, type Context, type Env } from '../../lib/auth';
 import { speichern, type Anfrage } from '../../lib/anfragen';
 import { alsAngenommenMarkieren, SLUG_RE } from '../../lib/angebot-daten';
 import { sendSmtp } from '../../lib/smtp';
@@ -24,24 +24,10 @@ import { sendSmtp } from '../../lib/smtp';
 const MIN_FILL_MS = 2500; // schneller ausgefüllt = sehr wahrscheinlich ein Bot
 const MAX_AGE_MS = 1000 * 60 * 60 * 24; // Formular älter als 24 h → neu laden
 const RATE_LIMIT = 5; // Anfragen pro Stunde und Absender
-const LIMITS = { name: 120, firma: 160, email: 200, telefon: 40, nachricht: 5000, wunschtermin: 200, webseite: 200, quiz: 1500 } as const;
+const LIMITS = { name: 120, firma: 160, email: 200, telefon: 40, nachricht: 5000, wunschtermin: 200, webseite: 200, quiz: 1500, check: 3000, ergebnis: 80 } as const;
 /** Croissant-Einladung: erlaubte Antworten auf „Wo frühstücken wir?“ */
 const FORMATE: Record<string, string> = { 'bei-uns': 'Bei euch in Pasching', 'bei-mir': 'Beim Kunden', virtuell: 'Virtuell' };
 const EMAIL_RE = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[a-z]{2,}$/i;
-const DEFAULT_ORIGINS = ['https://www.online-boutique-agentur.at', 'https://online-boutique-agentur.at'];
-
-function isAllowedOrigin(origin: string | null, env: Env): boolean {
-  if (!origin) return true; // manche Browser senden bei Same-Origin-POST ohne JS keinen Origin
-  const allowed = env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(',').map((o) => o.trim()) : DEFAULT_ORIGINS;
-  if (allowed.includes(origin)) return true;
-  try {
-    const { hostname, protocol } = new URL(origin);
-    return protocol === 'https:' && hostname.endsWith('.pages.dev'); // Preview-Deployments
-  } catch {
-    return false;
-  }
-}
-
 function respond(request: Request, ok: boolean, status: number): Response {
   if ((request.headers.get('Accept') ?? '').includes('application/json')) return json({ ok }, status);
   const url = new URL(request.url);
@@ -60,19 +46,22 @@ const clean = (value: FormDataEntryValue | null, max: number) =>
 async function sendMail(env: Env, a: Anfrage, adminUrl: string): Promise<boolean> {
   const croissant = a.quelle === 'croissant';
   const angebot = a.quelle === 'angebot';
+  const check = a.quelle === 'markencheck';
   const zeilen = [
     croissant
       ? '🥐 Frühstücks-Einladung angenommen – über www.online-boutique-agentur.at/das-croissant-prinzip'
-      : angebot
+      : check
+        ? `💗 Marken-Check ausgefüllt – Ergebnis: ${a.ergebnis ?? '–'}`
+        : angebot
         ? `✨ Angebot angenommen – www.online-boutique-agentur.at/angebot/${a.angebot}/`
         : 'Neue Anfrage über www.online-boutique-agentur.at',
     '',
     `Name: ${a.name}`,
-    `Firma: ${a.firma}`,
+    `Firma: ${a.firma || '–'}`,
     `E-Mail: ${a.email}`,
     a.telefon ? `Tel.: ${a.telefon}` : null,
     a.webseite ? `Website: ${a.webseite}` : null,
-    croissant || angebot ? null : `Design: ${a.design === 'louder' ? 'Louder' : a.design === 'minimal' ? 'Minimal' : 'unbekannt'}`,
+    croissant || angebot || check ? null : `Design: ${a.design === 'louder' ? 'Louder' : a.design === 'minimal' ? 'Minimal' : 'unbekannt'}`,
     croissant && a.format ? `Wo frühstücken wir: ${FORMATE[a.format] ?? a.format}` : null,
     croissant ? `Wann passt es: ${a.wunschtermin || '–'}` : null,
     croissant && a.quiz ? `\nIm Quiz angetippt:\n${a.quiz.split('\n').map((z) => `• ${z}`).join('\n')}` : null,
@@ -87,7 +76,9 @@ async function sendMail(env: Env, a: Anfrage, adminUrl: string): Promise<boolean
   const to = env.MAIL_TO!.split(',').map((s) => s.trim()).filter(Boolean);
   const subject = croissant
     ? `🥐 Frühstücks-Einladung: ${a.name} · ${a.firma}`
-    : angebot
+    : check
+      ? `💗 Marken-Check: ${a.name}${a.firma ? ` · ${a.firma}` : ''} · ${a.ergebnis ?? ''}`
+      : angebot
       ? `✨ Angebot angenommen: ${a.name} · ${a.firma}`
       : `Neue Anfrage: ${a.name} · ${a.firma}`;
 
@@ -159,7 +150,9 @@ export const onRequestPost = async ({ request, env }: Context): Promise<Response
     telefon: clean(form.get('phone'), LIMITS.telefon),
     nachricht: clean(form.get('message'), LIMITS.nachricht),
   };
-  if (!daten.name || !daten.firma || !EMAIL_RE.test(daten.email)) return respond(request, false, 422);
+  // Beim Marken-Check ist die Marke/Firma freiwillig
+  const istCheck = form.get('quelle') === 'markencheck';
+  if (!daten.name || (!daten.firma && !istCheck) || !EMAIL_RE.test(daten.email)) return respond(request, false, 422);
 
   const kv = env.ANFRAGEN;
   const mailBereit = Boolean(env.MAIL_TO && ((env.SMTP_USER && env.SMTP_PASSWORD) || env.RESEND_API_KEY));
@@ -190,6 +183,14 @@ export const onRequestPost = async ({ request, env }: Context): Promise<Response
           webseite: clean(form.get('webseite'), LIMITS.webseite) || undefined,
           quiz: clean(form.get('quiz'), LIMITS.quiz).replace(/\r/g, '') || undefined,
         }
+      : istCheck
+        ? {
+            quelle: 'markencheck' as const,
+            webseite: clean(form.get('webseite'), LIMITS.webseite) || undefined,
+            ergebnis: clean(form.get('ergebnis'), LIMITS.ergebnis) || undefined,
+            // Auswertung steht in der Nachricht, damit sie auch im CRM ohne Anpassung sichtbar ist
+            nachricht: [daten.nachricht, clean(form.get('check'), LIMITS.check).replace(/\r/g, '')].filter(Boolean).join('\n\n'),
+          }
       : form.get('quelle') === 'angebot' && SLUG_RE.test(String(form.get('angebot')))
         ? { quelle: 'angebot' as const, angebot: String(form.get('angebot')) }
         : { quelle: 'website' as const }),
