@@ -2,7 +2,7 @@
 /**
  * /marken-check – „Du darfst in deine Marke verliebt sein.“
  * Selbst-Check für Einzelunternehmer:innen (Mobile First, etwa 2 Minuten):
- * Einstieg → Wunschgefühl (1–2) → 10 Fragen mit Croissant-Skala → Ergebnis mit Auswertung je Bereich.
+ * Einstieg → „Bevor wir starten“: Wunschgefühl (1–2) → 10 Fragen mit Croissant-Skala → Ergebnis mit Auswertung je Bereich.
  *
  * - Texte und Fragen: src/content/markencheck.ts
  * - Auswertung läuft komplett im Browser. Anonyme Statistik (wie weit, wo abgebrochen) geht an
@@ -19,6 +19,8 @@ import { contact } from '../content/site';
 import { markencheck as m, markencheckSeo } from '../content/markencheck';
 
 const k = m.kontakt;
+/** Das Wunschgefühl ist der Einstieg („Bevor wir starten“), gezählt werden nur die Croissant-Fragen */
+const gesamtFragen = m.fragen.length;
 // Feine Linien-Icons im Stil der Croissant-Zeichnung (Kontur in Tinte, Akzent in Orange)
 const icons = {
   uhr: '<circle cx="16" cy="17" r="11" class="i-fill"/><circle cx="16" cy="17" r="11"/><path d="M16 11v6l4 3M13 3h6M16 3v3"/>',
@@ -68,7 +70,7 @@ const icons = {
       <!-- Wunschgefühl -->
       <section class="mc-screen mc-screen--frage" data-screen="gefuehl" aria-labelledby="mc-gefuehl" hidden>
         <div class="v-line mc-linie" aria-hidden="true"></div>
-        <p class="mc-schritt">{m.intro.eyebrow}</p>
+        <p class="mc-schritt">{m.gefuehl.vorab}</p>
         <h2 class="mc-frage" id="mc-gefuehl" tabindex="-1">{m.gefuehl.titel}</h2>
         <p class="mc-hinweis" id="mc-gefuehl-hinweis">{m.gefuehl.hinweis}</p>
         <ul role="list" class="mc-chips" aria-describedby="mc-gefuehl-hinweis">
@@ -93,11 +95,11 @@ const icons = {
         m.fragen.map((f, i) => (
           <section class="mc-screen mc-screen--frage" data-screen={`frage-${i}`} aria-labelledby={`mc-f${i}`} hidden>
             <div class="mc-fortschritt" aria-hidden="true">
-              <span style={`--p:${(i + 1) / m.fragen.length}`} />
+              <span style={`--p:${(i + 1) / gesamtFragen}`} />
             </div>
             <div class="v-line mc-linie" aria-hidden="true" />
             <p class="mc-schritt">
-              {m.navigation.frage} {i + 1} {m.navigation.von} {m.fragen.length}
+              {m.navigation.frage} {i + 1} {m.navigation.von} {gesamtFragen}
               <span class="mc-schritt__bereich">· {m.bereiche[f.bereich].name}</span>
             </p>
             <h2 class="mc-frage" id={`mc-f${i}`} tabindex="-1" data-text={f.text}>
@@ -119,6 +121,9 @@ const icons = {
             <div class="mc-nav">
               <button type="button" class="mc-zurueck" data-zurueck>
                 {m.navigation.zurueck}
+              </button>
+              <button type="button" class="btn btn--solid mc-btn" data-frage-weiter disabled>
+                {i === m.fragen.length - 1 ? m.navigation.ergebnis : m.navigation.weiter}
               </button>
             </div>
           </section>
@@ -249,7 +254,8 @@ const icons = {
     </div>
   </main>
 
-  <Footer />
+  <!-- Footer ohne Kontaktblock: WhatsApp sitzt in der schwarzen Fußleiste -->
+  <Footer contact={false} />
 </Base>
 
 <script>
@@ -389,55 +395,67 @@ const icons = {
       transform: rotate(6deg) scale(1.05);
     }
   }
-  /* Drei Kacheln: Dauer, anonym, Sofort-Ergebnis */
+  /* Drei Punkte ohne Kästchen: Icon im orangen Kreis, getrennt durch den feinen senkrechten Strich */
   .mc-punkte {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.6rem;
     padding: 0;
-    margin: 0.5rem 0 0.75rem;
+    margin: 0.75rem 0 1rem;
   }
   .mc-punkt {
     display: grid;
     justify-items: center;
     align-content: start;
-    gap: 0.2rem;
-    padding: 1rem 0.5rem 0.9rem;
-    border-radius: var(--radius);
-    background: var(--c-white);
+    gap: 0.15rem;
+    padding: 0.25rem 0.5rem;
     text-align: center;
   }
-  :global(:root[data-design='louder']) .mc-punkt {
-    background: #fff;
+  .mc-punkt + .mc-punkt {
+    border-left: 1px solid color-mix(in srgb, var(--c-ink) 45%, transparent);
   }
   .mc-punkt strong {
     font-family: var(--f-display);
+    font-style: italic;
     font-weight: var(--w-regular);
-    font-size: clamp(0.875rem, 0.8rem + 0.4vw, 1.0625rem);
-    line-height: 1.25;
+    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+    line-height: 1.2;
   }
   :global(:root[data-design='louder']) .mc-punkt strong {
     font-family: var(--f-bold);
+    font-style: normal;
     text-transform: lowercase;
   }
   .mc-punkt span {
     font-size: 0.75rem;
     line-height: 1.3;
+    letter-spacing: 0.04em;
     color: var(--c-ink-soft);
   }
   .mc-punkt__icon {
-    width: 2.1rem;
-    margin-bottom: 0.35rem;
+    box-sizing: content-box;
+    width: 1.35rem;
+    padding: 0.65rem;
+    margin-bottom: 0.5rem;
+    border-radius: 50%;
+    background: var(--c-accent);
     fill: none;
-    stroke: var(--c-ink);
-    stroke-width: 1.4;
+    stroke: #000;
+    stroke-width: 1.5;
     stroke-linecap: round;
     stroke-linejoin: round;
+    transition: transform 0.35s var(--ease);
   }
   .mc-punkt__icon :global(.i-fill) {
-    fill: var(--c-accent);
-    stroke: none;
-    opacity: 0.85;
+    display: none;
+  }
+  :global(:root[data-design='louder']) .mc-punkt__icon {
+    background: #000;
+    stroke: var(--c-accent);
+  }
+  @media (hover: hover) {
+    .mc-punkt:hover .mc-punkt__icon {
+      transform: rotate(-8deg) scale(1.06);
+    }
   }
   @media (prefers-reduced-motion: no-preference) {
     .mc-punkt {

@@ -139,11 +139,17 @@ export function starteMarkencheck(root: HTMLElement) {
     zeige(2);
   });
 
-  // Croissant-Skala: antippen → kurz zeigen → nächste Frage
+  // Croissant-Skala: antippen, dann „Weiter“
   cfg.fragen.forEach((_, i) => {
     const screen = screens.find((s) => s.dataset.screen === `frage-${i}`)!;
     const herzen = [...screen.querySelectorAll<HTMLButtonElement>('[data-wert]')];
-    let timer = 0;
+    // Wie beim Einstieg: antippen (und bei Bedarf ändern), dann bewusst „Weiter“ klicken
+    const weiterBtn = screen.querySelector<HTMLButtonElement>('[data-frage-weiter]')!;
+    weiterBtn.addEventListener('click', () => {
+      if (antworten[i] === null) return;
+      if (i === cfg.fragen.length - 1) ergebnis();
+      else zeige(aktuell + 1);
+    });
     herzen.forEach((h) =>
       h.addEventListener('click', () => {
         const wert = Number(h.dataset.wert);
@@ -154,8 +160,7 @@ export function starteMarkencheck(root: HTMLElement) {
           x.setAttribute('aria-pressed', String(n === wert));
         });
         fortschritt(2 + i);
-        clearTimeout(timer);
-        timer = window.setTimeout(() => (i === cfg.fragen.length - 1 ? ergebnis() : zeige(aktuell + 1)), 380);
+        weiterBtn.disabled = false;
       }),
     );
   });
@@ -283,6 +288,7 @@ export function starteMarkencheck(root: HTMLElement) {
     chipsAktualisieren();
     boxen.forEach((b) => (b.checked = false));
     if (alleOk) alleOk.hidden = true;
+    root.querySelectorAll<HTMLButtonElement>('[data-frage-weiter]').forEach((b) => (b.disabled = true));
     root.querySelectorAll('[data-wert]').forEach((h) => {
       h.classList.remove('is-an');
       h.setAttribute('aria-pressed', 'false');

@@ -84,7 +84,8 @@ export async function speichereLauf(kv: KV, id: string, lauf: CheckLauf): Promis
 
 /** Text zu einem Abbruch-Schritt für die Übersicht */
 export function schrittText(schritt: number): string {
-  if (schritt === 0) return 'Beim Wunschgefühl';
+  // Das Wunschgefühl ist der Einstieg („Bevor wir starten“), die Croissant-Fragen sind 1 bis 10
+  if (schritt === 0) return 'Vor dem Start: Wunschgefühl';
   const frage = markencheck.fragen[schritt - 1];
   return frage ? `Frage ${schritt}: ${frage.text.replace('{gefuehl}', '…')}` : 'Beim Ergebnis';
 }

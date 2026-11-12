@@ -335,7 +335,7 @@ import '../../styles/base.css';
               const stand = l.fertig
                 ? `fertig · ${ERGEBNIS_NAMEN[l.ergebnis ?? ''] ?? ''} ${l.prozent ?? ''} %${l.lead ? ' · ✉️ Kontakt angefragt' : ''}`
                 : l.schritt === 0
-                  ? 'aufgehört beim Wunschgefühl'
+                  ? 'aufgehört vor dem Start (Wunschgefühl)'
                   : `aufgehört bei Frage ${l.schritt}`;
               ul.append(el('li', `${datum.format(new Date(l.start))} · ${stand}${l.gefuehle?.length ? ` · ${l.gefuehle.join(', ')}` : ''} · ${l.herkunft ?? 'direkt'} · ${l.geraet ?? ''}`));
             }

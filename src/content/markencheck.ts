@@ -1,7 +1,7 @@
 /**
  * MARKEN-CHECK – alle Texte der Seite /marken-check („Du darfst in deine Marke verliebt sein.“)
  *
- * Ablauf: Einstieg → Wunschgefühl wählen (1–2) → 10 Fragen mit Croissant-Skala (1–5) → Ergebnis.
+ * Ablauf: Einstieg → „Bevor wir starten“: Wunschgefühl wählen (1–2) → 10 Fragen mit Croissant-Skala (1–5) → Ergebnis.
  * {gefuehl} in einer Frage wird durch das gewählte Wunschgefühl ersetzt (z. B. „Leichtigkeit und Wärme“).
  *
  * Fragen ändern: einfach Text anpassen. Neue Fragen brauchen einen Bereich (spueren, echt, leben, ankommen).
@@ -20,7 +20,7 @@ export interface Frage {
 }
 
 export const markencheckSeo = {
-  title: 'Du darfst in deine Marke verliebt sein – der Marken-Check | Online Boutique Agentur',
+  title: 'Du darfst in deine Marke verliebt sein – dein Marken-Check | Online Boutique Agentur',
   description:
     'Der 2-Minuten-Check für Einzelunternehmer:innen: Wie sehr spürst und lebst du deine Marke? Ehrlich, anonym und mit einem persönlichen Ergebnis.',
   path: '/marken-check/',
@@ -28,21 +28,23 @@ export const markencheckSeo = {
 
 export const markencheck = {
   intro: {
-    eyebrow: 'Der Marken-Check',
+    eyebrow: 'Dein Marken-Check',
     titel: 'Du darfst in deine Marke',
     titelBetont: 'verliebt sein.',
-    text: 'Eine Marke ist nicht nur Logo und Farben. Man muss sie fühlen können, und du selbst solltest zu 100 % dahinterstehen. Denn wenn du deine Marke nicht fühlst, werden es auch deine Kund:innen nicht spüren. In zwei Minuten findest du heraus, wie sehr du deine Marke gerade spürst und lebst.',
+    text: 'Eine Marke ist nicht nur Logo und Farben. Man muss sie fühlen können, und du selbst solltest zu 100 % dahinterstehen. Denn was du selbst nicht spürst, kommt auch bei deinen Kund:innen nicht an. In zwei Minuten findest du heraus, wie sehr du deine Marke gerade lebst.',
     /** Drei kleine Kacheln mit Icon (icon: uhr, anonym, sofort) */
     punkte: [
       { icon: 'uhr', titel: '2 Minuten', text: '10 kurze Fragen' },
       { icon: 'anonym', titel: 'Anonym', text: 'ohne Anmeldung' },
-      { icon: 'sofort', titel: 'Sofort', text: 'dein Ergebnis direkt' },
+      { icon: 'sofort', titel: 'Sofort', text: 'Ergebnis direkt' },
     ],
     start: 'Check starten',
     startUnter: 'Sofort-Ergebnis · ohne Anmeldung',
   },
 
   gefuehl: {
+    /** Kleine Zeile über der Einstiegsfrage (statt „Frage x von y“) */
+    vorab: 'Bevor wir starten · eine wichtige Frage',
     titel: 'Welches Gefühl sollen Menschen haben, wenn sie deiner Marke begegnen?',
     hinweis: 'Wähle ein oder zwei Gefühle.',
     optionen: ['Geborgenheit', 'Leichtigkeit', 'Mut', 'Eleganz', 'Vertrauen', 'Lebensfreude', 'Klarheit', 'Wärme', 'Ruhe', 'Begeisterung'],
@@ -129,7 +131,7 @@ export const markencheck = {
     },
   ] satisfies Frage[],
 
-  navigation: { zurueck: 'Zurück', frage: 'Frage', von: 'von' },
+  navigation: { zurueck: 'Zurück', weiter: 'Weiter', ergebnis: 'Ergebnis anzeigen', frage: 'Frage', von: 'von' },
 
   /** Ergebnis nach Gesamtwert in Prozent (ab „ab“). Reihenfolge: niedrigster zuerst. */
   ergebnisse: [
