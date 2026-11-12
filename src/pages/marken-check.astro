@@ -1,0 +1,1038 @@
+---
+/**
+ * /marken-check – „Du darfst in deine Marke verliebt sein.“
+ * Selbst-Check für Einzelunternehmer:innen (Mobile First, etwa 2 Minuten):
+ * Einstieg → „Bevor wir starten“: Wunschgefühl (1–2) → 10 Fragen mit Croissant-Skala → Ergebnis mit Auswertung je Bereich.
+ *
+ * - Texte und Fragen: src/content/markencheck.ts
+ * - Auswertung läuft komplett im Browser. Anonyme Statistik (wie weit, wo abgebrochen) geht an
+ *   /api/marken-check – ohne Cookie, ohne IP, mit einer zufälligen id pro Durchlauf.
+ *   Browser im „internen Modus“ (?intern=1 bzw. im Admin angemeldet) zählen nicht mit.
+ * - Kontaktformular nach dem Ergebnis: /api/contact mit quelle=markencheck → Mail + /admin + CRM.
+ */
+import Base from '../layouts/Base.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import CroissantArt from '../components/CroissantArt.astro';
+import CroissantTeaser from '../components/CroissantTeaser.astro';
+import { contact } from '../content/site';
+import { markencheck as m, markencheckSeo } from '../content/markencheck';
+
+const k = m.kontakt;
+const pm = m.perMail;
+/** Das Wunschgefühl ist der Einstieg („Bevor wir starten“), gezählt werden nur die Croissant-Fragen */
+const gesamtFragen = m.fragen.length;
+// Große Linien-Icons im Stil der Croissant-Zeichnung: Kontur in Tinte, Akzente in Orange, kein Hintergrund
+const icons = {
+  // Stoppuhr mit der „2“ im Zifferblatt, der orange Bogen zeichnet sich beim Laden
+  uhr:
+    '<path d="M26 6h12M32 6v8M49 15l4-4"/><circle cx="32" cy="36" r="22"/>' +
+    '<path class="i-akzent i-bogen" pathLength="1" d="M32 14A22 22 0 0 1 51.05 25"/>' +
+    '<text class="i-zahl" x="32" y="45" text-anchor="middle">2</text>' +
+    '<text class="i-klein" x="32" y="53" text-anchor="middle">min</text>',
+  // Augenmaske wie beim Maskenball: anonym, aber mit Augenzwinkern
+  anonym:
+    '<path d="M6 30c0-7 6-10 13-10 6 0 9 3 13 3s7-3 13-3c7 0 13 3 13 10 0 9-6 14-13 14-6 0-9-5-13-5s-7 5-13 5C12 44 6 39 6 30z"/>' +
+    '<path class="i-akzent i-auge" d="M15 31c2-3 7-3 9 0M40 31c2-3 7-3 9 0"/>' +
+    '<path d="M6 30c-2 6-1 14 2 18M58 30c2 6 1 14-2 18"/>',
+  // Blitz mit kleinen Funken
+  sofort:
+    '<path d="M37 5 15 36h15l-4 23 23-32H34l3-22z"/>' +
+    '<path class="i-akzent i-funken" d="M50 8l5-5M53 17h7M10 47l-5 4M11 56l-3 5"/>',
+};
+---
+
+<Base title={markencheckSeo.title} description={markencheckSeo.description} path={markencheckSeo.path} noindex>
+  <header class="mc-head">
+    <Navigation base="/" designSwitch />
+  </header>
+
+  <main id="inhalt" tabindex="-1" class="mc">
+    <div
+      class="mc-check container--text"
+      data-check
+      data-config={JSON.stringify({ fragen: m.fragen, bereiche: m.bereiche, ergebnisse: m.ergebnisse, auswertung: m.auswertung })}
+    >
+      <noscript>
+        <p class="mc-noscript">Der Marken-Check braucht JavaScript. Bitte aktiviere es in deinem Browser oder <a href="/kontakt/">schreib uns direkt</a>.</p>
+      </noscript>
+
+      <!-- Einstieg -->
+      <section class="mc-screen mc-intro is-active" data-screen="intro" aria-labelledby="mc-titel">
+        <CroissantArt mini class="mc-intro__croissant" />
+        <p class="mc-eyebrow">{m.intro.eyebrow}</p>
+        <h1 class="mc-titel" id="mc-titel" tabindex="-1">{m.intro.titel} <em>{m.intro.titelBetont}</em> {m.intro.titelEnde}</h1>
+        <p class="mc-slogan">
+          <span class="sr-only">{m.intro.slogan.vor} {m.intro.slogan.woerter[0]} {m.intro.slogan.nach}</span>
+          <span aria-hidden="true" data-typewriter={JSON.stringify(m.intro.slogan.woerter.map((word) => ({ word })))}>
+            {m.intro.slogan.vor} <span class="mc-slogan__wort" data-tw-word>{m.intro.slogan.woerter[0]}</span><span class="cursor">|</span> {m.intro.slogan.nach}
+          </span>
+        </p>
+        <p class="mc-lead">{m.intro.text}</p>
+        <ul role="list" class="mc-punkte">
+          {
+            m.intro.punkte.map((p) => (
+              <li class="mc-punkt">
+                <svg class="mc-punkt__icon" viewBox="0 0 64 64" aria-hidden="true" set:html={icons[p.icon as keyof typeof icons]} />
+                <strong>{p.titel}</strong>
+                <span>{p.text}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <button type="button" class="btn btn--solid mc-btn mc-btn--start" data-start>
+          <span class="mc-btn__haupt">{m.intro.start} <span aria-hidden="true">→</span></span>
+          <span class="mc-btn__unter">{m.intro.startUnter}</span>
+        </button>
+      </section>
+
+      <!-- Wunschgefühl -->
+      <section class="mc-screen mc-screen--frage" data-screen="gefuehl" aria-labelledby="mc-gefuehl" hidden>
+        <div class="v-line mc-linie" aria-hidden="true"></div>
+        <p class="mc-schritt">{m.gefuehl.vorab}</p>
+        <h2 class="mc-frage" id="mc-gefuehl" tabindex="-1">{m.gefuehl.titel}</h2>
+        <p class="mc-hinweis" id="mc-gefuehl-hinweis">{m.gefuehl.hinweis}</p>
+        <ul role="list" class="mc-chips" aria-describedby="mc-gefuehl-hinweis">
+          {
+            m.gefuehl.optionen.map((g) => (
+              <li>
+                <button type="button" class="mc-chip" aria-pressed="false" data-gefuehl={g}>
+                  {g}
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="mc-nav">
+          <button type="button" class="mc-zurueck" data-zurueck>{m.navigation.zurueck}</button>
+          <button type="button" class="btn btn--solid mc-btn" data-gefuehl-weiter disabled>{m.gefuehl.weiter}</button>
+        </div>
+      </section>
+
+      <!-- Fragen -->
+      {
+        m.fragen.map((f, i) => (
+          <section class="mc-screen mc-screen--frage" data-screen={`frage-${i}`} aria-labelledby={`mc-f${i}`} hidden>
+            <div class="mc-fortschritt" aria-hidden="true">
+              <span style={`--p:${(i + 1) / gesamtFragen}`} />
+            </div>
+            <div class="v-line mc-linie" aria-hidden="true" />
+            <p class="mc-schritt">
+              {m.navigation.frage} {i + 1} {m.navigation.von} {gesamtFragen}
+              <span class="mc-schritt__bereich">· {m.bereiche[f.bereich].name}</span>
+            </p>
+            <h2 class="mc-frage" id={`mc-f${i}`} tabindex="-1" data-text={f.text}>
+              {f.text.replace('{gefuehl}', '…')}
+            </h2>
+            <div class="mc-skala" role="group" aria-labelledby={`mc-f${i}`}>
+              <div class="mc-herzen">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button type="button" class="mc-herz" data-wert={n} aria-pressed="false" aria-label={`${n} von 5 Croissants`}>
+                    <CroissantArt mini />
+                  </button>
+                ))}
+              </div>
+              <div class="mc-skala__labels" aria-hidden="true">
+                <span>{f.von}</span>
+                <span>{f.bis}</span>
+              </div>
+            </div>
+            <div class="mc-nav">
+              <button type="button" class="mc-zurueck" data-zurueck>
+                {m.navigation.zurueck}
+              </button>
+              <button type="button" class="btn btn--solid mc-btn" data-frage-weiter disabled>
+                {i === m.fragen.length - 1 ? m.navigation.ergebnis : m.navigation.weiter}
+              </button>
+            </div>
+          </section>
+        ))
+      }
+
+      <!-- Ergebnis -->
+      <section class="mc-screen mc-ergebnis" data-screen="ergebnis" aria-labelledby="mc-ergebnis" hidden>
+        <p class="mc-symbol" aria-hidden="true" data-e-symbol>
+          <CroissantArt mini /><CroissantArt mini /><CroissantArt mini />
+        </p>
+        <p class="mc-eyebrow">Dein Liebesstatus</p>
+        <h2 class="mc-titel" id="mc-ergebnis" tabindex="-1" data-e-titel></h2>
+        <p class="mc-lead" data-e-text></p>
+
+        <div class="mc-auswertung">
+          <h3 class="mc-h3">{m.auswertung.titel}</h3>
+          <p class="mc-gefuehl-tag" data-e-gefuehl></p>
+          <ul role="list" class="mc-balken" data-e-balken></ul>
+          <p class="mc-satz" data-e-staerke></p>
+          <p class="mc-satz" data-e-potenzial></p>
+        </div>
+
+        <div class="mc-tipp">
+          <h3 class="mc-h3">{m.auswertung.tippTitel}</h3>
+          <p data-e-tipp></p>
+        </div>
+
+        <!-- Bonus: Website-Checkliste zum Abhaken, als PDF speicherbar (Druckansicht zeigt nur diesen Block) -->
+        <section class="mc-bonus" aria-labelledby="mc-bonus-titel" data-bonus>
+          <p class="mc-eyebrow">{m.bonus.eyebrow}</p>
+          <h3 class="mc-h3" id="mc-bonus-titel">{m.bonus.titel}</h3>
+          <p class="mc-bonus__text">{m.bonus.text}</p>
+          <ul role="list" class="mc-bonus__liste">
+            {
+              m.bonus.punkte.map((p, i) => (
+                <li>
+                  <label class="mc-bonus__punkt">
+                    <input type="checkbox" class="mc-bonus__box" data-bonus-box />
+                    <span class="mc-bonus__haken" aria-hidden="true">
+                      <CroissantArt mini />
+                    </span>
+                    <span>
+                      <strong>
+                        {i + 1}. {p.titel}
+                      </strong>
+                      <span class="mc-bonus__frage">{p.text}</span>
+                    </span>
+                  </label>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="mc-bonus__ok" data-bonus-ok hidden>{m.bonus.alleOk}</p>
+          <div class="mc-bonus__aktion">
+            <a class="btn mc-bonus__pdf" href={m.bonus.pdfUrl} download data-bonus-pdf>{m.bonus.pdf}</a>
+            <span class="mc-bonus__hinweis">{m.bonus.pdfHinweis}</span>
+          </div>
+          <p class="mc-bonus__angebot">
+            <strong>{m.bonus.angebotTitel}</strong> {m.bonus.angebotBetont} <a href="#mc-kostenlos">Gleich anfragen</a>
+          </p>
+        </section>
+
+        <!-- Ergebnis und Website-Check per Mail (unverbindlich) → /api/marken-check-mail -->
+        <form class="form mc-permail" novalidate data-permail>
+          <h3 class="mc-h3">{pm.titel}</h3>
+          <p class="mc-permail__text">{pm.text}</p>
+          <div class="mc-permail__felder" data-permail-felder>
+            <div class="form__field">
+              <label for="mc-pm-vorname">{pm.felder.vorname}</label>
+              <input id="mc-pm-vorname" placeholder=" " name="vorname" type="text" autocomplete="given-name" maxlength="40" />
+            </div>
+            <div class="form__field">
+              <label for="mc-pm-email">{pm.felder.email} <span aria-hidden="true">*</span></label>
+              <input id="mc-pm-email" placeholder=" " name="email" type="email" autocomplete="email" required maxlength="200" aria-describedby="mc-pm-email-err" />
+              <p class="form__error" id="mc-pm-email-err" hidden>Bitte gib eine gültige E-Mail-Adresse an.</p>
+            </div>
+            <div class="form__hp" aria-hidden="true">
+              <label for="mc-pm-website">Website</label>
+              <input id="mc-pm-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+            <div class="form__actions">
+              <button class="btn btn--solid mc-btn" type="submit" data-permail-btn data-label={pm.absenden} data-sending={pm.sendet}>{pm.absenden}</button>
+            </div>
+            <p class="mc-meta">{pm.hinweis} <a href="/datenschutz/">Datenschutz</a></p>
+          </div>
+          <div role="status" aria-live="polite">
+            <p class="form__msg form__msg--ok" hidden data-permail-ok>{pm.erfolg}</p>
+            <p class="form__msg form__msg--err" hidden data-permail-err>{pm.fehler}</p>
+          </div>
+        </form>
+
+        <!-- Wer dahintersteht: Video von Nina und Pia (wie auf der Startseite), lädt erst beim Anzeigen -->
+        <figure class="mc-video">
+          <video class="mc-video__film" muted loop playsinline preload="none" data-src={contact.video.src} aria-label={contact.video.label}></video>
+          <figcaption>{m.video.text}</figcaption>
+        </figure>
+
+        <!-- Teaser: Was ein Croissant mit deinem Auftritt zu tun hat → /das-croissant-prinzip/ -->
+        <div class="mc-teaser">
+          <CroissantTeaser />
+        </div>
+
+        <form class="form mc-form" id="mc-kostenlos" action="/api/contact" method="post" novalidate data-contact-form data-check-form>
+          <h3 class="heading mc-form__titel">{k.titel}</h3>
+          <div class="mc-form__felder" data-form-fields>
+            <p class="mc-form__text">{k.text}</p>
+            <div class="form__field">
+              <label for="mc-name">{k.felder.name} <span aria-hidden="true">*</span></label>
+              <input id="mc-name" placeholder=" " name="name" type="text" autocomplete="given-name" required maxlength="120" aria-describedby="mc-name-err" />
+              <p class="form__error" id="mc-name-err" hidden>Verrätst du uns deinen Namen?</p>
+            </div>
+            <div class="form__field">
+              <label for="mc-email">{k.felder.email} <span aria-hidden="true">*</span></label>
+              <input id="mc-email" placeholder=" " name="email" type="email" autocomplete="email" required maxlength="200" aria-describedby="mc-email-err" />
+              <p class="form__error" id="mc-email-err" hidden>Bitte gib eine gültige E-Mail-Adresse an.</p>
+            </div>
+            <div class="form__field">
+              <label for="mc-firma">{k.felder.firma}</label>
+              <input id="mc-firma" placeholder=" " name="company" type="text" autocomplete="organization" maxlength="160" />
+            </div>
+            <div class="form__field">
+              <label for="mc-webseite">{k.felder.webseite}</label>
+              <input id="mc-webseite" placeholder=" " name="webseite" type="text" inputmode="url" autocomplete="url" maxlength="200" />
+            </div>
+            <div class="form__field">
+              <label for="mc-nachricht">{k.felder.nachricht}</label>
+              <textarea id="mc-nachricht" placeholder=" " name="message" rows="3" maxlength="5000"></textarea>
+            </div>
+
+            <div class="form__hp" aria-hidden="true">
+              <label for="mc-website">Website</label>
+              <input id="mc-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+            <input type="hidden" name="ts" value="" data-ts />
+            <input type="hidden" name="quelle" value="markencheck" />
+            <input type="hidden" name="check" value="" data-check-feld />
+            <input type="hidden" name="ergebnis" value="" data-ergebnis-feld />
+            <input type="hidden" name="design" value="" data-design-field />
+
+            <p class="form__privacy">
+              Mit dem Absenden werden deine Angaben und dein Check-Ergebnis zur Bearbeitung deiner Anfrage verwendet. Mehr dazu in der <a href="/datenschutz/">Datenschutzerklärung</a>.
+            </p>
+            <div class="form__actions">
+              <button class="btn btn--solid mc-btn" type="submit" data-label={k.absenden} data-sending={k.sendet}>
+                <span data-btn-text>{k.absenden}</span>
+              </button>
+            </div>
+            <p class="mc-meta">{k.meta}</p>
+          </div>
+          <div class="form__status" role="status" aria-live="polite" tabindex="-1" data-form-status>
+            <p class="form__msg form__msg--ok" hidden data-ok>{k.erfolg}</p>
+            <p class="form__msg form__msg--err" hidden data-err>{k.fehler}</p>
+          </div>
+        </form>
+
+        <p class="mc-nochmal"><button type="button" class="mc-zurueck" data-nochmal>{m.auswertung.nochmal}</button></p>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer ohne Kontaktblock: WhatsApp sitzt in der schwarzen Fußleiste -->
+  <Footer contact={false} />
+</Base>
+
+<script>
+  import '../scripts/contact-form';
+  import '../scripts/typewriter';
+  import { starteMarkencheck } from '../scripts/markencheck';
+
+  const root = document.querySelector<HTMLElement>('[data-check]');
+  if (root) starteMarkencheck(root);
+</script>
+
+<style>
+  .mc-head {
+    --c-ink-hero: var(--c-ink);
+    padding-bottom: 1rem;
+    text-align: center;
+  }
+  .mc {
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+  .mc-check {
+    max-width: 40rem;
+  }
+  .mc-noscript {
+    padding: 1rem 0;
+  }
+  .mc-screen {
+    display: grid;
+    gap: 1.1rem;
+    align-content: start;
+    min-height: min(36rem, calc(100svh - 10rem));
+    padding-top: clamp(1rem, 4vw, 2.5rem);
+  }
+  .mc-screen[hidden] {
+    display: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .mc-screen.is-active {
+      animation: mc-ein 0.45s var(--ease);
+    }
+  }
+  @keyframes mc-ein {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+  }
+  .mc-screen :is(h1, h2):focus {
+    outline: none;
+  }
+
+  /* ---------- Typo ---------- */
+  .mc-eyebrow,
+  .mc-schritt {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--c-ink-soft);
+  }
+  .mc-schritt__bereich {
+    font-style: normal;
+    font-family: var(--f-body);
+    font-size: 0.8125rem;
+  }
+  .mc-titel {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: var(--fs-hero);
+    line-height: 1.15;
+    letter-spacing: var(--ls-display);
+    text-wrap: balance;
+    color: var(--c-heading);
+  }
+  .mc-titel em {
+    font-style: italic;
+  }
+  /* Slogan als kleine, augenzwinkernde Antwort auf die Titelfrage */
+  .mc-slogan {
+    margin-top: -0.5rem;
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+    color: var(--c-ink-soft);
+  }
+  .mc-frage {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: clamp(1.375rem, 1.1rem + 1vw, 1.875rem);
+    line-height: 1.3;
+    text-wrap: balance;
+    min-height: 4em;
+  }
+  .mc-lead {
+    font-size: var(--fs-hero-sub);
+    text-wrap: pretty;
+  }
+  .mc-hinweis,
+  .mc-meta {
+    font-size: 0.875rem;
+    color: var(--c-ink-soft);
+  }
+  .mc-h3 {
+    font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  :global(:root[data-design='louder']) :is(.mc-titel, .mc-frage, .mc-h3) {
+    font-family: var(--f-bold);
+    text-transform: lowercase;
+    letter-spacing: 0;
+  }
+  :global(:root[data-design='louder']) .mc-titel em {
+    font-style: normal;
+    color: #000;
+  }
+
+  /* ---------- Einstieg ---------- */
+  .mc :global(.croissant-art) {
+    color: var(--c-ink);
+  }
+  :global(:root[data-design='louder']) .mc :global(.croissant-art) {
+    color: #000;
+  }
+  .mc :global(.mc-intro__croissant) {
+    width: 4.5rem;
+    --croissant-fill: var(--c-accent);
+    --croissant-stroke: 1.4;
+  }
+  /* Das Croissant wippt sanft – wie auf der Croissant-Seite */
+  @media (prefers-reduced-motion: no-preference) {
+    .mc :global(.mc-intro__croissant) {
+      animation: mc-wippen 3.2s ease-in-out infinite;
+    }
+  }
+  @keyframes mc-wippen {
+    0%,
+    70%,
+    100% {
+      transform: none;
+    }
+    80% {
+      transform: rotate(-10deg) scale(1.05);
+    }
+    90% {
+      transform: rotate(6deg) scale(1.05);
+    }
+  }
+  /* Drei Punkte ohne Kästchen und ohne Trennstriche: große Linien-Icons auf transparentem Grund */
+  .mc-punkte {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 0;
+    margin: 0.75rem 0 1rem;
+  }
+  .mc-punkt {
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 0.15rem;
+    padding: 0.25rem 0.5rem;
+    text-align: center;
+  }
+  .mc-punkt strong {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-weight: var(--w-regular);
+    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+    line-height: 1.2;
+  }
+  :global(:root[data-design='louder']) .mc-punkt strong {
+    font-family: var(--f-bold);
+    font-style: normal;
+    text-transform: lowercase;
+  }
+  .mc-punkt span {
+    font-size: 0.75rem;
+    line-height: 1.3;
+    letter-spacing: 0.04em;
+    color: var(--c-ink-soft);
+  }
+  .mc-punkt__icon {
+    width: clamp(4rem, 3rem + 4vw, 5.5rem);
+    height: auto;
+    margin-bottom: 0.5rem;
+    overflow: visible;
+    fill: none;
+    stroke: var(--c-ink);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.35s var(--ease);
+  }
+  .mc-punkt__icon :global(.i-akzent) {
+    stroke: var(--c-accent);
+    stroke-width: 3.5;
+  }
+  .mc-punkt__icon :global(.i-zahl) {
+    fill: var(--c-ink);
+    stroke: none;
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 24px;
+  }
+  .mc-punkt__icon :global(.i-klein) {
+    fill: var(--c-ink-soft);
+    stroke: none;
+    font-family: var(--f-body);
+    font-size: 7px;
+    letter-spacing: 0.08em;
+  }
+  :global(:root[data-design='louder']) .mc-punkt__icon :global(.i-zahl) {
+    font-family: var(--f-bold);
+    font-style: normal;
+  }
+  :global(:root[data-design='louder']) .mc-punkt__icon {
+    stroke: #000;
+    stroke-width: 2.5;
+  }
+  @media (hover: hover) {
+    .mc-punkt:hover .mc-punkt__icon {
+      transform: rotate(-6deg) scale(1.08);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    /* Uhr: Bogen zeichnet sich, Maske zwinkert, Blitz funkelt */
+    .mc-punkt__icon :global(.i-bogen) {
+      stroke-dasharray: 1;
+      animation: mc-bogen 1.2s 0.5s var(--ease) both;
+    }
+    .mc-punkt__icon :global(.i-auge) {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: mc-zwinkern 4s 1.2s ease-in-out infinite;
+    }
+    .mc-punkt__icon :global(.i-funken) {
+      animation: mc-funkeln 1.6s 0.8s ease-in-out infinite;
+    }
+  }
+  @keyframes mc-bogen {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes mc-zwinkern {
+    0%,
+    88%,
+    100% {
+      transform: scaleY(1);
+    }
+    93% {
+      transform: scaleY(0.2);
+    }
+  }
+  @keyframes mc-funkeln {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.25;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .mc-punkt {
+      animation: mc-ein 0.5s var(--ease) both;
+    }
+    .mc-punkt:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+    .mc-punkt:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+  }
+  /* Start-Button mit Unterzeile „Sofort-Ergebnis · ohne Anmeldung“ */
+  .mc-btn.mc-btn--start {
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.85rem 2rem;
+    justify-self: stretch;
+  }
+  @media (min-width: 36rem) {
+    .mc-btn.mc-btn--start {
+      justify-self: start;
+      min-width: 20rem;
+    }
+  }
+  .mc-btn__haupt {
+    font-size: 1rem;
+  }
+  .mc-btn__unter {
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+  .mc-btn {
+    justify-self: start;
+    min-width: 12rem;
+    font-size: 0.9375rem;
+  }
+  .mc-btn[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  /* Nach einem Tipp bleibt am Handy der Hover-Zustand am nächsten Button hängen: gesperrt immer gleich aussehen lassen */
+  .mc-btn.btn--solid[disabled]:hover {
+    background: var(--c-ink);
+    color: var(--c-bg);
+  }
+  :root[data-design='louder'] .mc-btn.btn--solid[disabled]:hover {
+    background: #000;
+    color: var(--c-accent);
+  }
+
+  /* ---------- Wunschgefühl ---------- */
+  .mc-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+  }
+  .mc-chip {
+    min-height: 44px;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid var(--c-ink);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--c-ink);
+    font: inherit;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition:
+      background-color var(--t-fast) var(--ease),
+      color var(--t-fast) var(--ease);
+  }
+  .mc-chip[aria-pressed='true'] {
+    background: var(--c-ink);
+    color: var(--c-bg);
+  }
+  .mc-chip[aria-disabled='true'] {
+    opacity: 0.4;
+  }
+  :global(:root[data-design='louder']) .mc-chip {
+    border-radius: 0;
+  }
+
+  /* ---------- Fragen: zentriert, mit dem senkrechten Strich darüber ---------- */
+  .mc-screen--frage {
+    justify-items: center;
+    text-align: center;
+  }
+  .mc-screen--frage .mc-fortschritt {
+    justify-self: stretch;
+  }
+  .mc-linie {
+    height: clamp(48px, 9vh, 90px);
+    margin: 0.5rem auto 0;
+  }
+  .mc-screen--frage .mc-chips {
+    justify-content: center;
+  }
+  .mc-screen--frage .mc-skala {
+    width: 100%;
+  }
+  /* Feste Höhe (längste Frage, per Skript gemessen), Frage darin mittig: Buttons springen nicht */
+  .mc-screen--frage .mc-frage[data-text] {
+    min-height: var(--mc-frage-h, 4em);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mc-screen--frage .mc-skala__labels {
+    min-height: 2.7em;
+  }
+  .mc-screen--frage .mc-nav {
+    justify-self: stretch;
+  }
+  .mc-screen--frage .mc-skala__labels span:first-child {
+    text-align: left;
+  }
+  .mc-fortschritt {
+    height: 3px;
+    background: color-mix(in srgb, var(--c-ink) 12%, transparent);
+  }
+  .mc-fortschritt span {
+    display: block;
+    height: 100%;
+    width: calc(var(--p) * 100%);
+    background: var(--c-ink);
+    transition: width var(--t-med) var(--ease);
+  }
+  .mc-skala {
+    display: grid;
+    gap: 0.5rem;
+    max-width: 24rem;
+  }
+  .mc-herzen {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.25rem;
+  }
+  .mc-herz {
+    display: grid;
+    place-items: center;
+    width: clamp(3.4rem, 17vw, 4.5rem);
+    aspect-ratio: 1;
+    padding: 0.2rem;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mc-herz :global(.croissant-art) {
+    --croissant-stroke: 1.4;
+    transition: transform 0.35s var(--ease);
+  }
+  .mc-herz :global(.croissant-art__fill) {
+    transition: fill var(--t-fast) var(--ease);
+  }
+  .mc-herz.is-an :global(.croissant-art) {
+    --croissant-fill: var(--c-accent);
+  }
+  .mc-herz[aria-pressed='true'] :global(.croissant-art) {
+    transform: rotate(-10deg) scale(1.12);
+  }
+  /* Vorschau beim Drüberfahren (nur mit Maus, damit am Handy nichts „hängen bleibt“) */
+  @media (hover: hover) and (pointer: fine) {
+    .mc-herzen:hover .mc-herz:not(.is-an) :global(.croissant-art) {
+      --croissant-fill: color-mix(in srgb, var(--c-accent) 50%, transparent);
+    }
+    .mc-herzen .mc-herz:hover ~ .mc-herz:not(.is-an) :global(.croissant-art) {
+      --croissant-fill: transparent;
+    }
+  }
+  .mc-herz:focus-visible {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+  .mc-skala__labels {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.8125rem;
+    color: var(--c-ink-soft);
+  }
+  .mc-skala__labels span:last-child {
+    text-align: right;
+  }
+  /* Antworten dürfen zweizeilig sein, jede Seite höchstens knapp die halbe Breite */
+  .mc-skala__labels span {
+    max-width: 45%;
+    line-height: 1.35;
+  }
+  .mc-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+  .mc-zurueck {
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--c-ink);
+    font: inherit;
+    font-size: 0.875rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  /* ---------- Ergebnis ---------- */
+  /* Ergebnis als 1–3 gefüllte Croissants */
+  .mc-symbol {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .mc-symbol :global(.croissant-art) {
+    width: 3.25rem;
+    --croissant-stroke: 1.4;
+    opacity: 0.35;
+    transition:
+      opacity 0.4s var(--ease),
+      transform 0.4s var(--ease);
+  }
+  .mc-symbol :global(.croissant-art.is-an) {
+    --croissant-fill: var(--c-accent);
+    opacity: 1;
+    transform: rotate(-8deg);
+  }
+  .mc-auswertung,
+  .mc-tipp {
+    margin-top: 1rem;
+    padding: clamp(1.25rem, 4vw, 1.75rem);
+    border-radius: var(--radius);
+    background: var(--c-white);
+  }
+  :global(:root[data-design='louder']) :is(.mc-auswertung, .mc-tipp) {
+    background: #fff;
+  }
+  .mc-tipp {
+    background: color-mix(in srgb, var(--c-accent) 22%, var(--c-bg));
+  }
+  :global(:root[data-design='louder']) .mc-tipp {
+    background: var(--c-accent);
+  }
+  .mc-gefuehl-tag {
+    font-size: 0.875rem;
+    color: var(--c-ink-soft);
+    margin-bottom: 0.75rem;
+  }
+  .mc-balken {
+    display: grid;
+    gap: 0.8rem;
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+  .mc-balken :global(li) {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.3rem 1rem;
+    font-size: 0.9375rem;
+  }
+  .mc-balken :global(.mc-balken__spur) {
+    grid-column: 1 / -1;
+    height: 8px;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--c-ink) 10%, transparent);
+    overflow: hidden;
+  }
+  .mc-balken :global(.mc-balken__wert) {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: var(--c-ink);
+    transition: width 0.9s var(--ease);
+  }
+  .mc-balken :global(.mc-balken__frage) {
+    text-wrap: pretty;
+  }
+  .mc-balken :global(.mc-balken__prozent) {
+    white-space: nowrap;
+  }
+  .mc-satz {
+    font-size: 0.9375rem;
+  }
+  .mc-satz + .mc-satz {
+    margin-top: 0.35rem;
+  }
+  /* ---------- Ergebnis per Mail ---------- */
+  .mc-permail {
+    display: grid;
+    gap: 0.75rem;
+    padding: clamp(1.25rem, 4vw, 2rem);
+    border: 1px solid var(--c-ink);
+  }
+  .mc-permail__felder {
+    display: grid;
+    gap: 0.75rem;
+  }
+  @media (min-width: 36rem) {
+    .mc-permail__felder {
+      grid-template-columns: 1fr 1fr;
+    }
+    .mc-permail__felder > :not(.form__field) {
+      grid-column: 1 / -1;
+    }
+  }
+  .mc-permail .form__actions {
+    justify-self: start;
+  }
+  .mc-permail[data-gesendet] .mc-permail__felder {
+    display: none;
+  }
+
+  /* ---------- Bonus: Website-Checkliste ---------- */
+  .mc-bonus {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 1rem;
+    padding: clamp(1.25rem, 4vw, 1.75rem);
+    border: 1px solid color-mix(in srgb, var(--c-ink) 25%, transparent);
+    border-radius: var(--radius);
+  }
+  .mc-bonus .mc-h3 {
+    margin-bottom: 0;
+  }
+  .mc-bonus__text {
+    font-size: 0.9375rem;
+  }
+  .mc-bonus__liste {
+    display: grid;
+    gap: 0.9rem;
+    padding: 0;
+    margin: 0.5rem 0;
+  }
+  .mc-bonus__punkt {
+    display: grid;
+    grid-template-columns: 2.4rem 1fr;
+    gap: 0.75rem;
+    align-items: start;
+    cursor: pointer;
+  }
+  .mc-bonus__punkt strong {
+    display: block;
+    font-weight: var(--w-bold);
+    font-size: 0.9375rem;
+  }
+  .mc-bonus__frage {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--c-ink-soft);
+  }
+  .mc-bonus__box {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+  .mc-bonus__haken {
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border: 1px solid var(--c-ink);
+    border-radius: 50%;
+    padding: 0.35rem;
+    transition: background-color var(--t-fast) var(--ease);
+  }
+  .mc-bonus__haken :global(.croissant-art) {
+    --croissant-stroke: 1.2;
+    opacity: 0.35;
+    transition:
+      opacity var(--t-fast) var(--ease),
+      transform 0.35s var(--ease);
+  }
+  .mc-bonus__box:checked + .mc-bonus__haken {
+    background: color-mix(in srgb, var(--c-accent) 30%, transparent);
+  }
+  .mc-bonus__box:checked + .mc-bonus__haken :global(.croissant-art) {
+    --croissant-fill: var(--c-accent);
+    opacity: 1;
+    transform: rotate(-10deg) scale(1.1);
+  }
+  .mc-bonus__box:focus-visible + .mc-bonus__haken {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 2px;
+  }
+  .mc-bonus__ok {
+    font-family: var(--f-display);
+    font-style: italic;
+  }
+  .mc-bonus__ok[hidden] {
+    display: none;
+  }
+  .mc-bonus__aktion {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+  }
+  .mc-bonus__angebot {
+    padding: 0.9rem 1.1rem;
+    background: var(--c-accent);
+    color: #000;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .mc-bonus__angebot a {
+    color: inherit;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .mc-bonus__hinweis {
+    font-size: 0.75rem;
+    color: var(--c-ink-soft);
+  }
+
+  .mc-video {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    text-align: center;
+  }
+  .mc-video__film {
+    width: min(100%, 24rem);
+    aspect-ratio: 442 / 516;
+    object-fit: cover;
+    border-radius: var(--radius);
+    background: rgb(0 0 0 / 0.08);
+  }
+  .mc-video figcaption {
+    max-width: 30rem;
+    font-family: var(--f-display);
+    font-style: italic;
+    color: var(--c-ink-soft);
+  }
+  /* Teaser ohne den großen Abstand der Startseite */
+  .mc-teaser :global(.teaser) {
+    padding-bottom: 0;
+  }
+  .mc-form {
+    margin-top: 2.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid color-mix(in srgb, var(--c-ink) 20%, transparent);
+  }
+  .mc-form__titel {
+    text-align: left;
+  }
+  .mc-form__felder {
+    display: grid;
+    gap: 0.85rem;
+  }
+  .mc-form__felder[hidden] {
+    display: none;
+  }
+  .mc-form .form__actions {
+    justify-content: flex-start;
+  }
+  .mc-nochmal {
+    margin-top: 1rem;
+  }
+</style>

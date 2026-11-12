@@ -121,3 +121,18 @@ export function sameOrigin(request: Request): boolean {
   const origin = request.headers.get('Origin');
   return !origin || origin === new URL(request.url).origin;
 }
+
+const DEFAULT_ORIGINS = ['https://www.online-boutique-agentur.at', 'https://online-boutique-agentur.at'];
+
+/** Formulare und Statistik nur von der eigenen Website (inkl. Vorschau-Deployments *.pages.dev). */
+export function isAllowedOrigin(origin: string | null, env: Env): boolean {
+  if (!origin) return true; // manche Browser senden bei Same-Origin-POST ohne JS keinen Origin
+  const allowed = env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(',').map((o) => o.trim()) : DEFAULT_ORIGINS;
+  if (allowed.includes(origin)) return true;
+  try {
+    const { hostname, protocol } = new URL(origin);
+    return protocol === 'https:' && hostname.endsWith('.pages.dev'); // Preview-Deployments
+  } catch {
+    return false;
+  }
+}

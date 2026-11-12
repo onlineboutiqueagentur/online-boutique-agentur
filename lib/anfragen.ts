@@ -17,13 +17,15 @@ export interface Anfrage {
   /** Designwelt beim Absenden: minimal, louder oder unbekannt (z. B. ohne JavaScript) */
   design?: 'minimal' | 'louder' | 'unbekannt';
   /** Herkunft: normales Kontaktformular, Croissant-Einladung (/das-croissant-prinzip) oder angenommenes Angebot (/angebot/…) */
-  quelle?: 'website' | 'croissant' | 'angebot';
+  quelle?: 'website' | 'croissant' | 'angebot' | 'markencheck';
+  /** Nur Marken-Check: Ergebnis in Kurzform, z. B. „🥐🥐 Es knistert (68 %)“ – die ganze Auswertung steht in nachricht */
+  ergebnis?: string;
   /** Nur Angebot: Kennung (slug) des angenommenen Angebots */
   angebot?: string;
   /** Nur Croissant-Einladung: Wo frühstücken wir? / Wann passt es? */
   format?: string;
   wunschtermin?: string;
-  /** Nur Croissant-Einladung: Website der Marke (optional) */
+  /** Croissant-Einladung und Marken-Check: Website der Marke (optional) */
   webseite?: string;
   /** Nur Croissant-Einladung: im Quiz angetippte Aussagen (eine pro Zeile) */
   quiz?: string;

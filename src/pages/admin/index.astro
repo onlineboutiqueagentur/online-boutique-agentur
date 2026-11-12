@@ -46,6 +46,20 @@ import '../../styles/base.css';
             <button type="button" data-filter="ungelesen" aria-pressed="false">Ungelesen</button>
           </div>
         </div>
+        <details class="check" id="check">
+          <summary>
+            <span class="check__titel">🥐 Marken-Check</span>
+            <span class="check__kurz" id="check-kurz">anonyme Statistik: wer beginnt, wer aufhört</span>
+          </summary>
+          <div class="check__inhalt">
+            <div class="admin__filter" role="group" aria-label="Zeitraum">
+              <button type="button" data-tage="7" aria-pressed="false">7 Tage</button>
+              <button type="button" data-tage="30" aria-pressed="true">30 Tage</button>
+              <button type="button" data-tage="365" aria-pressed="false">1 Jahr</button>
+            </div>
+            <div id="check-daten"><p>Wird geladen …</p></div>
+          </div>
+        </details>
         <p class="admin__status" id="status" role="status"></p>
         <ul role="list" class="admin__list" id="liste"></ul>
       </main>
@@ -92,7 +106,35 @@ import '../../styles/base.css';
         webseite?: string;
         quiz?: string;
         angebot?: string;
+        ergebnis?: string;
         kampagne?: Record<string, string>;
+      }
+
+      interface CheckLauf {
+        start: string;
+        schritt: number;
+        fertig: boolean;
+        ergebnis?: string;
+        prozent?: number;
+        gefuehle?: string[];
+        herkunft?: string;
+        geraet?: string;
+        lead?: boolean;
+        mail?: boolean;
+      }
+      interface CheckStatistik {
+        tage: number;
+        gestartet: number;
+        fertig: number;
+        leads: number;
+        mails?: number;
+        abbrueche: { schritt: number; text: string; anzahl: number }[];
+        ergebnisse: Record<string, number>;
+        gefuehle: Record<string, number>;
+        herkunft: Record<string, number>;
+        geraete: Record<string, number>;
+        bereiche: Record<string, number>;
+        letzte: CheckLauf[];
       }
 
       const $ = <T extends HTMLElement>(sel: string, root: ParentNode = document) => root.querySelector<T>(sel)!;
@@ -135,17 +177,19 @@ import '../../styles/base.css';
         for (const a of sichtbar) {
           const li = tpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
           li.classList.toggle('is-neu', !a.gelesen);
-          $('.anfrage__name', li).textContent = `${a.name} · ${a.firma}`;
+          $('.anfrage__name', li).textContent = a.firma ? `${a.name} · ${a.firma}` : a.name;
           const croissant = a.quelle === 'croissant';
           const formate: Record<string, string> = { 'bei-uns': 'bei uns in Pasching', 'bei-mir': 'beim Kunden', virtuell: 'virtuell' };
           const angebot = a.quelle === 'angebot';
-          const designName = croissant || angebot ? null : a.design === 'louder' ? 'Louder' : a.design === 'minimal' ? 'Minimal' : null;
+          const check = a.quelle === 'markencheck';
+          const designName = croissant || angebot || check ? null : a.design === 'louder' ? 'Louder' : a.design === 'minimal' ? 'Minimal' : null;
           $('.anfrage__meta', li).textContent = datum.format(new Date(a.eingang)) + (designName ? ` · Design: ${designName}` : '');
           if (croissant) {
             $('.anfrage__meta', li).textContent +=
               ' · 🥐 Frühstück' + (a.format ? ` (${formate[a.format] ?? a.format})` : '') + (a.wunschtermin ? ` · Wann: ${a.wunschtermin}` : '') + (a.webseite ? ` · Website: ${a.webseite}` : '');
           }
           if (angebot) $('.anfrage__meta', li).textContent += ` · ✨ Angebot angenommen (${a.angebot ?? '–'})`;
+          if (check) $('.anfrage__meta', li).textContent += ` · Marken-Check: ${a.ergebnis ?? '–'}` + (a.webseite ? ` · Website: ${a.webseite}` : '');
           // Über einen Werbelink gekommen (UTM-Parameter, z. B. Instagram-Anzeige)
           if (a.kampagne) {
             const k = a.kampagne;
@@ -224,6 +268,99 @@ import '../../styles/base.css';
         }
       }
 
+      /* ---------- Marken-Check: anonyme Statistik ---------- */
+      const ERGEBNIS_NAMEN: Record<string, string> = { 'grosse-liebe': 'Big Love', knistert: 'Es knistert', kompliziert: 'Es ist gerade etwas kompliziert' };
+      const BEREICH_NAMEN: Record<string, string> = { spueren: 'Spüren', echt: 'Echt sein', leben: 'Leben', ankommen: 'Ankommen' };
+      let checkTage = 30;
+
+      const el = (tag: string, text = '', cls = '') => {
+        const e = document.createElement(tag);
+        if (text) e.textContent = text;
+        if (cls) e.className = cls;
+        return e;
+      };
+      const quote = (n: number, von: number) => (von ? `${Math.round((n / von) * 100)} %` : '–');
+      function statListe(titel: string, eintraege: [string, number][], gesamt?: number) {
+        const box = el('div', '', 'check__box');
+        box.append(el('h3', titel));
+        if (!eintraege.length) {
+          box.append(el('p', 'Noch keine Daten.', 'check__leer'));
+          return box;
+        }
+        const ul = el('ul', '', 'check__liste');
+        const max = Math.max(...eintraege.map(([, n]) => n));
+        for (const [name, n] of eintraege) {
+          const li = el('li');
+          li.append(el('span', name), el('strong', gesamt ? `${n} · ${quote(n, gesamt)}` : String(n)));
+          const bar = el('span', '', 'check__bar');
+          bar.style.setProperty('--w', String(n / max));
+          li.append(bar);
+          ul.append(li);
+        }
+        box.append(ul);
+        return box;
+      }
+      const sortiert = (o: Record<string, number>) => Object.entries(o).sort((a, b) => b[1] - a[1]);
+
+      async function checkLaden() {
+        const ziel = $('#check-daten');
+        ziel.replaceChildren(el('p', 'Wird geladen …'));
+        try {
+          const s: CheckStatistik = await api(`/api/marken-check?tage=${checkTage}`);
+          $('#check-kurz').textContent = `${s.gestartet} gestartet · ${s.fertig} fertig · ${s.leads} Kontakt${s.leads === 1 ? '' : 'e'} (${checkTage} Tage)`;
+          const zahlen = el('div', '', 'check__zahlen');
+          for (const [wert, text] of [
+            [String(s.gestartet), 'gestartet'],
+            [`${s.fertig}`, `fertig (${quote(s.fertig, s.gestartet)})`],
+            [`${s.gestartet - s.fertig}`, 'unterwegs aufgehört'],
+            [`${s.leads}`, `Kontakt angefragt (${quote(s.leads, s.fertig)} der Fertigen)`],
+            [`${s.mails ?? 0}`, `Ergebnis per Mail (${quote(s.mails ?? 0, s.fertig)} der Fertigen)`],
+          ]) {
+            const d = el('div', '', 'check__zahl');
+            d.append(el('strong', wert), el('span', text));
+            zahlen.append(d);
+          }
+          const raster = el('div', '', 'check__raster');
+          raster.append(
+            statListe('Wo aufgehört wurde', s.abbrueche.map((a) => [a.text, a.anzahl] as [string, number]), s.gestartet - s.fertig),
+            statListe('Ergebnisse', sortiert(s.ergebnisse).map(([k, n]) => [ERGEBNIS_NAMEN[k] ?? k, n]), s.fertig),
+            statListe('Durchschnitt je Bereich', Object.entries(s.bereiche).map(([k, n]) => [`${BEREICH_NAMEN[k] ?? k} (%)`, n])),
+            statListe('Gewählte Wunschgefühle', sortiert(s.gefuehle)),
+            statListe('Woher', sortiert(s.herkunft)),
+            statListe('Gerät', sortiert(s.geraete)),
+          );
+          const letzte = el('div', '', 'check__box check__box--breit');
+          letzte.append(el('h3', 'Letzte Durchläufe'));
+          if (!s.letzte.length) letzte.append(el('p', 'Noch niemand hat den Check gestartet.', 'check__leer'));
+          else {
+            const ul = el('ul', '', 'check__laeufe');
+            for (const l of s.letzte) {
+              const stand = l.fertig
+                ? `fertig · ${ERGEBNIS_NAMEN[l.ergebnis ?? ''] ?? ''} ${l.prozent ?? ''} %${l.mail ? ' · 📬 per Mail' : ''}${l.lead ? ' · ✉️ Kontakt angefragt' : ''}`
+                : l.schritt === 0
+                  ? 'aufgehört vor dem Start (Wunschgefühl)'
+                  : `aufgehört bei Frage ${l.schritt}`;
+              ul.append(el('li', `${datum.format(new Date(l.start))} · ${stand}${l.gefuehle?.length ? ` · ${l.gefuehle.join(', ')}` : ''} · ${l.herkunft ?? 'direkt'} · ${l.geraet ?? ''}`));
+            }
+            letzte.append(ul);
+          }
+          const hinweis = el('p', 'Anonym: keine Namen, keine IP-Adressen. Wer gerade mitten im Check ist, erscheint als „aufgehört“, bis er fertig ist. Eigene Tests aus diesem Browser zählen nicht mit.', 'check__leer');
+          ziel.replaceChildren(zahlen, raster, letzte, hinweis);
+        } catch (e) {
+          ziel.replaceChildren(el('p', (e as Error).message));
+        }
+      }
+      $<HTMLDetailsElement>('#check').addEventListener('toggle', (e) => {
+        if ((e.target as HTMLDetailsElement).open) checkLaden();
+      });
+      document.querySelectorAll<HTMLButtonElement>('[data-tage]').forEach((btn) =>
+        btn.addEventListener('click', () => {
+          checkTage = Number(btn.dataset.tage);
+          document.querySelectorAll('[data-tage]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+          checkLaden();
+        }),
+      );
+
       async function laden() {
         status.textContent = 'Wird geladen …';
         try {
@@ -238,6 +375,12 @@ import '../../styles/base.css';
             // ignorieren
           }
           render();
+          // Kurzinfo zum Marken-Check gleich in der Zeile darüber anzeigen
+          api(`/api/marken-check?tage=${checkTage}`)
+            .then((s: CheckStatistik) => {
+              $('#check-kurz').textContent = `${s.gestartet} gestartet · ${s.fertig} fertig · ${s.leads} Kontakt${s.leads === 1 ? '' : 'e'} (${checkTage} Tage)`;
+            })
+            .catch(() => {});
         } catch (e) {
           if (!login.hidden) return;
           status.textContent = (e as Error).message;
@@ -451,6 +594,98 @@ import '../../styles/base.css';
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
+      }
+      .check {
+        margin-top: 1.5rem;
+        padding: 1rem 1.5rem;
+        border-radius: 14px;
+        background: #fff;
+      }
+      .check summary {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.25rem 1rem;
+        cursor: pointer;
+      }
+      .check__titel {
+        font-weight: var(--w-bold);
+      }
+      .check__kurz {
+        font-size: 0.875rem;
+        opacity: 0.7;
+      }
+      .check__inhalt {
+        display: grid;
+        gap: 1.25rem;
+        margin-top: 1.25rem;
+      }
+      .check__inhalt .admin__filter {
+        justify-self: start;
+      }
+      .check__zahlen {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+        gap: 0.75rem;
+      }
+      .check__zahl {
+        display: grid;
+        padding: 0.9rem 1rem;
+        border-radius: 10px;
+        background: #f6f4f2;
+      }
+      .check__zahl strong {
+        font-family: var(--f-display);
+        font-size: 1.75rem;
+        font-weight: var(--w-regular);
+      }
+      .check__zahl span {
+        font-size: 0.8125rem;
+        opacity: 0.75;
+      }
+      .check__raster {
+        display: grid;
+        margin-top: 0.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+        gap: 1.25rem;
+      }
+      .check__box h3 {
+        margin-bottom: 0.5rem;
+        font-size: 0.9375rem;
+        font-weight: var(--w-bold);
+      }
+      .check__liste,
+      .check__laeufe {
+        padding: 0;
+        list-style: none;
+      }
+      .check__liste {
+        display: grid;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+      }
+      .check__liste li {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 0.2rem 0.75rem;
+      }
+      .check__bar {
+        grid-column: 1 / -1;
+        height: 5px;
+        width: calc(var(--w) * 100%);
+        min-width: 4px;
+        border-radius: 99px;
+        background: var(--c-accent);
+      }
+      .check__laeufe {
+        display: grid;
+        gap: 0.35rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.8125rem;
+      }
+      .check__leer {
+        font-size: 0.8125rem;
+        opacity: 0.7;
       }
       .anfrage__actions .is-danger {
         background: #8a1f1f;

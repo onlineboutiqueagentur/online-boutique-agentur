@@ -36,3 +36,13 @@ https://:project.pages.dev/*
 # Kunden-Vorschauen nicht indexieren
 /vorschau/*
   X-Robots-Tag: noindex, nofollow
+
+# Marken-Check: noch nicht öffentlich beworben – nicht indexieren
+/marken-check
+  X-Robots-Tag: noindex, nofollow
+
+/marken-check/*
+  X-Robots-Tag: noindex, nofollow
+
+/downloads/*
+  X-Robots-Tag: noindex, nofollow

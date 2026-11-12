@@ -1,5 +1,5 @@
 /**
- * Formulare (Kontakt auf der Startseite + Croissant-Einladung): clientseitige Validierung
+ * Formulare (Kontakt auf der Startseite, Croissant-Einladung, Marken-Check): clientseitige Validierung
  * + Versand per fetch an /api/contact. Gilt für jedes Formular mit [data-contact-form].
  * Ohne JavaScript funktionieren die Formulare als klassischer POST
  * (die Function antwortet dann mit einer Weiterleitung).
@@ -66,6 +66,8 @@ function setup(form: HTMLFormElement) {
       required.forEach((i) => i.removeAttribute('aria-invalid'));
       if (fields) fields.hidden = true;
       ok.hidden = false;
+      // z. B. für den Marken-Check: „Kontakt abgeschickt“ in der anonymen Statistik vermerken
+      form.dispatchEvent(new CustomEvent('formular-gesendet'));
     } catch {
       err.hidden = false;
     } finally {
