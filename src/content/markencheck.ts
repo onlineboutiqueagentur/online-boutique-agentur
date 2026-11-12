@@ -34,7 +34,7 @@ export const markencheck = {
     titelBetont: 'verliebt',
     titelEnde: 'in deine Marke?',
     /** Der Slogan als kleine Antwort unter dem Titel; das Wort in der Mitte tippt sich wie auf der Startseite (Schreibmaschine) */
-    slogan: { vor: 'Du', woerter: ['darfst', 'sollst', 'musst'], nach: 'es nämlich sein.' },
+    slogan: { vor: 'Du', woerter: ['darfst', 'sollst'], nach: 'es nämlich sein.' },
     text: 'Eine Marke ist nicht nur Logo und Farben. Man muss sie fühlen können, und du selbst solltest zu 100 % dahinterstehen. Denn was du selbst nicht spürst, kommt auch bei deinen Kund:innen nicht an. In zwei Minuten findest du heraus, wie sehr du deine Marke gerade lebst.',
     /** Drei kleine Kacheln mit Icon (icon: uhr, anonym, sofort) */
     punkte: [
