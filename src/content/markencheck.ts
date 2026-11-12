@@ -101,7 +101,7 @@ export const markencheck = {
     {
       id: 'zeigen',
       bereich: 'leben',
-      text: 'Zeigst du dich mit deiner Marke so, wie du bist, ohne dich zu verstecken?',
+      text: 'Sieht man dich als Person in deinem Auftritt, mit Gesicht, Haltung und Persönlichkeit, statt Stockfotos und Floskeln?',
       von: 'Ich halte mich eher zurück',
       bis: 'Voll und ganz, ohne Filter',
     },
