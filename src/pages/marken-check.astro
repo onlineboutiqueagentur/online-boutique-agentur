@@ -497,6 +497,15 @@ const icons = {
     opacity: 0.4;
     cursor: not-allowed;
   }
+  /* Nach einem Tipp bleibt am Handy der Hover-Zustand am nächsten Button hängen: gesperrt immer gleich aussehen lassen */
+  .mc-btn.btn--solid[disabled]:hover {
+    background: var(--c-ink);
+    color: var(--c-bg);
+  }
+  :root[data-design='louder'] .mc-btn.btn--solid[disabled]:hover {
+    background: #000;
+    color: var(--c-accent);
+  }
 
   /* ---------- Wunschgefühl ---------- */
   .mc-chips {
@@ -622,6 +631,11 @@ const icons = {
   }
   .mc-skala__labels span:last-child {
     text-align: right;
+  }
+  /* Antworten dürfen zweizeilig sein, jede Seite höchstens knapp die halbe Breite */
+  .mc-skala__labels span {
+    max-width: 45%;
+    line-height: 1.35;
   }
   .mc-nav {
     display: flex;
