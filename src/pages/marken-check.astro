@@ -640,6 +640,16 @@ const icons = {
   .mc-screen--frage .mc-skala {
     width: 100%;
   }
+  /* Feste Höhe (längste Frage, per Skript gemessen), Frage darin mittig: Buttons springen nicht */
+  .mc-screen--frage .mc-frage[data-text] {
+    min-height: var(--mc-frage-h, 4em);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mc-screen--frage .mc-skala__labels {
+    min-height: 2.7em;
+  }
   .mc-screen--frage .mc-nav {
     justify-self: stretch;
   }
@@ -808,10 +818,10 @@ const icons = {
     transition: width 0.9s var(--ease);
   }
   .mc-balken :global(.mc-balken__frage) {
-    grid-column: 1 / -1;
-    font-size: 0.8125rem;
-    color: var(--c-ink-soft);
-    margin-top: -0.2rem;
+    text-wrap: pretty;
+  }
+  .mc-balken :global(.mc-balken__prozent) {
+    white-space: nowrap;
   }
   .mc-satz {
     font-size: 0.9375rem;

@@ -22,6 +22,34 @@ export function starteMarkencheck(root: HTMLElement) {
   const cfg: Config = JSON.parse(root.dataset.config || '{}');
   const screens = [...root.querySelectorAll<HTMLElement>('[data-screen]')];
   const reihenfolge = ['intro', 'gefuehl', ...cfg.fragen.map((_, i) => `frage-${i}`), 'ergebnis'];
+
+  // Alle Fragen bekommen die Höhe der längsten Frage (mit dem längsten Gefühlspaar),
+  // damit Croissants, Weiter und Zurück bei jeder Frage an derselben Stelle stehen.
+  const fragenHoehe = () => {
+    const vorlage = root.querySelector<HTMLElement>('.mc-frage[data-text]');
+    if (!vorlage) return;
+    const mess = vorlage.cloneNode(false) as HTMLElement;
+    mess.removeAttribute('id');
+    const st = getComputedStyle(root);
+    const breite = root.clientWidth - parseFloat(st.paddingLeft) - parseFloat(st.paddingRight);
+    mess.style.cssText = `position:absolute;visibility:hidden;left:0;top:0;min-height:0;width:${breite}px`;
+    root.append(mess);
+    const laengstesGefuehl = 'Lebensfreude und Begeisterung';
+    let max = 0;
+    for (const f of cfg.fragen) {
+      mess.textContent = f.text.replaceAll('{gefuehl}', laengstesGefuehl);
+      max = Math.max(max, mess.getBoundingClientRect().height);
+    }
+    mess.remove();
+    root.style.setProperty('--mc-frage-h', `${Math.ceil(max)}px`);
+  };
+  fragenHoehe();
+  document.fonts?.ready.then(fragenHoehe);
+  let resizeTimer = 0;
+  addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(fragenHoehe, 150);
+  });
   const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
 
   let aktuell = 0;
@@ -191,11 +219,11 @@ export function starteMarkencheck(root: HTMLElement) {
     liste.replaceChildren(
       ...ids.map((b) => {
         const li = document.createElement('li');
-        li.innerHTML = '<span></span><span></span><span class="mc-balken__frage"></span><span class="mc-balken__spur"><span class="mc-balken__wert"></span></span>';
-        const [name, wert, frage] = li.querySelectorAll('span');
-        name.textContent = cfg.bereiche[b].name;
-        wert.textContent = `${bereiche[b]} %`;
+        // Nur die Frage des Bereichs (ohne Bereichsnamen) und der Wert
+        li.innerHTML = '<span class="mc-balken__frage"></span><span class="mc-balken__prozent"></span><span class="mc-balken__spur"><span class="mc-balken__wert"></span></span>';
+        const [frage, wert] = li.querySelectorAll('span');
         frage.textContent = cfg.bereiche[b].frage;
+        wert.textContent = `${bereiche[b]} %`;
         li.querySelector('.mc-balken__spur')!.setAttribute('aria-hidden', 'true');
         requestAnimationFrame(() => requestAnimationFrame(() => (li.querySelector<HTMLElement>('.mc-balken__wert')!.style.width = `${bereiche[b]}%`)));
         return li;
@@ -207,8 +235,8 @@ export function starteMarkencheck(root: HTMLElement) {
       staerke.textContent = a.ausgeglichen;
       potenzial.hidden = true;
     } else {
-      staerke.textContent = mitGefuehl(a.staerke).replace('{bereich}', cfg.bereiche[staerkster].name);
-      potenzial.textContent = a.potenzial.replace('{bereich}', cfg.bereiche[schwaechster].name);
+      staerke.textContent = mitGefuehl(a.staerke).replace('{frage}', cfg.bereiche[staerkster].frage);
+      potenzial.textContent = mitGefuehl(a.potenzial).replace('{frage}', cfg.bereiche[schwaechster].frage);
       potenzial.hidden = false;
     }
     $('[data-e-tipp]').textContent = mitGefuehl(a.tipps[schwaechster]);

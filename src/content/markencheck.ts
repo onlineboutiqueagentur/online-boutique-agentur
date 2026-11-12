@@ -164,8 +164,9 @@ export const markencheck = {
 
   auswertung: {
     titel: 'So fühlt sich deine Marke gerade an',
-    staerke: 'Am stärksten spürt man {gefuehl} bei: {bereich}.',
-    potenzial: 'Am meisten Potenzial liegt bei: {bereich}.',
+    /** {frage} = die Frage des stärksten bzw. schwächsten Bereichs (z. B. „Bist das wirklich du?“) */
+    staerke: 'Hier bist du schon richtig stark: „{frage}“',
+    potenzial: 'Am meisten Potenzial liegt hier: „{frage}“',
     ausgeglichen: 'Alle Bereiche sind fast gleich stark. Das ist eine schöne Basis.',
     tippTitel: 'Dein nächster Schritt',
     /** Tipp für den schwächsten Bereich */
