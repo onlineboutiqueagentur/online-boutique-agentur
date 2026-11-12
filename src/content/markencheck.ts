@@ -29,8 +29,12 @@ export const markencheckSeo = {
 export const markencheck = {
   intro: {
     eyebrow: 'Dein Marken-Check',
-    titel: 'Du darfst in deine Marke',
-    titelBetont: 'verliebt sein.',
+    /** Titel als Frage: titel + betontes Wort (kursiv) + titelEnde */
+    titel: 'Bist du noch',
+    titelBetont: 'verliebt',
+    titelEnde: 'in deine Marke?',
+    /** Der Slogan als kleine Antwort unter dem Titel */
+    slogan: 'Du darfst es nämlich sein.',
     text: 'Eine Marke ist nicht nur Logo und Farben. Man muss sie fühlen können, und du selbst solltest zu 100 % dahinterstehen. Denn was du selbst nicht spürst, kommt auch bei deinen Kund:innen nicht an. In zwei Minuten findest du heraus, wie sehr du deine Marke gerade lebst.',
     /** Drei kleine Kacheln mit Icon (icon: uhr, anonym, sofort) */
     punkte: [
