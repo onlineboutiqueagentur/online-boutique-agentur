@@ -147,6 +147,39 @@ const icons = {
           <p data-e-tipp></p>
         </div>
 
+        <!-- Bonus: Website-Checkliste zum Abhaken, als PDF speicherbar (Druckansicht zeigt nur diesen Block) -->
+        <section class="mc-bonus" aria-labelledby="mc-bonus-titel" data-bonus>
+          <p class="mc-eyebrow">{m.bonus.eyebrow}</p>
+          <h3 class="mc-h3" id="mc-bonus-titel">{m.bonus.titel}</h3>
+          <p class="mc-bonus__text">{m.bonus.text}</p>
+          <ul role="list" class="mc-bonus__liste">
+            {
+              m.bonus.punkte.map((p, i) => (
+                <li>
+                  <label class="mc-bonus__punkt">
+                    <input type="checkbox" class="mc-bonus__box" data-bonus-box />
+                    <span class="mc-bonus__haken" aria-hidden="true">
+                      <CroissantArt mini />
+                    </span>
+                    <span>
+                      <strong>
+                        {i + 1}. {p.titel}
+                      </strong>
+                      <span class="mc-bonus__frage">{p.text}</span>
+                    </span>
+                  </label>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="mc-bonus__ok" data-bonus-ok hidden>{m.bonus.alleOk}</p>
+          <div class="mc-bonus__aktion">
+            <button type="button" class="btn mc-bonus__pdf" data-bonus-pdf>{m.bonus.pdf}</button>
+            <span class="mc-bonus__hinweis">{m.bonus.pdfHinweis}</span>
+          </div>
+          <p class="mc-bonus__fuss">{m.bonus.fusszeile}</p>
+        </section>
+
         <!-- Wer dahintersteht: Video von Nina und Pia (wie auf der Startseite), lädt erst beim Anzeigen -->
         <figure class="mc-video">
           <video class="mc-video__film" muted loop playsinline preload="none" data-src={contact.video.src} aria-label={contact.video.label}></video>
@@ -671,6 +704,135 @@ const icons = {
   .mc-satz + .mc-satz {
     margin-top: 0.35rem;
   }
+  /* ---------- Bonus: Website-Checkliste ---------- */
+  .mc-bonus {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 1rem;
+    padding: clamp(1.25rem, 4vw, 1.75rem);
+    border: 1px solid color-mix(in srgb, var(--c-ink) 25%, transparent);
+    border-radius: var(--radius);
+  }
+  .mc-bonus .mc-h3 {
+    margin-bottom: 0;
+  }
+  .mc-bonus__text {
+    font-size: 0.9375rem;
+  }
+  .mc-bonus__liste {
+    display: grid;
+    gap: 0.9rem;
+    padding: 0;
+    margin: 0.5rem 0;
+  }
+  .mc-bonus__punkt {
+    display: grid;
+    grid-template-columns: 2.4rem 1fr;
+    gap: 0.75rem;
+    align-items: start;
+    cursor: pointer;
+  }
+  .mc-bonus__punkt strong {
+    display: block;
+    font-weight: var(--w-bold);
+    font-size: 0.9375rem;
+  }
+  .mc-bonus__frage {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--c-ink-soft);
+  }
+  .mc-bonus__box {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+  .mc-bonus__haken {
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border: 1px solid var(--c-ink);
+    border-radius: 50%;
+    padding: 0.35rem;
+    transition: background-color var(--t-fast) var(--ease);
+  }
+  .mc-bonus__haken :global(.croissant-art) {
+    --croissant-stroke: 1.2;
+    opacity: 0.35;
+    transition:
+      opacity var(--t-fast) var(--ease),
+      transform 0.35s var(--ease);
+  }
+  .mc-bonus__box:checked + .mc-bonus__haken {
+    background: color-mix(in srgb, var(--c-accent) 30%, transparent);
+  }
+  .mc-bonus__box:checked + .mc-bonus__haken :global(.croissant-art) {
+    --croissant-fill: var(--c-accent);
+    opacity: 1;
+    transform: rotate(-10deg) scale(1.1);
+  }
+  .mc-bonus__box:focus-visible + .mc-bonus__haken {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 2px;
+  }
+  .mc-bonus__ok {
+    font-family: var(--f-display);
+    font-style: italic;
+  }
+  .mc-bonus__ok[hidden] {
+    display: none;
+  }
+  .mc-bonus__aktion {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+  }
+  .mc-bonus__hinweis {
+    font-size: 0.75rem;
+    color: var(--c-ink-soft);
+  }
+  .mc-bonus__fuss {
+    display: none;
+  }
+
+  /* PDF/Druck: nur die Checkliste, schlicht auf Weiß */
+  @media print {
+    :global(html.mc-druck body > *:not(main)),
+    :global(html.mc-druck .mc-screen[data-screen='ergebnis'] > *:not(.mc-bonus)),
+    :global(html.mc-druck .mc-noscript) {
+      display: none !important;
+    }
+    :global(html.mc-druck),
+    :global(html.mc-druck body),
+    :global(html.mc-druck main) {
+      background: #fff !important;
+    }
+    :global(html.mc-druck) .mc-screen {
+      min-height: 0;
+      padding: 0;
+      animation: none;
+    }
+    :global(html.mc-druck) .mc-bonus {
+      border: 0;
+      padding: 0;
+    }
+    :global(html.mc-druck) .mc-bonus__aktion {
+      display: none;
+    }
+    :global(html.mc-druck) .mc-bonus__fuss {
+      display: block;
+      margin-top: 2rem;
+      font-size: 0.75rem;
+      color: #555;
+    }
+    :global(html.mc-druck) .mc-bonus__liste li {
+      break-inside: avoid;
+    }
+  }
+
   .mc-video {
     display: grid;
     justify-items: center;

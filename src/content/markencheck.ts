@@ -175,6 +175,35 @@ export const markencheck = {
     nochmal: 'Check nochmal machen',
   },
 
+  /** Bonus unter dem Ergebnis: kurze Website-Checkliste zum Abhaken und als PDF zum Mitnehmen */
+  bonus: {
+    eyebrow: 'Bonus für dich',
+    titel: 'Dein schneller Website-Check',
+    text: 'Vier Fragen, die du dir in fünf Minuten selbst beantworten kannst. Hak ab, was schon passt.',
+    punkte: [
+      {
+        titel: 'Schnell und handytauglich',
+        text: 'Öffne deine Website am Handy. Lädt sie in wenigen Sekunden, ist alles gut lesbar, und steht vorne in der Adresszeile ein kleines Schloss (https)?',
+      },
+      {
+        titel: 'Auf den ersten Blick klar',
+        text: 'Versteht jemand Fremdes in fünf Sekunden, was du anbietest und für wen? Sind Texte und Bilder aktuell, und findet man sofort, wie man dich erreicht?',
+      },
+      {
+        titel: 'Rechtlich sauber',
+        text: 'Sind Impressum und Datenschutzerklärung auf dem neuesten Stand? Und laden Tools wie Google Analytics erst, nachdem jemand zugestimmt hat?',
+      },
+      {
+        titel: 'Bei Google gut zu finden',
+        text: 'Hat jede Seite einen eigenen, aussagekräftigen Titel und eine kurze Beschreibung? Sind deine Überschriften klar gegliedert?',
+      },
+    ],
+    alleOk: 'Alles abgehakt? Großartig, deine Website steht auf einem soliden Fundament.',
+    pdf: 'Als PDF speichern',
+    pdfHinweis: 'Im Druckfenster „Als PDF sichern“ bzw. „Als PDF speichern“ wählen.',
+    fusszeile: 'Online Boutique Agentur · www.online-boutique-agentur.at · Make it boutique.',
+  },
+
   /** Unter der Auswertung: Video von Nina und Pia */
   video: {
     text: 'Das sind wir, Nina und Pia. Wir helfen Einzelunternehmer:innen, sich (wieder) in ihre Marke zu verlieben.',

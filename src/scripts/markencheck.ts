@@ -253,6 +253,24 @@ export function starteMarkencheck(root: HTMLElement) {
     ).observe(video);
   }
 
+  // Bonus-Checkliste: abhaken; „Als PDF speichern“ öffnet die Druckansicht nur mit der Checkliste
+  const boxen = [...root.querySelectorAll<HTMLInputElement>('[data-bonus-box]')];
+  const alleOk = root.querySelector<HTMLElement>('[data-bonus-ok]');
+  boxen.forEach((b) => b.addEventListener('change', () => alleOk && (alleOk.hidden = !boxen.every((x) => x.checked))));
+  root.querySelector('[data-bonus-pdf]')?.addEventListener('click', () => {
+    const html = document.documentElement;
+    html.classList.add('mc-druck');
+    const titel = document.title;
+    document.title = 'Website-Check – Online Boutique Agentur';
+    const fertig = () => {
+      html.classList.remove('mc-druck');
+      document.title = titel;
+      removeEventListener('afterprint', fertig);
+    };
+    addEventListener('afterprint', fertig);
+    print();
+  });
+
   // Kontaktformular abgeschickt → in der Statistik vermerken
   root.querySelector('[data-check-form]')?.addEventListener('formular-gesendet', () => senden({ lead: true }));
 
@@ -263,6 +281,8 @@ export function starteMarkencheck(root: HTMLElement) {
     antworten = cfg.fragen.map(() => null);
     ergebnisDaten = {};
     chipsAktualisieren();
+    boxen.forEach((b) => (b.checked = false));
+    if (alleOk) alleOk.hidden = true;
     root.querySelectorAll('[data-wert]').forEach((h) => {
       h.classList.remove('is-an');
       h.setAttribute('aria-pressed', 'false');
