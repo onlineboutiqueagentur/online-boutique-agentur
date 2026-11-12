@@ -27,6 +27,8 @@ export interface CheckLauf {
   geraet?: 'mobil' | 'desktop';
   /** Kontaktformular nach dem Ergebnis abgeschickt */
   lead?: boolean;
+  /** Ergebnis per Mail schicken lassen */
+  mail?: boolean;
 }
 
 export const CHECK_ID_RE = /^\d{13}-[0-9a-f]{8}$/;
@@ -75,6 +77,7 @@ export function pruefeLauf(raw: unknown): { id: string; lauf: CheckLauf } | null
   }
   if (r.geraet === 'mobil' || r.geraet === 'desktop') lauf.geraet = r.geraet;
   if (r.lead === true) lauf.lead = true;
+  if (r.mail === true) lauf.mail = true;
   return { id, lauf };
 }
 
@@ -95,6 +98,8 @@ export interface CheckStatistik {
   gestartet: number;
   fertig: number;
   leads: number;
+  /** Ergebnis per Mail schicken lassen */
+  mails: number;
   /** Wo aufgehört wurde (nur nicht fertige Durchläufe), in Ablauf-Reihenfolge */
   abbrueche: { schritt: number; text: string; anzahl: number }[];
   ergebnisse: Record<string, number>;
@@ -129,6 +134,7 @@ export async function statistik(kv: KV, tage: number): Promise<CheckStatistik> {
     gestartet: laeufe.length,
     fertig: 0,
     leads: 0,
+    mails: 0,
     abbrueche: [],
     ergebnisse: {},
     gefuehle: {},
@@ -143,6 +149,7 @@ export async function statistik(kv: KV, tage: number): Promise<CheckStatistik> {
     if (l.fertig) s.fertig++;
     else abbruch.set(l.schritt, (abbruch.get(l.schritt) ?? 0) + 1);
     if (l.lead) s.leads++;
+    if (l.mail) s.mails++;
     zaehle(s.ergebnisse, l.ergebnis);
     l.gefuehle?.forEach((g) => zaehle(s.gefuehle, g));
     zaehle(s.herkunft, l.herkunft ?? 'direkt');
@@ -156,4 +163,106 @@ export async function statistik(kv: KV, tage: number): Promise<CheckStatistik> {
   s.abbrueche = [...abbruch.entries()].sort((a, b) => a[0] - b[0]).map(([schritt, anzahl]) => ({ schritt, text: schrittText(schritt), anzahl }));
   for (const [k, { n, total }] of Object.entries(summe)) s.bereiche[k] = Math.round(total / n);
   return s;
+}
+
+/* ---------- Ergebnis per Mail (/api/marken-check-mail) ---------- */
+
+type BereichId = keyof typeof markencheck.bereiche;
+type Ergebnis = (typeof markencheck.ergebnisse)[number];
+
+const prozentVon = (werte: number[]) =>
+  werte.length ? Math.round((werte.reduce((a, v) => a + (v - 1) / 4, 0) / werte.length) * 100) : 0;
+
+/** Wertet die Antworten (1–5 je Frage) aus – dieselbe Logik wie im Browser (src/scripts/markencheck.ts). */
+export function auswerten(werte: number[]) {
+  const ids = Object.keys(markencheck.bereiche) as BereichId[];
+  const bereiche = Object.fromEntries(
+    ids.map((b) => [b, prozentVon(werte.filter((_, i) => markencheck.fragen[i].bereich === b))]),
+  ) as Record<BereichId, number>;
+  const gesamt = prozentVon(werte);
+  let ergebnis: Ergebnis = markencheck.ergebnisse[0];
+  for (const x of markencheck.ergebnisse) if (gesamt >= x.ab) ergebnis = x;
+  const sortiert = [...ids].sort((a, b) => bereiche[b] - bereiche[a]);
+  const staerkster = sortiert[0];
+  const schwaechster = sortiert[sortiert.length - 1];
+  return { ids, bereiche, gesamt, ergebnis, staerkster, schwaechster, ausgeglichen: bereiche[staerkster] - bereiche[schwaechster] < 10 };
+}
+
+/** Prüft die Anfrage „Ergebnis per Mail“: 10 Antworten 1–5 und 1–2 bekannte Gefühle. Der Mailtext entsteht nur auf dem Server. */
+export function pruefeMailCheck(raw: unknown): { werte: number[]; gefuehle: string[] } | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const r = raw as Record<string, unknown>;
+  if (!Array.isArray(r.werte) || r.werte.length !== ANZAHL_FRAGEN) return null;
+  const werte = r.werte.map(Number);
+  if (!werte.every((w) => Number.isInteger(w) && w >= 1 && w <= 5)) return null;
+  const gefuehle = Array.isArray(r.gefuehle) ? r.gefuehle.filter((x): x is string => typeof x === 'string' && GEFUEHLE.has(x)).slice(0, 2) : [];
+  return { werte, gefuehle };
+}
+
+/** Der persönliche Mailtext: Ergebnis, Auswertung, nächster Schritt und der Website-Check als Liste. */
+export function ergebnisMail(werte: number[], gefuehle: string[], vorname: string) {
+  const m = markencheck;
+  const a = auswerten(werte);
+  const gefuehl = gefuehle.join(' und ') || 'dein Wunschgefühl';
+  const mitGefuehl = (t: string) => t.replaceAll('{gefuehl}', gefuehl);
+  const kurz = `${a.ergebnis.symbol} ${a.ergebnis.titel.replace(/\.$/, '')} (${a.gesamt} %)`;
+  const linie = '────────────────────────';
+  const text = [
+    vorname ? `Hallo ${vorname},` : 'Hallo,',
+    '',
+    m.mail.einleitung,
+    '',
+    linie,
+    `DEIN LIEBESSTATUS: ${a.ergebnis.titel} ${a.ergebnis.symbol}`,
+    linie,
+    a.ergebnis.text,
+    '',
+    `${m.auswertung.titel.toUpperCase()}`,
+    `Dein Wunschgefühl: ${gefuehl}`,
+    ...a.ids.map((b) => `• ${m.bereiche[b].frage} ${a.bereiche[b]} %`),
+    '',
+    ...(a.ausgeglichen
+      ? [m.auswertung.ausgeglichen]
+      : [
+          mitGefuehl(m.auswertung.staerke).replace('{frage}', m.bereiche[a.staerkster].frage),
+          mitGefuehl(m.auswertung.potenzial).replace('{frage}', m.bereiche[a.schwaechster].frage),
+        ]),
+    '',
+    linie,
+    m.auswertung.tippTitel.toUpperCase(),
+    linie,
+    mitGefuehl(m.auswertung.tipps[a.schwaechster]),
+    '',
+    linie,
+    `${m.bonus.eyebrow.toUpperCase()}: ${m.bonus.titel}`,
+    linie,
+    m.bonus.text,
+    '',
+    ...m.bonus.punkte.flatMap((p) => [`☐ ${p.titel}`, `   ${p.text}`, '']),
+    `Als PDF zum Ausdrucken und Abhaken: https://www.online-boutique-agentur.at${m.bonus.pdfUrl}`,
+    '',
+    linie,
+    `${m.bonus.angebotTitel} ${m.bonus.angebotBetont}`,
+    linie,
+    m.bonus.angebotText,
+    '',
+    m.mail.abschluss,
+    '',
+    m.mail.gruss,
+    '',
+    '—',
+    m.bonus.fusszeile,
+    'hello@online-boutique-agentur.at',
+  ].join('\n');
+  // Für Admin/CRM: kurze Zusammenfassung + alle Antworten (wie beim Kontaktformular)
+  const zusammenfassung = [
+    '— Marken-Check —',
+    `Wunschgefühl: ${gefuehl}`,
+    `Ergebnis: ${kurz}`,
+    a.ids.map((b) => `${m.bereiche[b].name} ${a.bereiche[b]} %`).join(' · '),
+    '',
+    'Antworten (1–5 Croissants):',
+    ...m.fragen.map((f, i) => `${i + 1}. ${mitGefuehl(f.text)} → ${'🥐'.repeat(werte[i])} (${werte[i]} von 5)`),
+  ].join('\n');
+  return { betreff: `${m.mail.betreff}: ${a.ergebnis.titel} ${a.ergebnis.symbol}`, text, kurz, zusammenfassung, auswertung: a };
 }

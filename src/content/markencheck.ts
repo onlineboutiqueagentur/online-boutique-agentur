@@ -206,9 +206,35 @@ export const markencheck = {
       },
     ],
     alleOk: 'Alles abgehakt? Großartig, deine Website steht auf einem soliden Fundament.',
-    pdf: 'Als PDF speichern',
-    pdfHinweis: 'Im Druckfenster „Als PDF sichern“ bzw. „Als PDF speichern“ wählen.',
+    pdf: 'Als PDF herunterladen',
+    pdfHinweis: 'Zum Ausdrucken und Abhaken, mit Platz für Notizen.',
+    /** Gestaltetes PDF; neu erzeugen mit scripts/website-check-pdf.mjs (Vorlage: /vorschau/website-check-pdf/) */
+    pdfUrl: '/downloads/website-check-online-boutique-agentur.pdf',
+    /** Angebot im PDF und auf der Ergebnisseite: kostenloser Website-Check von uns */
+    angebotTitel: 'Lieber gleich mit Profi-Blick?',
+    angebotBetont: 'Wir machen den Website-Check kostenlos für dich.',
+    angebotText: 'Wir schauen uns deine Website persönlich an und sagen dir ehrlich, was schon gut läuft und was sie noch braucht. Kostenlos und unverbindlich, gern bei einem Croissant.',
     fusszeile: 'Online Boutique Agentur · www.online-boutique-agentur.at · Make it boutique.',
+  },
+
+  /** Ergebnis und Website-Check per Mail (Box auf der Ergebnisseite + Text der Mail) */
+  perMail: {
+    titel: 'Ergebnis und Website-Check per Mail',
+    text: 'Willst du dein Ergebnis und den schnellen Website-Check in Ruhe nachlesen? Wir schicken dir beides ganz unverbindlich per Mail.',
+    felder: { vorname: 'Vorname (freiwillig)', email: 'E-Mail' },
+    absenden: 'Per Mail schicken',
+    sendet: 'Wird verschickt …',
+    hinweis: 'Kein Newsletter, keine Werbung. Deine Adresse nutzen wir nur für diese Mail und höchstens eine persönliche Rückfrage von uns.',
+    erfolg: 'Ist unterwegs! Schau in dein Postfach, und falls nichts da ist, auch kurz in den Spam-Ordner.',
+    fehler: 'Das hat leider nicht geklappt. Bitte versuch es nochmal oder schreib uns an hello@online-boutique-agentur.at.',
+  },
+
+  /** Text der Mail mit dem Ergebnis (wird auf dem Server zusammengesetzt, siehe lib/markencheck.ts) */
+  mail: {
+    betreff: 'Dein Marken-Check',
+    einleitung: 'schön, dass du dir die zwei Minuten für deine Marke genommen hast. Hier ist dein Ergebnis zum Nachlesen, dazu der schnelle Website-Check für dich.',
+    abschluss: 'Antworte einfach auf diese Mail mit dem Link zu deiner Website, dann melden wir uns mit einem Terminvorschlag. Ganz unverbindlich.',
+    gruss: 'Herzlich,\nNina und Pia',
   },
 
   /** Unter der Auswertung: Video von Nina und Pia */
@@ -217,10 +243,10 @@ export const markencheck = {
   },
 
   kontakt: {
-    titel: 'Lass uns gemeinsam hinschauen.',
-    text: 'Wenn du magst, schauen wir uns dein Ergebnis gemeinsam an und sagen dir in einem kostenlosen Gespräch ehrlich, was deine Marke noch braucht, damit du dich in sie verliebst.',
+    titel: 'Dein kostenloser Website-Check von uns.',
+    text: 'Wir schauen uns deine Website persönlich an und besprechen dein Ergebnis mit dir. Du erfährst ehrlich, was schon gut läuft und was deine Marke noch braucht, damit du dich (wieder) in sie verliebst. Kostenlos und unverbindlich.',
     felder: { name: 'Vorname', email: 'E-Mail', firma: 'Marke oder Unternehmen', webseite: 'Website oder Instagram', nachricht: 'Möchtest du uns noch etwas sagen?' },
-    absenden: 'Ergebnis besprechen',
+    absenden: 'Kostenlosen Website-Check anfragen',
     sendet: 'Wird gesendet …',
     meta: 'Kostenlos, unverbindlich, 30 Minuten.',
     erfolg: 'Danke! Dein Ergebnis ist bei uns angekommen. Wir melden uns in den nächsten Tagen persönlich bei dir.',

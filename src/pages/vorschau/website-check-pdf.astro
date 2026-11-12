@@ -1,0 +1,261 @@
+---
+/**
+ * Druckvorlage für das PDF „Dein schneller Website-Check“ (Bonus im Marken-Check).
+ * Daraus entsteht public/downloads/website-check-online-boutique-agentur.pdf:
+ *   npm run build && npx wrangler pages dev dist --port 8788   (in einem zweiten Terminal)
+ *   node scripts/website-check-pdf.mjs
+ * Texte kommen aus src/content/markencheck.ts (bonus), Kontakt aus src/content/site.ts.
+ */
+import '../../styles/fonts.css';
+import CroissantArt from '../../components/CroissantArt.astro';
+import { markencheck } from '../../content/markencheck';
+import { agency } from '../../content/site';
+
+const b = markencheck.bonus;
+const web = agency.url.replace('https://', '');
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{b.titel} – {agency.name}</title>
+  </head>
+  <body>
+    <main class="seite">
+      <header class="kopf">
+        <div>
+          <p class="eyebrow">{b.eyebrow} · Marken-Check</p>
+          <h1>Dein schneller<br /><em>Website-Check</em></h1>
+          <p class="intro">{b.text}</p>
+        </div>
+        <div class="croissant"><CroissantArt /></div>
+      </header>
+
+      <ol class="punkte">
+        {
+          b.punkte.map((p, i) => (
+            <li class="punkt">
+              <span class="nr">{i + 1}</span>
+              <div class="inhalt">
+                <h2>{p.titel}</h2>
+                <p>{p.text}</p>
+                <div class="abhaken">
+                  <span class="box" /> Passt schon
+                  <span class="box" /> Da schau ich nochmal hin
+                </div>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      <section class="notizen">
+        <h2>Meine Notizen</h2>
+        <span /><span /><span />
+      </section>
+
+      <footer class="fuss">
+        <div class="fuss__cta">
+          <p class="fuss__vor">{b.angebotTitel}</p>
+          <p class="fuss__titel"><em>{b.angebotBetont}</em></p>
+          <p>{b.angebotText} Schreib uns einfach.</p>
+        </div>
+        <div class="fuss__kontakt">
+          <p>{agency.email}</p>
+          <p>{agency.phone}</p>
+          <p>{web}</p>
+          <p class="fuss__claim">Make it boutique.</p>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  html {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body {
+    font-family: 'Mulish', Arial, sans-serif;
+    font-weight: 300;
+    color: #000;
+    background: #fff;
+  }
+  .seite {
+    width: 210mm;
+    height: 297mm;
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    overflow: hidden;
+  }
+  em {
+    font-style: italic;
+  }
+
+  /* Kopf auf warmem Beige mit Croissant */
+  .kopf {
+    display: grid;
+    grid-template-columns: 1fr 52mm;
+    align-items: center;
+    gap: 8mm;
+    padding: 16mm 18mm 12mm;
+    background: #f4f3f1;
+    border-bottom: 1.5mm solid #fab14f;
+  }
+  .eyebrow {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-style: italic;
+    font-size: 10pt;
+    color: #555;
+    margin-bottom: 4mm;
+  }
+  h1 {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-weight: 400;
+    font-size: 30pt;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+  }
+  .intro {
+    margin-top: 5mm;
+    font-size: 11pt;
+    line-height: 1.5;
+    max-width: 110mm;
+  }
+  .croissant {
+    --croissant-fill: #fab14f;
+    --croissant-stroke: 2;
+    color: #000;
+    transform: rotate(-8deg);
+  }
+
+  /* Vier Punkte, verbunden durch den senkrechten Strich der Website */
+  .punkte {
+    list-style: none;
+    padding: 9mm 18mm 0;
+    display: grid;
+    gap: 5.5mm;
+    align-content: start;
+  }
+  .punkt {
+    display: grid;
+    grid-template-columns: 14mm 1fr;
+    gap: 5mm;
+    position: relative;
+  }
+  .punkt:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 7mm;
+    top: 15mm;
+    bottom: -5mm;
+    border-left: 0.3mm solid #000;
+  }
+  .nr {
+    display: grid;
+    place-items: center;
+    width: 14mm;
+    height: 14mm;
+    border-radius: 50%;
+    background: #fab14f;
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-style: italic;
+    font-size: 16pt;
+  }
+  .punkt h2 {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-weight: 400;
+    font-size: 14pt;
+    margin: 1mm 0 1.5mm;
+  }
+  .punkt p {
+    font-size: 10.5pt;
+    line-height: 1.5;
+  }
+  .abhaken {
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+    margin-top: 2.5mm;
+    font-size: 9pt;
+    color: #444;
+  }
+  .box {
+    width: 4mm;
+    height: 4mm;
+    border: 0.3mm solid #000;
+    border-radius: 0.8mm;
+  }
+  .box:not(:first-child) {
+    margin-left: 5mm;
+  }
+
+  .notizen {
+    padding: 6mm 18mm 8mm;
+    display: grid;
+    gap: 7mm;
+  }
+  .notizen h2 {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 11pt;
+    margin-bottom: -2mm;
+  }
+  .notizen span {
+    border-bottom: 0.25mm solid #bbb;
+  }
+
+  /* Schwarze Fußleiste wie auf der Website */
+  .fuss {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10mm;
+    align-items: end;
+    padding: 10mm 18mm 11mm;
+    background: #000;
+    color: #fff;
+  }
+  .fuss__titel {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-size: 16pt;
+    margin-bottom: 2.5mm;
+  }
+  .fuss__titel em {
+    color: #fab14f;
+  }
+  .fuss__vor {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-style: italic;
+    font-size: 10pt;
+    margin-bottom: 1.5mm;
+  }
+  .fuss__cta p:not(.fuss__titel, .fuss__vor) {
+    font-size: 10pt;
+    line-height: 1.5;
+    max-width: 105mm;
+  }
+  .fuss__kontakt {
+    text-align: right;
+    font-size: 9.5pt;
+    line-height: 1.6;
+  }
+  .fuss__claim {
+    margin-top: 2mm;
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-style: italic;
+    color: #fab14f;
+  }
+</style>

@@ -19,6 +19,7 @@ import { contact } from '../content/site';
 import { markencheck as m, markencheckSeo } from '../content/markencheck';
 
 const k = m.kontakt;
+const pm = m.perMail;
 /** Das Wunschgefühl ist der Einstieg („Bevor wir starten“), gezählt werden nur die Croissant-Fragen */
 const gesamtFragen = m.fragen.length;
 // Große Linien-Icons im Stil der Croissant-Zeichnung: Kontur in Tinte, Akzente in Orange, kein Hintergrund
@@ -197,11 +198,42 @@ const icons = {
           </ul>
           <p class="mc-bonus__ok" data-bonus-ok hidden>{m.bonus.alleOk}</p>
           <div class="mc-bonus__aktion">
-            <button type="button" class="btn mc-bonus__pdf" data-bonus-pdf>{m.bonus.pdf}</button>
+            <a class="btn mc-bonus__pdf" href={m.bonus.pdfUrl} download data-bonus-pdf>{m.bonus.pdf}</a>
             <span class="mc-bonus__hinweis">{m.bonus.pdfHinweis}</span>
           </div>
-          <p class="mc-bonus__fuss">{m.bonus.fusszeile}</p>
+          <p class="mc-bonus__angebot">
+            <strong>{m.bonus.angebotTitel}</strong> {m.bonus.angebotBetont} <a href="#mc-kostenlos">Gleich anfragen</a>
+          </p>
         </section>
+
+        <!-- Ergebnis und Website-Check per Mail (unverbindlich) → /api/marken-check-mail -->
+        <form class="form mc-permail" novalidate data-permail>
+          <h3 class="mc-h3">{pm.titel}</h3>
+          <p class="mc-permail__text">{pm.text}</p>
+          <div class="mc-permail__felder" data-permail-felder>
+            <div class="form__field">
+              <label for="mc-pm-vorname">{pm.felder.vorname}</label>
+              <input id="mc-pm-vorname" placeholder=" " name="vorname" type="text" autocomplete="given-name" maxlength="40" />
+            </div>
+            <div class="form__field">
+              <label for="mc-pm-email">{pm.felder.email} <span aria-hidden="true">*</span></label>
+              <input id="mc-pm-email" placeholder=" " name="email" type="email" autocomplete="email" required maxlength="200" aria-describedby="mc-pm-email-err" />
+              <p class="form__error" id="mc-pm-email-err" hidden>Bitte gib eine gültige E-Mail-Adresse an.</p>
+            </div>
+            <div class="form__hp" aria-hidden="true">
+              <label for="mc-pm-website">Website</label>
+              <input id="mc-pm-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+            <div class="form__actions">
+              <button class="btn btn--solid mc-btn" type="submit" data-permail-btn data-label={pm.absenden} data-sending={pm.sendet}>{pm.absenden}</button>
+            </div>
+            <p class="mc-meta">{pm.hinweis} <a href="/datenschutz/">Datenschutz</a></p>
+          </div>
+          <div role="status" aria-live="polite">
+            <p class="form__msg form__msg--ok" hidden data-permail-ok>{pm.erfolg}</p>
+            <p class="form__msg form__msg--err" hidden data-permail-err>{pm.fehler}</p>
+          </div>
+        </form>
 
         <!-- Wer dahintersteht: Video von Nina und Pia (wie auf der Startseite), lädt erst beim Anzeigen -->
         <figure class="mc-video">
@@ -214,7 +246,7 @@ const icons = {
           <CroissantTeaser />
         </div>
 
-        <form class="form mc-form" action="/api/contact" method="post" novalidate data-contact-form data-check-form>
+        <form class="form mc-form" id="mc-kostenlos" action="/api/contact" method="post" novalidate data-contact-form data-check-form>
           <h3 class="heading mc-form__titel">{k.titel}</h3>
           <div class="mc-form__felder" data-form-fields>
             <p class="mc-form__text">{k.text}</p>
@@ -829,6 +861,32 @@ const icons = {
   .mc-satz + .mc-satz {
     margin-top: 0.35rem;
   }
+  /* ---------- Ergebnis per Mail ---------- */
+  .mc-permail {
+    display: grid;
+    gap: 0.75rem;
+    padding: clamp(1.25rem, 4vw, 2rem);
+    border: 1px solid var(--c-ink);
+  }
+  .mc-permail__felder {
+    display: grid;
+    gap: 0.75rem;
+  }
+  @media (min-width: 36rem) {
+    .mc-permail__felder {
+      grid-template-columns: 1fr 1fr;
+    }
+    .mc-permail__felder > :not(.form__field) {
+      grid-column: 1 / -1;
+    }
+  }
+  .mc-permail .form__actions {
+    justify-self: start;
+  }
+  .mc-permail[data-gesendet] .mc-permail__felder {
+    display: none;
+  }
+
   /* ---------- Bonus: Website-Checkliste ---------- */
   .mc-bonus {
     display: grid;
@@ -915,47 +973,21 @@ const icons = {
     align-items: center;
     gap: 0.5rem 1rem;
   }
+  .mc-bonus__angebot {
+    padding: 0.9rem 1.1rem;
+    background: var(--c-accent);
+    color: #000;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .mc-bonus__angebot a {
+    color: inherit;
+    font-weight: 600;
+    white-space: nowrap;
+  }
   .mc-bonus__hinweis {
     font-size: 0.75rem;
     color: var(--c-ink-soft);
-  }
-  .mc-bonus__fuss {
-    display: none;
-  }
-
-  /* PDF/Druck: nur die Checkliste, schlicht auf Weiß */
-  @media print {
-    :global(html.mc-druck body > *:not(main)),
-    :global(html.mc-druck .mc-screen[data-screen='ergebnis'] > *:not(.mc-bonus)),
-    :global(html.mc-druck .mc-noscript) {
-      display: none !important;
-    }
-    :global(html.mc-druck),
-    :global(html.mc-druck body),
-    :global(html.mc-druck main) {
-      background: #fff !important;
-    }
-    :global(html.mc-druck) .mc-screen {
-      min-height: 0;
-      padding: 0;
-      animation: none;
-    }
-    :global(html.mc-druck) .mc-bonus {
-      border: 0;
-      padding: 0;
-    }
-    :global(html.mc-druck) .mc-bonus__aktion {
-      display: none;
-    }
-    :global(html.mc-druck) .mc-bonus__fuss {
-      display: block;
-      margin-top: 2rem;
-      font-size: 0.75rem;
-      color: #555;
-    }
-    :global(html.mc-druck) .mc-bonus__liste li {
-      break-inside: avoid;
-    }
   }
 
   .mc-video {

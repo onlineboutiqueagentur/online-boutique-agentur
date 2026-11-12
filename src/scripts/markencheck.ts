@@ -57,6 +57,8 @@ export function starteMarkencheck(root: HTMLElement) {
   let antworten: (number | null)[] = cfg.fragen.map(() => null);
   let lauf: { id: string; schritt: number; gesendet: number; fertig: boolean } | null = null;
   let ergebnisDaten: Record<string, unknown> = {};
+  /** Antworten des letzten Ergebnisses – für „Ergebnis per Mail“ (der Server wertet selbst aus) */
+  let letzteWerte: number[] = [];
 
   /* ---------- Statistik ---------- */
   const intern = (() => {
@@ -198,6 +200,8 @@ export function starteMarkencheck(root: HTMLElement) {
 
   function ergebnis() {
     const werte = antworten.map((a) => a ?? 3);
+    letzteWerte = werte;
+    permailZuruecksetzen();
     const ids = Object.keys(cfg.bereiche) as BereichId[];
     const bereiche = Object.fromEntries(ids.map((b) => [b, pct(werte.filter((_, i) => cfg.fragen[i].bereich === b))])) as Record<BereichId, number>;
     const gesamt = pct(werte);
@@ -286,22 +290,61 @@ export function starteMarkencheck(root: HTMLElement) {
     ).observe(video);
   }
 
-  // Bonus-Checkliste: abhaken; „Als PDF speichern“ öffnet die Druckansicht nur mit der Checkliste
+  // Bonus-Checkliste: abhaken (das gestaltete PDF liegt unter public/downloads/)
   const boxen = [...root.querySelectorAll<HTMLInputElement>('[data-bonus-box]')];
   const alleOk = root.querySelector<HTMLElement>('[data-bonus-ok]');
   boxen.forEach((b) => b.addEventListener('change', () => alleOk && (alleOk.hidden = !boxen.every((x) => x.checked))));
-  root.querySelector('[data-bonus-pdf]')?.addEventListener('click', () => {
-    const html = document.documentElement;
-    html.classList.add('mc-druck');
-    const titel = document.title;
-    document.title = 'Website-Check – Online Boutique Agentur';
-    const fertig = () => {
-      html.classList.remove('mc-druck');
-      document.title = titel;
-      removeEventListener('afterprint', fertig);
-    };
-    addEventListener('afterprint', fertig);
-    print();
+
+  // Ergebnis und Website-Check per Mail (unverbindlich)
+  const permail = root.querySelector<HTMLFormElement>('[data-permail]');
+  let permailStart = Date.now();
+  function permailZuruecksetzen() {
+    if (!permail) return;
+    permail.removeAttribute('data-gesendet');
+    permail.querySelectorAll<HTMLElement>('[data-permail-ok], [data-permail-err]').forEach((p) => (p.hidden = true));
+    permailStart = Date.now();
+  }
+  permail?.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const email = permail.querySelector<HTMLInputElement>('[name="email"]')!;
+    const fehler = permail.querySelector<HTMLElement>('#mc-pm-email-err')!;
+    const gueltig = email.checkValidity() && email.value.trim() !== '';
+    fehler.hidden = gueltig;
+    email.setAttribute('aria-invalid', String(!gueltig));
+    if (!gueltig) return email.focus();
+    const btn = permail.querySelector<HTMLButtonElement>('[data-permail-btn]')!;
+    const ok = permail.querySelector<HTMLElement>('[data-permail-ok]')!;
+    const err = permail.querySelector<HTMLElement>('[data-permail-err]')!;
+    btn.disabled = true;
+    btn.textContent = btn.dataset.sending ?? '…';
+    err.hidden = true;
+    let geklappt = false;
+    try {
+      const res = await fetch('/api/marken-check-mail', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.value.trim(),
+          vorname: permail.querySelector<HTMLInputElement>('[name="vorname"]')!.value.trim(),
+          website: permail.querySelector<HTMLInputElement>('[name="website"]')!.value,
+          werte: letzteWerte,
+          gefuehle,
+          ts: permailStart,
+        }),
+      });
+      geklappt = res.ok && Boolean((await res.json().catch(() => null))?.ok);
+    } catch {
+      geklappt = false;
+    }
+    btn.disabled = false;
+    btn.textContent = btn.dataset.label ?? '';
+    if (geklappt) {
+      permail.setAttribute('data-gesendet', '');
+      ok.hidden = false;
+      senden({ mail: true });
+    } else {
+      err.hidden = false;
+    }
   });
 
   // Kontaktformular abgeschickt → in der Statistik vermerken

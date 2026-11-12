@@ -120,12 +120,14 @@ import '../../styles/base.css';
         herkunft?: string;
         geraet?: string;
         lead?: boolean;
+        mail?: boolean;
       }
       interface CheckStatistik {
         tage: number;
         gestartet: number;
         fertig: number;
         leads: number;
+        mails?: number;
         abbrueche: { schritt: number; text: string; anzahl: number }[];
         ergebnisse: Record<string, number>;
         gefuehle: Record<string, number>;
@@ -312,6 +314,7 @@ import '../../styles/base.css';
             [`${s.fertig}`, `fertig (${quote(s.fertig, s.gestartet)})`],
             [`${s.gestartet - s.fertig}`, 'unterwegs aufgehört'],
             [`${s.leads}`, `Kontakt angefragt (${quote(s.leads, s.fertig)} der Fertigen)`],
+            [`${s.mails ?? 0}`, `Ergebnis per Mail (${quote(s.mails ?? 0, s.fertig)} der Fertigen)`],
           ]) {
             const d = el('div', '', 'check__zahl');
             d.append(el('strong', wert), el('span', text));
@@ -333,7 +336,7 @@ import '../../styles/base.css';
             const ul = el('ul', '', 'check__laeufe');
             for (const l of s.letzte) {
               const stand = l.fertig
-                ? `fertig · ${ERGEBNIS_NAMEN[l.ergebnis ?? ''] ?? ''} ${l.prozent ?? ''} %${l.lead ? ' · ✉️ Kontakt angefragt' : ''}`
+                ? `fertig · ${ERGEBNIS_NAMEN[l.ergebnis ?? ''] ?? ''} ${l.prozent ?? ''} %${l.mail ? ' · 📬 per Mail' : ''}${l.lead ? ' · ✉️ Kontakt angefragt' : ''}`
                 : l.schritt === 0
                   ? 'aufgehört vor dem Start (Wunschgefühl)'
                   : `aufgehört bei Frage ${l.schritt}`;
