@@ -21,11 +21,23 @@ import { markencheck as m, markencheckSeo } from '../content/markencheck';
 const k = m.kontakt;
 /** Das Wunschgefühl ist der Einstieg („Bevor wir starten“), gezählt werden nur die Croissant-Fragen */
 const gesamtFragen = m.fragen.length;
-// Feine Linien-Icons im Stil der Croissant-Zeichnung (Kontur in Tinte, Akzent in Orange)
+// Große Linien-Icons im Stil der Croissant-Zeichnung: Kontur in Tinte, Akzente in Orange, kein Hintergrund
 const icons = {
-  uhr: '<circle cx="16" cy="17" r="11" class="i-fill"/><circle cx="16" cy="17" r="11"/><path d="M16 11v6l4 3M13 3h6M16 3v3"/>',
-  anonym: '<rect x="7" y="14" width="18" height="13" rx="3" class="i-fill"/><rect x="7" y="14" width="18" height="13" rx="3"/><path d="M11 14v-3a5 5 0 0 1 10 0v3M16 19v3"/>',
-  sofort: '<path d="M18 3 7 18h8l-2 11 12-16h-8l1-10z" class="i-fill"/><path d="M18 3 7 18h8l-2 11 12-16h-8l1-10z"/>',
+  // Stoppuhr mit der „2“ im Zifferblatt, der orange Bogen zeichnet sich beim Laden
+  uhr:
+    '<path d="M26 6h12M32 6v8M49 15l4-4"/><circle cx="32" cy="36" r="22"/>' +
+    '<path class="i-akzent i-bogen" pathLength="1" d="M32 14A22 22 0 0 1 51.05 25"/>' +
+    '<text class="i-zahl" x="32" y="45" text-anchor="middle">2</text>' +
+    '<text class="i-klein" x="32" y="53" text-anchor="middle">min</text>',
+  // Augenmaske wie beim Maskenball: anonym, aber mit Augenzwinkern
+  anonym:
+    '<path d="M6 30c0-7 6-10 13-10 6 0 9 3 13 3s7-3 13-3c7 0 13 3 13 10 0 9-6 14-13 14-6 0-9-5-13-5s-7 5-13 5C12 44 6 39 6 30z"/>' +
+    '<path class="i-akzent i-auge" d="M15 31c2-3 7-3 9 0M40 31c2-3 7-3 9 0"/>' +
+    '<path d="M6 30c-2 6-1 14 2 18M58 30c2 6 1 14-2 18"/>',
+  // Blitz mit kleinen Funken
+  sofort:
+    '<path d="M37 5 15 36h15l-4 23 23-32H34l3-22z"/>' +
+    '<path class="i-akzent i-funken" d="M50 8l5-5M53 17h7M10 47l-5 4M11 56l-3 5"/>',
 };
 ---
 
@@ -55,7 +67,7 @@ const icons = {
           {
             m.intro.punkte.map((p) => (
               <li class="mc-punkt">
-                <svg class="mc-punkt__icon" viewBox="0 0 32 32" aria-hidden="true" set:html={icons[p.icon as keyof typeof icons]} />
+                <svg class="mc-punkt__icon" viewBox="0 0 64 64" aria-hidden="true" set:html={icons[p.icon as keyof typeof icons]} />
                 <strong>{p.titel}</strong>
                 <span>{p.text}</span>
               </li>
@@ -404,7 +416,7 @@ const icons = {
       transform: rotate(6deg) scale(1.05);
     }
   }
-  /* Drei Punkte ohne Kästchen: Icon im orangen Kreis, getrennt durch den feinen senkrechten Strich */
+  /* Drei Punkte ohne Kästchen und ohne Trennstriche: große Linien-Icons auf transparentem Grund */
   .mc-punkte {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -418,9 +430,6 @@ const icons = {
     gap: 0.15rem;
     padding: 0.25rem 0.5rem;
     text-align: center;
-  }
-  .mc-punkt + .mc-punkt {
-    border-left: 1px solid color-mix(in srgb, var(--c-ink) 45%, transparent);
   }
   .mc-punkt strong {
     font-family: var(--f-display);
@@ -441,29 +450,88 @@ const icons = {
     color: var(--c-ink-soft);
   }
   .mc-punkt__icon {
-    box-sizing: content-box;
-    width: 1.35rem;
-    padding: 0.65rem;
+    width: clamp(4rem, 3rem + 4vw, 5.5rem);
+    height: auto;
     margin-bottom: 0.5rem;
-    border-radius: 50%;
-    background: var(--c-accent);
+    overflow: visible;
     fill: none;
-    stroke: #000;
-    stroke-width: 1.5;
+    stroke: var(--c-ink);
+    stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
     transition: transform 0.35s var(--ease);
   }
-  .mc-punkt__icon :global(.i-fill) {
-    display: none;
+  .mc-punkt__icon :global(.i-akzent) {
+    stroke: var(--c-accent);
+    stroke-width: 3.5;
+  }
+  .mc-punkt__icon :global(.i-zahl) {
+    fill: var(--c-ink);
+    stroke: none;
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 24px;
+  }
+  .mc-punkt__icon :global(.i-klein) {
+    fill: var(--c-ink-soft);
+    stroke: none;
+    font-family: var(--f-body);
+    font-size: 7px;
+    letter-spacing: 0.08em;
+  }
+  :global(:root[data-design='louder']) .mc-punkt__icon :global(.i-zahl) {
+    font-family: var(--f-bold);
+    font-style: normal;
   }
   :global(:root[data-design='louder']) .mc-punkt__icon {
-    background: #000;
-    stroke: var(--c-accent);
+    stroke: #000;
+    stroke-width: 2.5;
   }
   @media (hover: hover) {
     .mc-punkt:hover .mc-punkt__icon {
-      transform: rotate(-8deg) scale(1.06);
+      transform: rotate(-6deg) scale(1.08);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    /* Uhr: Bogen zeichnet sich, Maske zwinkert, Blitz funkelt */
+    .mc-punkt__icon :global(.i-bogen) {
+      stroke-dasharray: 1;
+      animation: mc-bogen 1.2s 0.5s var(--ease) both;
+    }
+    .mc-punkt__icon :global(.i-auge) {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: mc-zwinkern 4s 1.2s ease-in-out infinite;
+    }
+    .mc-punkt__icon :global(.i-funken) {
+      animation: mc-funkeln 1.6s 0.8s ease-in-out infinite;
+    }
+  }
+  @keyframes mc-bogen {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes mc-zwinkern {
+    0%,
+    88%,
+    100% {
+      transform: scaleY(1);
+    }
+    93% {
+      transform: scaleY(0.2);
+    }
+  }
+  @keyframes mc-funkeln {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.25;
     }
   }
   @media (prefers-reduced-motion: no-preference) {
