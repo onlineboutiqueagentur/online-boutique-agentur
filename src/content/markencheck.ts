@@ -94,7 +94,7 @@ export const markencheck = {
     {
       id: 'ein-satz',
       bereich: 'echt',
-      text: 'Kannst du in einem Satz sagen, wofür du und deine Marke stehen?',
+      text: 'Kannst du in einem Satz sagen, was du machst und was deine Kund:innen bei dir erwarten dürfen?',
       von: 'Hm, da muss ich überlegen',
       bis: 'Klar, schieß los!',
     },
