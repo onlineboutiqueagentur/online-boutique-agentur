@@ -182,7 +182,7 @@ export const markencheck = {
     nochmal: 'Check nochmal machen',
   },
 
-  /** Bonus unter dem Ergebnis: kurze Website-Checkliste zum Abhaken und als PDF zum Mitnehmen */
+  /** Schneller Website-Check: Inhalt des PDFs und der Mail (auf der Seite nur angeteasert) */
   bonus: {
     eyebrow: 'Bonus für dich',
     titel: 'Dein schneller Website-Check',
@@ -205,11 +205,10 @@ export const markencheck = {
         text: 'Hat jede Seite einen eigenen, aussagekräftigen Titel und eine kurze Beschreibung? Sind deine Überschriften klar gegliedert?',
       },
     ],
-    alleOk: 'Alles abgehakt? Großartig, deine Website steht auf einem soliden Fundament.',
-    pdf: 'Als PDF herunterladen',
-    pdfHinweis: 'Zum Ausdrucken und Abhaken, mit Platz für Notizen.',
     /** Gestaltetes PDF; neu erzeugen mit scripts/website-check-pdf.mjs (Vorlage: /vorschau/website-check-pdf/) */
     pdfUrl: '/downloads/website-check-online-boutique-agentur.pdf',
+    /** Vorschaubild der ersten PDF-Seite (aus dem PDF erzeugt, siehe scripts/website-check-pdf.mjs) */
+    pdfVorschau: '/downloads/website-check-vorschau.webp',
     /** Angebot im PDF und auf der Ergebnisseite: kostenloser Website-Check von uns */
     angebotTitel: 'Lieber gleich mit Profi-Blick?',
     angebotBetont: 'Wir machen den Website-Check kostenlos für dich.',
@@ -219,14 +218,26 @@ export const markencheck = {
 
   /** Ergebnis und Website-Check per Mail (Box auf der Ergebnisseite + Text der Mail) */
   perMail: {
-    titel: 'Ergebnis und Website-Check per Mail',
-    text: 'Willst du dein Ergebnis und den schnellen Website-Check in Ruhe nachlesen? Wir schicken dir beides ganz unverbindlich per Mail.',
+    eyebrow: 'Gratis für dich',
+    titel: 'Dein Ergebnis per Mail, plus Website-Check als PDF',
+    text: 'Wir schicken dir dein Ergebnis zum Nachlesen und dazu unseren schnellen Website-Check als PDF. Vier Fragen, mit denen du deine Website in fünf Minuten selbst prüfst:',
     felder: { vorname: 'Vorname (freiwillig)', email: 'E-Mail' },
-    absenden: 'Per Mail schicken',
+    absenden: 'Gratis zuschicken',
     sendet: 'Wird verschickt …',
-    hinweis: 'Kein Newsletter, keine Werbung. Deine Adresse nutzen wir nur für diese Mail und höchstens eine persönliche Rückfrage von uns.',
+    hinweis: 'Ganz unverbindlich. Kein Newsletter, keine Werbung. Deine Adresse nutzen wir nur für diese Mail und höchstens eine persönliche Rückfrage von uns.',
     erfolg: 'Ist unterwegs! Schau in dein Postfach, und falls nichts da ist, auch kurz in den Spam-Ordner.',
+    pdfDirekt: 'Das PDF gibt’s hier auch gleich zum Herunterladen.',
     fehler: 'Das hat leider nicht geklappt. Bitte versuch es nochmal oder schreib uns an hello@online-boutique-agentur.at.',
+  },
+
+  /** Teaser mit dem Video von Nina und Pia: kostenloser Profi-Website-Check → Kontaktformular */
+  profiCheck: {
+    eyebrow: 'Das sind wir, Nina und Pia.',
+    titel: 'Wir machen deinen Profi-Website-Check.',
+    titelBetont: 'Kostenlos.',
+    text: 'Statt selbst zu prüfen, schauen wir uns deine Website persönlich an und besprechen dein Ergebnis mit dir. Ehrlich, konkret und ohne Fachchinesisch.',
+    punkte: ['Was schon richtig gut läuft', 'Wo deine Marke noch nicht ankommt', 'Die drei nächsten Schritte, die am meisten bringen'],
+    button: 'Kostenlosen Website-Check sichern',
   },
 
   /** Text der Mail mit dem Ergebnis (wird auf dem Server zusammengesetzt, siehe lib/markencheck.ts) */
@@ -235,11 +246,6 @@ export const markencheck = {
     einleitung: 'schön, dass du dir die zwei Minuten für deine Marke genommen hast. Hier ist dein Ergebnis zum Nachlesen, dazu der schnelle Website-Check für dich.',
     abschluss: 'Antworte einfach auf diese Mail mit dem Link zu deiner Website, dann melden wir uns mit einem Terminvorschlag. Ganz unverbindlich.',
     gruss: 'Herzlich,\nNina und Pia',
-  },
-
-  /** Unter der Auswertung: Video von Nina und Pia */
-  video: {
-    text: 'Das sind wir, Nina und Pia. Wir helfen Einzelunternehmer:innen, sich (wieder) in ihre Marke zu verlieben.',
   },
 
   kontakt: {
