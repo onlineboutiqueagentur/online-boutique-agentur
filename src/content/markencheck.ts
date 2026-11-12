@@ -31,7 +31,7 @@ export const markencheck = {
     eyebrow: 'Der Marken-Check',
     titel: 'Du darfst in deine Marke',
     titelBetont: 'verliebt sein.',
-    text: 'Eine Marke ist nicht nur Logo und Farben. Man muss sie fühlen können, und du selbst solltest zu 100 % dahinterstehen. In zwei Minuten findest du heraus, wie sehr du deine Marke gerade spürst und lebst.',
+    text: 'Eine Marke ist nicht nur Logo und Farben. Man muss sie fühlen können, und du selbst solltest zu 100 % dahinterstehen. Denn wenn du deine Marke nicht fühlst, werden es auch deine Kund:innen nicht spüren. In zwei Minuten findest du heraus, wie sehr du deine Marke gerade spürst und lebst.',
     punkte: ['10 Fragen, etwa 2 Minuten', 'Anonym, ohne Anmeldung', 'Dein Ergebnis siehst du sofort'],
     start: 'Check starten',
   },
@@ -169,9 +169,14 @@ export const markencheck = {
     nochmal: 'Check nochmal machen',
   },
 
+  /** Unter der Auswertung: Video von Nina und Pia */
+  video: {
+    text: 'Das sind wir, Nina und Pia. Wir helfen Einzelunternehmer:innen, sich (wieder) in ihre Marke zu verlieben.',
+  },
+
   kontakt: {
     titel: 'Lass uns gemeinsam hinschauen.',
-    text: 'Wir sind Nina und Pia. Wenn du magst, schauen wir uns dein Ergebnis gemeinsam an und sagen dir in einem kostenlosen Gespräch ehrlich, was deine Marke noch braucht, damit du dich in sie verliebst.',
+    text: 'Wenn du magst, schauen wir uns dein Ergebnis gemeinsam an und sagen dir in einem kostenlosen Gespräch ehrlich, was deine Marke noch braucht, damit du dich in sie verliebst.',
     felder: { name: 'Vorname', email: 'E-Mail', firma: 'Marke oder Unternehmen', webseite: 'Website oder Instagram', nachricht: 'Möchtest du uns noch etwas sagen?' },
     absenden: 'Ergebnis besprechen',
     sendet: 'Wird gesendet …',

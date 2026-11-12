@@ -14,6 +14,8 @@ import Base from '../layouts/Base.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import CroissantArt from '../components/CroissantArt.astro';
+import CroissantTeaser from '../components/CroissantTeaser.astro';
+import { contact } from '../content/site';
 import { markencheck as m, markencheckSeo } from '../content/markencheck';
 
 const k = m.kontakt;
@@ -126,6 +128,17 @@ const k = m.kontakt;
         <div class="mc-tipp">
           <h3 class="mc-h3">{m.auswertung.tippTitel}</h3>
           <p data-e-tipp></p>
+        </div>
+
+        <!-- Wer dahintersteht: Video von Nina und Pia (wie auf der Startseite), lädt erst beim Anzeigen -->
+        <figure class="mc-video">
+          <video class="mc-video__film" muted loop playsinline preload="none" data-src={contact.video.src} aria-label={contact.video.label}></video>
+          <figcaption>{m.video.text}</figcaption>
+        </figure>
+
+        <!-- Teaser: Was ein Croissant mit deinem Auftritt zu tun hat → /das-croissant-prinzip/ -->
+        <div class="mc-teaser">
+          <CroissantTeaser />
         </div>
 
         <form class="form mc-form" action="/api/contact" method="post" novalidate data-contact-form data-check-form>
@@ -569,6 +582,30 @@ const k = m.kontakt;
   }
   .mc-satz + .mc-satz {
     margin-top: 0.35rem;
+  }
+  .mc-video {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    text-align: center;
+  }
+  .mc-video__film {
+    width: min(100%, 24rem);
+    aspect-ratio: 442 / 516;
+    object-fit: cover;
+    border-radius: var(--radius);
+    background: rgb(0 0 0 / 0.08);
+  }
+  .mc-video figcaption {
+    max-width: 30rem;
+    font-family: var(--f-display);
+    font-style: italic;
+    color: var(--c-ink-soft);
+  }
+  /* Teaser ohne den großen Abstand der Startseite */
+  .mc-teaser :global(.teaser) {
+    padding-bottom: 0;
   }
   .mc-form {
     margin-top: 2.5rem;

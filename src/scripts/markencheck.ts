@@ -228,6 +228,29 @@ export function starteMarkencheck(root: HTMLElement) {
       senden();
     }
     zeige(reihenfolge.length - 1);
+    videoStarten();
+  }
+
+  // Video von Nina und Pia erst laden, wenn das Ergebnis da ist und es in die Nähe kommt
+  function videoStarten() {
+    const video = root.querySelector<HTMLVideoElement>('.mc-video__film');
+    if (!video || video.src) return;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    new IntersectionObserver(
+      ([entry], obs) => {
+        if (!entry.isIntersecting) return;
+        obs.disconnect();
+        video.src = video.dataset.src ?? '';
+        if (reduced) {
+          video.controls = true;
+          video.preload = 'metadata';
+        } else {
+          video.autoplay = true;
+          video.play().catch(() => (video.controls = true));
+        }
+      },
+      { rootMargin: '400px' },
+    ).observe(video);
   }
 
   // Kontaktformular abgeschickt → in der Statistik vermerken
