@@ -64,12 +64,7 @@ const icons = {
         <CroissantArt mini class="mc-intro__croissant" />
         <p class="mc-eyebrow">{m.intro.eyebrow}</p>
         <h1 class="mc-titel" id="mc-titel" tabindex="-1">{m.intro.titel} <em>{m.intro.titelBetont}</em> {m.intro.titelEnde}</h1>
-        <p class="mc-slogan">
-          <span class="sr-only">{m.intro.slogan.vor} {m.intro.slogan.woerter[0]} {m.intro.slogan.nach}</span>
-          <span aria-hidden="true" data-typewriter={JSON.stringify(m.intro.slogan.woerter.map((word) => ({ word })))}>
-            {m.intro.slogan.vor} <span class="mc-slogan__wort" data-tw-word>{m.intro.slogan.woerter[0]}</span><span class="cursor">|</span>{m.intro.slogan.nach}
-          </span>
-        </p>
+        <p class="mc-slogan">{m.intro.slogan}</p>
         <p class="mc-lead">{m.intro.text}</p>
         <ul role="list" class="mc-punkte">
           {
@@ -295,7 +290,6 @@ const icons = {
 
 <script>
   import '../scripts/contact-form';
-  import '../scripts/typewriter';
   import { starteMarkencheck } from '../scripts/markencheck';
 
   const root = document.querySelector<HTMLElement>('[data-check]');
