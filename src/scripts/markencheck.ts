@@ -290,10 +290,6 @@ export function starteMarkencheck(root: HTMLElement) {
     ).observe(video);
   }
 
-  // Bonus-Checkliste: abhaken (das gestaltete PDF liegt unter public/downloads/)
-  const boxen = [...root.querySelectorAll<HTMLInputElement>('[data-bonus-box]')];
-  const alleOk = root.querySelector<HTMLElement>('[data-bonus-ok]');
-  boxen.forEach((b) => b.addEventListener('change', () => alleOk && (alleOk.hidden = !boxen.every((x) => x.checked))));
 
   // Ergebnis und Website-Check per Mail (unverbindlich)
   const permail = root.querySelector<HTMLFormElement>('[data-permail]');
@@ -357,8 +353,6 @@ export function starteMarkencheck(root: HTMLElement) {
     antworten = cfg.fragen.map(() => null);
     ergebnisDaten = {};
     chipsAktualisieren();
-    boxen.forEach((b) => (b.checked = false));
-    if (alleOk) alleOk.hidden = true;
     root.querySelectorAll<HTMLButtonElement>('[data-frage-weiter]').forEach((b) => (b.disabled = true));
     root.querySelectorAll('[data-wert]').forEach((h) => {
       h.classList.remove('is-an');

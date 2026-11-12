@@ -20,6 +20,8 @@ import { markencheck as m, markencheckSeo } from '../content/markencheck';
 
 const k = m.kontakt;
 const pm = m.perMail;
+const pr = m.profiCheck;
+const b = m.bonus;
 /** Das Wunschgefühl ist der Einstieg („Bevor wir starten“), gezählt werden nur die Croissant-Fragen */
 const gesamtFragen = m.fragen.length;
 // Große Linien-Icons im Stil der Croissant-Zeichnung: Kontur in Tinte, Akzente in Orange, kein Hintergrund
@@ -171,80 +173,58 @@ const icons = {
           <p data-e-tipp></p>
         </div>
 
-        <!-- Bonus: Website-Checkliste zum Abhaken, als PDF speicherbar (Druckansicht zeigt nur diesen Block) -->
-        <section class="mc-bonus" aria-labelledby="mc-bonus-titel" data-bonus>
-          <p class="mc-eyebrow">{m.bonus.eyebrow}</p>
-          <h3 class="mc-h3" id="mc-bonus-titel">{m.bonus.titel}</h3>
-          <p class="mc-bonus__text">{m.bonus.text}</p>
-          <ul role="list" class="mc-bonus__liste">
-            {
-              m.bonus.punkte.map((p, i) => (
-                <li>
-                  <label class="mc-bonus__punkt">
-                    <input type="checkbox" class="mc-bonus__box" data-bonus-box />
-                    <span class="mc-bonus__haken" aria-hidden="true">
-                      <CroissantArt mini />
-                    </span>
-                    <span>
-                      <strong>
-                        {i + 1}. {p.titel}
-                      </strong>
-                      <span class="mc-bonus__frage">{p.text}</span>
-                    </span>
-                  </label>
-                </li>
-              ))
-            }
-          </ul>
-          <p class="mc-bonus__ok" data-bonus-ok hidden>{m.bonus.alleOk}</p>
-          <div class="mc-bonus__aktion">
-            <a class="btn mc-bonus__pdf" href={m.bonus.pdfUrl} download data-bonus-pdf>{m.bonus.pdf}</a>
-            <span class="mc-bonus__hinweis">{m.bonus.pdfHinweis}</span>
-          </div>
-          <p class="mc-bonus__angebot">
-            <strong>{m.bonus.angebotTitel}</strong> {m.bonus.angebotBetont} <a href="#mc-kostenlos">Gleich anfragen</a>
-          </p>
-        </section>
 
-        <!-- Ergebnis und Website-Check per Mail (unverbindlich) → /api/marken-check-mail -->
+        <!-- Direkt nach dem Ergebnis: Ergebnis + Website-Check-PDF gratis per Mail → /api/marken-check-mail -->
         <form class="form mc-permail" novalidate data-permail>
-          <h3 class="mc-h3">{pm.titel}</h3>
-          <p class="mc-permail__text">{pm.text}</p>
-          <div class="mc-permail__felder" data-permail-felder>
-            <div class="form__field">
-              <label for="mc-pm-vorname">{pm.felder.vorname}</label>
-              <input id="mc-pm-vorname" placeholder=" " name="vorname" type="text" autocomplete="given-name" maxlength="40" />
+          <img class="mc-permail__pdf" src={b.pdfVorschau} alt="" width="360" height="509" loading="lazy" decoding="async" />
+          <div class="mc-permail__inhalt">
+            <p class="mc-eyebrow">{pm.eyebrow}</p>
+            <h3 class="mc-h3">{pm.titel}</h3>
+            <p class="mc-permail__text">{pm.text}</p>
+            <ul role="list" class="mc-permail__liste">
+              {b.punkte.map((p) => <li>{p.titel}</li>)}
+            </ul>
+            <div class="mc-permail__felder" data-permail-felder>
+              <div class="form__field">
+                <label for="mc-pm-vorname">{pm.felder.vorname}</label>
+                <input id="mc-pm-vorname" placeholder=" " name="vorname" type="text" autocomplete="given-name" maxlength="40" />
+              </div>
+              <div class="form__field">
+                <label for="mc-pm-email">{pm.felder.email} <span aria-hidden="true">*</span></label>
+                <input id="mc-pm-email" placeholder=" " name="email" type="email" autocomplete="email" required maxlength="200" aria-describedby="mc-pm-email-err" />
+                <p class="form__error" id="mc-pm-email-err" hidden>Bitte gib eine gültige E-Mail-Adresse an.</p>
+              </div>
+              <div class="form__hp" aria-hidden="true">
+                <label for="mc-pm-website">Website</label>
+                <input id="mc-pm-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+              </div>
+              <div class="form__actions">
+                <button class="btn btn--solid mc-btn" type="submit" data-permail-btn data-label={pm.absenden} data-sending={pm.sendet}>{pm.absenden}</button>
+              </div>
+              <p class="mc-meta">{pm.hinweis} <a href="/datenschutz/">Datenschutz</a></p>
             </div>
-            <div class="form__field">
-              <label for="mc-pm-email">{pm.felder.email} <span aria-hidden="true">*</span></label>
-              <input id="mc-pm-email" placeholder=" " name="email" type="email" autocomplete="email" required maxlength="200" aria-describedby="mc-pm-email-err" />
-              <p class="form__error" id="mc-pm-email-err" hidden>Bitte gib eine gültige E-Mail-Adresse an.</p>
+            <div role="status" aria-live="polite">
+              <p class="form__msg form__msg--ok" hidden data-permail-ok>
+                {pm.erfolg} <a href={b.pdfUrl} download>{pm.pdfDirekt}</a>
+              </p>
+              <p class="form__msg form__msg--err" hidden data-permail-err>{pm.fehler}</p>
             </div>
-            <div class="form__hp" aria-hidden="true">
-              <label for="mc-pm-website">Website</label>
-              <input id="mc-pm-website" name="website" type="text" tabindex="-1" autocomplete="off" />
-            </div>
-            <div class="form__actions">
-              <button class="btn btn--solid mc-btn" type="submit" data-permail-btn data-label={pm.absenden} data-sending={pm.sendet}>{pm.absenden}</button>
-            </div>
-            <p class="mc-meta">{pm.hinweis} <a href="/datenschutz/">Datenschutz</a></p>
-          </div>
-          <div role="status" aria-live="polite">
-            <p class="form__msg form__msg--ok" hidden data-permail-ok>{pm.erfolg}</p>
-            <p class="form__msg form__msg--err" hidden data-permail-err>{pm.fehler}</p>
           </div>
         </form>
 
-        <!-- Wer dahintersteht: Video von Nina und Pia (wie auf der Startseite), lädt erst beim Anzeigen -->
-        <figure class="mc-video">
+        <!-- Teaser: Nina und Pia im Video + Angebot kostenloser Profi-Website-Check → Formular -->
+        <section class="mc-profi" aria-labelledby="mc-profi-titel">
           <video class="mc-video__film" muted loop playsinline preload="none" data-src={contact.video.src} aria-label={contact.video.label}></video>
-          <figcaption>{m.video.text}</figcaption>
-        </figure>
-
-        <!-- Teaser: Was ein Croissant mit deinem Auftritt zu tun hat → /das-croissant-prinzip/ -->
-        <div class="mc-teaser">
-          <CroissantTeaser />
-        </div>
+          <div class="mc-profi__text">
+            <p class="mc-eyebrow">{pr.eyebrow}</p>
+            <h3 class="mc-profi__titel" id="mc-profi-titel">{pr.titel} <em>{pr.titelBetont}</em></h3>
+            <p>{pr.text}</p>
+            <ul role="list" class="mc-profi__liste">
+              {pr.punkte.map((x) => <li>{x}</li>)}
+            </ul>
+            <a class="btn btn--solid mc-btn" href="#mc-kostenlos">{pr.button}</a>
+          </div>
+        </section>
 
         <form class="form mc-form" id="mc-kostenlos" action="/api/contact" method="post" novalidate data-contact-form data-check-form>
           <h3 class="heading mc-form__titel">{k.titel}</h3>
@@ -298,6 +278,11 @@ const icons = {
             <p class="form__msg form__msg--err" hidden data-err>{k.fehler}</p>
           </div>
         </form>
+
+        <!-- Teaser: Was ein Croissant mit deinem Auftritt zu tun hat → /das-croissant-prinzip/ -->
+        <div class="mc-teaser">
+          <CroissantTeaser />
+        </div>
 
         <p class="mc-nochmal"><button type="button" class="mc-zurueck" data-nochmal>{m.auswertung.nochmal}</button></p>
       </section>
@@ -861,12 +846,56 @@ const icons = {
   .mc-satz + .mc-satz {
     margin-top: 0.35rem;
   }
-  /* ---------- Ergebnis per Mail ---------- */
+  /* ---------- Ergebnis + PDF gratis per Mail (direkt nach dem Ergebnis) ---------- */
   .mc-permail {
     display: grid;
+    gap: 1.5rem;
+    margin-top: clamp(1.5rem, 4vw, 2.5rem);
+    padding: clamp(1.25rem, 4vw, 2.25rem);
+    background: #fff;
+    border: 2px solid var(--c-accent);
+    border-radius: var(--radius);
+  }
+  @media (min-width: 40rem) {
+    .mc-permail {
+      grid-template-columns: 9.5rem 1fr;
+      align-items: start;
+    }
+  }
+  .mc-permail__pdf {
+    width: min(9.5rem, 45%);
+    height: auto;
+    justify-self: center;
+    transform: rotate(-4deg);
+    box-shadow: 0 0.75rem 1.75rem rgb(0 0 0 / 0.18);
+    background: #fff;
+  }
+  @media (min-width: 40rem) {
+    .mc-permail__pdf {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+  }
+  .mc-permail__inhalt {
+    display: grid;
     gap: 0.75rem;
-    padding: clamp(1.25rem, 4vw, 2rem);
-    border: 1px solid var(--c-ink);
+  }
+  .mc-permail__inhalt .mc-eyebrow {
+    margin-bottom: -0.5rem;
+  }
+  .mc-permail__liste {
+    display: grid;
+    gap: 0.2rem;
+    padding: 0;
+    font-size: 0.9375rem;
+  }
+  .mc-permail__liste li {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .mc-permail__liste li::before {
+    content: '✓';
+    font-weight: 600;
   }
   .mc-permail__felder {
     display: grid;
@@ -883,132 +912,70 @@ const icons = {
   .mc-permail .form__actions {
     justify-self: start;
   }
+  .mc-permail .form__msg a {
+    color: inherit;
+    font-weight: 600;
+  }
   .mc-permail[data-gesendet] .mc-permail__felder {
     display: none;
   }
 
-  /* ---------- Bonus: Website-Checkliste ---------- */
-  .mc-bonus {
+  /* ---------- Teaser: Nina und Pia + kostenloser Profi-Website-Check ---------- */
+  .mc-profi {
     display: grid;
-    gap: 0.6rem;
-    margin-top: 1rem;
-    padding: clamp(1.25rem, 4vw, 1.75rem);
-    border: 1px solid color-mix(in srgb, var(--c-ink) 25%, transparent);
-    border-radius: var(--radius);
-  }
-  .mc-bonus .mc-h3 {
-    margin-bottom: 0;
-  }
-  .mc-bonus__text {
-    font-size: 0.9375rem;
-  }
-  .mc-bonus__liste {
-    display: grid;
-    gap: 0.9rem;
-    padding: 0;
-    margin: 0.5rem 0;
-  }
-  .mc-bonus__punkt {
-    display: grid;
-    grid-template-columns: 2.4rem 1fr;
-    gap: 0.75rem;
-    align-items: start;
-    cursor: pointer;
-  }
-  .mc-bonus__punkt strong {
-    display: block;
-    font-weight: var(--w-bold);
-    font-size: 0.9375rem;
-  }
-  .mc-bonus__frage {
-    display: block;
-    font-size: 0.875rem;
-    color: var(--c-ink-soft);
-  }
-  .mc-bonus__box {
-    position: absolute;
-    opacity: 0;
-    width: 1px;
-    height: 1px;
-  }
-  .mc-bonus__haken {
-    display: grid;
-    place-items: center;
-    width: 2.4rem;
-    height: 2.4rem;
-    border: 1px solid var(--c-ink);
-    border-radius: 50%;
-    padding: 0.35rem;
-    transition: background-color var(--t-fast) var(--ease);
-  }
-  .mc-bonus__haken :global(.croissant-art) {
-    --croissant-stroke: 1.2;
-    opacity: 0.35;
-    transition:
-      opacity var(--t-fast) var(--ease),
-      transform 0.35s var(--ease);
-  }
-  .mc-bonus__box:checked + .mc-bonus__haken {
-    background: color-mix(in srgb, var(--c-accent) 30%, transparent);
-  }
-  .mc-bonus__box:checked + .mc-bonus__haken :global(.croissant-art) {
-    --croissant-fill: var(--c-accent);
-    opacity: 1;
-    transform: rotate(-10deg) scale(1.1);
-  }
-  .mc-bonus__box:focus-visible + .mc-bonus__haken {
-    outline: 2px solid var(--c-focus);
-    outline-offset: 2px;
-  }
-  .mc-bonus__ok {
-    font-family: var(--f-display);
-    font-style: italic;
-  }
-  .mc-bonus__ok[hidden] {
-    display: none;
-  }
-  .mc-bonus__aktion {
-    display: flex;
-    flex-wrap: wrap;
+    gap: 1.5rem;
     align-items: center;
-    gap: 0.5rem 1rem;
-  }
-  .mc-bonus__angebot {
-    padding: 0.9rem 1.1rem;
-    background: var(--c-accent);
-    color: #000;
-    font-size: 0.9375rem;
-    line-height: 1.5;
-  }
-  .mc-bonus__angebot a {
-    color: inherit;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .mc-bonus__hinweis {
-    font-size: 0.75rem;
-    color: var(--c-ink-soft);
-  }
-
-  .mc-video {
-    display: grid;
-    justify-items: center;
-    gap: 0.75rem;
     margin-top: clamp(2.5rem, 6vw, 4rem);
-    text-align: center;
+  }
+  @media (min-width: 40rem) {
+    .mc-profi {
+      grid-template-columns: 15rem 1fr;
+      gap: 2rem;
+    }
   }
   .mc-video__film {
-    width: min(100%, 24rem);
+    width: min(100%, 22rem);
+    justify-self: center;
     aspect-ratio: 442 / 516;
     object-fit: cover;
     border-radius: var(--radius);
     background: rgb(0 0 0 / 0.08);
   }
-  .mc-video figcaption {
-    max-width: 30rem;
+  .mc-profi__text {
+    display: grid;
+    gap: 0.85rem;
+    justify-items: start;
+  }
+  .mc-profi__text .mc-eyebrow {
+    margin-bottom: -0.4rem;
+  }
+  .mc-profi__titel {
     font-family: var(--f-display);
+    font-weight: var(--w-regular);
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.1rem);
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+  .mc-profi__titel em {
     font-style: italic;
-    color: var(--c-ink-soft);
+    background: linear-gradient(transparent 62%, var(--c-accent) 62%);
+  }
+  :global(:root[data-design='louder']) .mc-profi__titel {
+    font-family: var(--f-bold);
+    text-transform: lowercase;
+  }
+  .mc-profi__liste {
+    display: grid;
+    gap: 0.3rem;
+    padding: 0;
+  }
+  .mc-profi__liste li {
+    display: flex;
+    gap: 0.6rem;
+  }
+  .mc-profi__liste li::before {
+    content: '🥐';
+    font-size: 0.9em;
   }
   /* Teaser ohne den großen Abstand der Startseite */
   .mc-teaser :global(.teaser) {
