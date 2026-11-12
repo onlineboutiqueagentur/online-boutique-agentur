@@ -92,6 +92,7 @@ import '../../styles/base.css';
         webseite?: string;
         quiz?: string;
         angebot?: string;
+        kampagne?: Record<string, string>;
       }
 
       const $ = <T extends HTMLElement>(sel: string, root: ParentNode = document) => root.querySelector<T>(sel)!;
@@ -145,6 +146,11 @@ import '../../styles/base.css';
               ' · 🥐 Frühstück' + (a.format ? ` (${formate[a.format] ?? a.format})` : '') + (a.wunschtermin ? ` · Wann: ${a.wunschtermin}` : '') + (a.webseite ? ` · Website: ${a.webseite}` : '');
           }
           if (angebot) $('.anfrage__meta', li).textContent += ` · ✨ Angebot angenommen (${a.angebot ?? '–'})`;
+          // Über einen Werbelink gekommen (UTM-Parameter, z. B. Instagram-Anzeige)
+          if (a.kampagne) {
+            const k = a.kampagne;
+            $('.anfrage__meta', li).textContent += ` · 📣 Werbelink: ${[k.source, k.medium, k.campaign, k.content, k.term].filter(Boolean).join(' · ')}`;
+          }
           const badge = $('.anfrage__badge', li);
           badge.textContent = a.gelesen ? 'gelesen' : 'neu';
           if (a.mail === 'fehlgeschlagen') {
