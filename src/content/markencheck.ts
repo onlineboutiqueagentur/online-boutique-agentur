@@ -30,7 +30,7 @@ export const markencheck = {
   intro: {
     eyebrow: 'Dein Marken-Check',
     /** Titel als Frage: titel + betontes Wort (kursiv) + titelEnde */
-    titel: 'Bist du noch',
+    titel: 'Bist du',
     titelBetont: 'verliebt',
     titelEnde: 'in deine Marke?',
     /** Der Slogan als kleine Antwort unter dem Titel */
