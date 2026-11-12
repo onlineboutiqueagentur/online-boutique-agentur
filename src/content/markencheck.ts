@@ -80,9 +80,9 @@ export const markencheck = {
     {
       id: 'worte',
       bereich: 'echt',
-      text: 'Klingen deine Texte so, wie du wirklich sprichst?',
-      von: 'Klingt nach jemand anderem',
-      bis: 'Das bin zu 100 % ich',
+      text: 'Lies deine Website-Texte einmal laut: Klingen sie nach dir, und bringen sie klar und verständlich auf den Punkt, was du anbietest?',
+      von: 'Eher kompliziert und fremd',
+      bis: 'Klar, auf den Punkt und ganz ich',
     },
     {
       id: 'look',
