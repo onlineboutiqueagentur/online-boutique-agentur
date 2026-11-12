@@ -18,7 +18,7 @@ export interface Anfrage {
   design?: 'minimal' | 'louder' | 'unbekannt';
   /** Herkunft: normales Kontaktformular, Croissant-Einladung (/das-croissant-prinzip) oder angenommenes Angebot (/angebot/…) */
   quelle?: 'website' | 'croissant' | 'angebot' | 'markencheck';
-  /** Nur Marken-Check: Ergebnis in Kurzform, z. B. „💗 Es knistert (68 %)“ – die ganze Auswertung steht in nachricht */
+  /** Nur Marken-Check: Ergebnis in Kurzform, z. B. „🥐🥐 Es knistert (68 %)“ – die ganze Auswertung steht in nachricht */
   ergebnis?: string;
   /** Nur Angebot: Kennung (slug) des angenommenen Angebots */
   angebot?: string;
@@ -29,8 +29,14 @@ export interface Anfrage {
   webseite?: string;
   /** Nur Croissant-Einladung: im Quiz angetippte Aussagen (eine pro Zeile) */
   quiz?: string;
+  /** Werbelink, über den die Person kam (UTM-Parameter), z. B. { source: 'instagram', campaign: '…' } */
+  kampagne?: { source?: string; medium?: string; campaign?: string; content?: string; term?: string };
   mail: 'gesendet' | 'fehlgeschlagen' | 'nicht eingerichtet';
 }
+
+/** Kampagne als eine Zeile, z. B. „instagram · paid_social · herbst-2026 · anzeige-1“ */
+export const kampagneText = (k: Anfrage['kampagne']) =>
+  k ? [k.source, k.medium, k.campaign, k.content, k.term].filter(Boolean).join(' · ') : '';
 
 export const AUFBEWAHRUNG_SEKUNDEN = 60 * 60 * 24 * 730; // 2 Jahre
 const PREFIX = 'anfrage:';

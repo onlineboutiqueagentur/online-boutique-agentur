@@ -48,7 +48,7 @@ import '../../styles/base.css';
         </div>
         <details class="check" id="check">
           <summary>
-            <span class="check__titel">💗 Marken-Check</span>
+            <span class="check__titel">🥐 Marken-Check</span>
             <span class="check__kurz" id="check-kurz">anonyme Statistik: wer beginnt, wer aufhört</span>
           </summary>
           <div class="check__inhalt">
@@ -107,6 +107,7 @@ import '../../styles/base.css';
         quiz?: string;
         angebot?: string;
         ergebnis?: string;
+        kampagne?: Record<string, string>;
       }
 
       interface CheckLauf {
@@ -187,6 +188,11 @@ import '../../styles/base.css';
           }
           if (angebot) $('.anfrage__meta', li).textContent += ` · ✨ Angebot angenommen (${a.angebot ?? '–'})`;
           if (check) $('.anfrage__meta', li).textContent += ` · Marken-Check: ${a.ergebnis ?? '–'}` + (a.webseite ? ` · Website: ${a.webseite}` : '');
+          // Über einen Werbelink gekommen (UTM-Parameter, z. B. Instagram-Anzeige)
+          if (a.kampagne) {
+            const k = a.kampagne;
+            $('.anfrage__meta', li).textContent += ` · 📣 Werbelink: ${[k.source, k.medium, k.campaign, k.content, k.term].filter(Boolean).join(' · ')}`;
+          }
           const badge = $('.anfrage__badge', li);
           badge.textContent = a.gelesen ? 'gelesen' : 'neu';
           if (a.mail === 'fehlgeschlagen') {
@@ -261,7 +267,7 @@ import '../../styles/base.css';
       }
 
       /* ---------- Marken-Check: anonyme Statistik ---------- */
-      const ERGEBNIS_NAMEN: Record<string, string> = { 'grosse-liebe': '❤️ Große Liebe', knistert: '💗 Es knistert', kompliziert: '💔 Es ist kompliziert' };
+      const ERGEBNIS_NAMEN: Record<string, string> = { 'grosse-liebe': 'Große Liebe', knistert: 'Es knistert', kompliziert: 'Es ist kompliziert' };
       const BEREICH_NAMEN: Record<string, string> = { spueren: 'Spüren', echt: 'Echt sein', leben: 'Leben', ankommen: 'Ankommen' };
       let checkTage = 30;
 

@@ -1,7 +1,7 @@
 /**
  * MARKEN-CHECK – alle Texte der Seite /marken-check („Du darfst in deine Marke verliebt sein.“)
  *
- * Ablauf: Einstieg → Wunschgefühl wählen (1–2) → 10 Fragen mit Herz-Skala (1–5) → Ergebnis.
+ * Ablauf: Einstieg → Wunschgefühl wählen (1–2) → 10 Fragen mit Croissant-Skala (1–5) → Ergebnis.
  * {gefuehl} in einer Frage wird durch das gewählte Wunschgefühl ersetzt (z. B. „Leichtigkeit und Wärme“).
  *
  * Fragen ändern: einfach Text anpassen. Neue Fragen brauchen einen Bereich (spueren, echt, leben, ankommen).
@@ -14,7 +14,7 @@ export interface Frage {
   id: string;
   bereich: BereichId;
   text: string;
-  /** Beschriftung links (1 Herz) und rechts (5 Herzen) */
+  /** Beschriftung links (1 Croissant) und rechts (5 Croissants) */
   von: string;
   bis: string;
 }
@@ -110,9 +110,9 @@ export const markencheck = {
     {
       id: 'richtige-kunden',
       bereich: 'ankommen',
-      text: 'Kommen die Menschen zu dir, mit denen du am liebsten arbeitest?',
-      von: 'selten',
-      bis: 'fast immer',
+      text: 'Denk an deine Wunschkund:innen, die Menschen, mit denen du am liebsten arbeitest: Fühlen sie sich von deinem Auftritt so angesprochen, dass sie zu dir kommen?',
+      von: 'eher andere',
+      bis: 'genau die',
     },
     {
       id: 'verliebt',
@@ -130,21 +130,21 @@ export const markencheck = {
     {
       id: 'kompliziert',
       ab: 0,
-      symbol: '💔',
+      symbol: '🥐',
       titel: 'Es ist kompliziert.',
       text: 'Deine Marke fühlt sich (noch) nicht ganz nach dir an. Das ist kein Grund zur Sorge, sondern ein ehrlicher Anfang. In dir steckt mehr, als dein Auftritt gerade zeigt.',
     },
     {
       id: 'knistert',
       ab: 55,
-      symbol: '💗',
+      symbol: '🥐🥐',
       titel: 'Es knistert.',
       text: 'Das Gefühl ist da, und du spürst, wofür deine Marke steht. Es ist nur noch nicht überall sichtbar. Mit ein paar gezielten Schritten wird aus dem Knistern eine große Liebe.',
     },
     {
       id: 'grosse-liebe',
       ab: 80,
-      symbol: '❤️',
+      symbol: '🥐🥐🥐',
       titel: 'Große Liebe.',
       text: 'Du lebst deine Marke, und man spürt es. Jetzt geht es ums Pflegen und Weiterwachsen, damit sie mit dir mitwächst.',
     },

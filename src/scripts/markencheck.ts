@@ -6,6 +6,7 @@
  * /api/marken-check beim Start, beim Verlassen/Verstecken der Seite, beim Ergebnis und nach dem
  * Kontaktformular. Kein Cookie, kein Local Storage. Browser im internen Modus („oba-intern“) senden nichts.
  */
+import { kampagne } from './kampagne';
 import type { BereichId, Ergebnis, Frage, markencheck } from '../content/markencheck';
 
 interface Config {
@@ -39,7 +40,8 @@ export function starteMarkencheck(root: HTMLElement) {
   })();
   const herkunft = (() => {
     const p = new URLSearchParams(location.search);
-    const von = p.get('von') || p.get('utm_source');
+    // Werbelink (UTM, auch wenn er auf einer anderen Seite dieses Tabs ankam) oder ?von=…
+    const von = p.get('von') || kampagne()?.utm_source;
     if (von) return von;
     try {
       const ref = document.referrer ? new URL(document.referrer).hostname.replace(/^(www|l|m|lm)\./, '') : '';
@@ -92,6 +94,12 @@ export function starteMarkencheck(root: HTMLElement) {
     const top = root.getBoundingClientRect().top + scrollY - 16;
     if (scrollY > top) scrollTo({ top, behavior: 'smooth' });
     screen.querySelector<HTMLElement>('h1, h2')?.focus({ preventScroll: true });
+    // Senkrechter Strich über der Frage wächst bei jeder Frage neu (wie beim Scrollen auf der Website)
+    const linie = screen.querySelector<HTMLElement>('.v-line');
+    if (linie) {
+      linie.classList.remove('is-in');
+      requestAnimationFrame(() => requestAnimationFrame(() => linie.classList.add('is-in')));
+    }
   }
 
   $('[data-start]').addEventListener('click', () => {
@@ -131,7 +139,7 @@ export function starteMarkencheck(root: HTMLElement) {
     zeige(2);
   });
 
-  // Herz-Skala: antippen → kurz zeigen → nächste Frage
+  // Croissant-Skala: antippen → kurz zeigen → nächste Frage
   cfg.fragen.forEach((_, i) => {
     const screen = screens.find((s) => s.dataset.screen === `frage-${i}`)!;
     const herzen = [...screen.querySelectorAll<HTMLButtonElement>('[data-wert]')];
@@ -168,7 +176,9 @@ export function starteMarkencheck(root: HTMLElement) {
     const ausgeglichen = bereiche[staerkster] - bereiche[schwaechster] < 10;
     const a = cfg.auswertung;
 
-    $('[data-e-symbol]').textContent = e.symbol;
+    // 1–3 gefüllte Croissants je nach Ergebnis
+    const stufe = cfg.ergebnisse.indexOf(e) + 1;
+    $('[data-e-symbol]').querySelectorAll('.croissant-art').forEach((c, k) => c.classList.toggle('is-an', k < stufe));
     $('[data-e-titel]').textContent = e.titel;
     $('[data-e-text]').textContent = e.text;
     $('[data-e-gefuehl]').textContent = `Dein Wunschgefühl: ${gefuehlText()}`;
@@ -207,8 +217,8 @@ export function starteMarkencheck(root: HTMLElement) {
       `Ergebnis: ${kurz}`,
       ids.map((b) => `${cfg.bereiche[b].name} ${bereiche[b]} %`).join(' · '),
       '',
-      'Antworten (1–5 Herzen):',
-      ...cfg.fragen.map((f, i) => `${i + 1}. ${mitGefuehl(f.text)} → ${'♥'.repeat(werte[i])}${'♡'.repeat(5 - werte[i])} (${werte[i]})`),
+      'Antworten (1–5 Croissants):',
+      ...cfg.fragen.map((f, i) => `${i + 1}. ${mitGefuehl(f.text)} → ${'🥐'.repeat(werte[i])} (${werte[i]} von 5)`),
     ].join('\n');
 
     if (lauf) {

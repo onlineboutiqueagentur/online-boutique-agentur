@@ -2,7 +2,7 @@
 /**
  * /marken-check – „Du darfst in deine Marke verliebt sein.“
  * Selbst-Check für Einzelunternehmer:innen (Mobile First, etwa 2 Minuten):
- * Einstieg → Wunschgefühl (1–2) → 10 Fragen mit Herz-Skala → Ergebnis mit Auswertung je Bereich.
+ * Einstieg → Wunschgefühl (1–2) → 10 Fragen mit Croissant-Skala → Ergebnis mit Auswertung je Bereich.
  *
  * - Texte und Fragen: src/content/markencheck.ts
  * - Auswertung läuft komplett im Browser. Anonyme Statistik (wie weit, wo abgebrochen) geht an
@@ -13,11 +13,10 @@
 import Base from '../layouts/Base.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
+import CroissantArt from '../components/CroissantArt.astro';
 import { markencheck as m, markencheckSeo } from '../content/markencheck';
 
 const k = m.kontakt;
-const herz =
-  'M12 20.5s-7.5-4.6-9.6-9.4C.9 7.6 3.1 4 6.6 4c2.1 0 3.6 1.2 4.4 2.6h2C13.8 5.2 15.3 4 17.4 4c3.5 0 5.7 3.6 4.2 7.1-2.1 4.8-9.6 9.4-9.6 9.4z';
 ---
 
 <Base title={markencheckSeo.title} description={markencheckSeo.description} path={markencheckSeo.path} noindex>
@@ -37,7 +36,7 @@ const herz =
 
       <!-- Einstieg -->
       <section class="mc-screen mc-intro is-active" data-screen="intro" aria-labelledby="mc-titel">
-        <svg class="mc-intro__herz" viewBox="0 0 24 24" aria-hidden="true"><path d={herz} /></svg>
+        <CroissantArt mini class="mc-intro__croissant" />
         <p class="mc-eyebrow">{m.intro.eyebrow}</p>
         <h1 class="mc-titel" id="mc-titel" tabindex="-1">{m.intro.titel} <em>{m.intro.titelBetont}</em></h1>
         <p class="mc-lead">{m.intro.text}</p>
@@ -48,7 +47,8 @@ const herz =
       </section>
 
       <!-- Wunschgefühl -->
-      <section class="mc-screen" data-screen="gefuehl" aria-labelledby="mc-gefuehl" hidden>
+      <section class="mc-screen mc-screen--frage" data-screen="gefuehl" aria-labelledby="mc-gefuehl" hidden>
+        <div class="v-line mc-linie" aria-hidden="true"></div>
         <p class="mc-schritt">{m.intro.eyebrow}</p>
         <h2 class="mc-frage" id="mc-gefuehl" tabindex="-1">{m.gefuehl.titel}</h2>
         <p class="mc-hinweis" id="mc-gefuehl-hinweis">{m.gefuehl.hinweis}</p>
@@ -72,10 +72,11 @@ const herz =
       <!-- Fragen -->
       {
         m.fragen.map((f, i) => (
-          <section class="mc-screen" data-screen={`frage-${i}`} aria-labelledby={`mc-f${i}`} hidden>
+          <section class="mc-screen mc-screen--frage" data-screen={`frage-${i}`} aria-labelledby={`mc-f${i}`} hidden>
             <div class="mc-fortschritt" aria-hidden="true">
               <span style={`--p:${(i + 1) / m.fragen.length}`} />
             </div>
+            <div class="v-line mc-linie" aria-hidden="true" />
             <p class="mc-schritt">
               {m.navigation.frage} {i + 1} {m.navigation.von} {m.fragen.length}
               <span class="mc-schritt__bereich">· {m.bereiche[f.bereich].name}</span>
@@ -86,10 +87,8 @@ const herz =
             <div class="mc-skala" role="group" aria-labelledby={`mc-f${i}`}>
               <div class="mc-herzen">
                 {[1, 2, 3, 4, 5].map((n) => (
-                  <button type="button" class="mc-herz" data-wert={n} aria-pressed="false" aria-label={`${n} von 5 Herzen`}>
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d={herz} />
-                    </svg>
+                  <button type="button" class="mc-herz" data-wert={n} aria-pressed="false" aria-label={`${n} von 5 Croissants`}>
+                    <CroissantArt mini />
                   </button>
                 ))}
               </div>
@@ -109,7 +108,9 @@ const herz =
 
       <!-- Ergebnis -->
       <section class="mc-screen mc-ergebnis" data-screen="ergebnis" aria-labelledby="mc-ergebnis" hidden>
-        <p class="mc-symbol" aria-hidden="true" data-e-symbol></p>
+        <p class="mc-symbol" aria-hidden="true" data-e-symbol>
+          <CroissantArt mini /><CroissantArt mini /><CroissantArt mini />
+        </p>
         <p class="mc-eyebrow">Dein Ergebnis</p>
         <h2 class="mc-titel" id="mc-ergebnis" tabindex="-1" data-e-titel></h2>
         <p class="mc-lead" data-e-text></p>
@@ -267,7 +268,7 @@ const herz =
     font-size: clamp(1.375rem, 1.1rem + 1vw, 1.875rem);
     line-height: 1.3;
     text-wrap: balance;
-    min-height: 4.5em;
+    min-height: 4em;
   }
   .mc-lead {
     font-size: var(--fs-hero-sub);
@@ -295,31 +296,34 @@ const herz =
   }
 
   /* ---------- Einstieg ---------- */
-  .mc-intro__herz {
-    width: 3rem;
-    fill: var(--c-accent);
-    stroke: var(--c-ink);
-    stroke-width: 1;
+  .mc :global(.croissant-art) {
+    color: var(--c-ink);
   }
+  :global(:root[data-design='louder']) .mc :global(.croissant-art) {
+    color: #000;
+  }
+  .mc :global(.mc-intro__croissant) {
+    width: 4.5rem;
+    --croissant-fill: var(--c-accent);
+    --croissant-stroke: 1.4;
+  }
+  /* Das Croissant wippt sanft – wie auf der Croissant-Seite */
   @media (prefers-reduced-motion: no-preference) {
-    .mc-intro__herz {
-      animation: mc-puls 2.4s var(--ease) infinite;
+    .mc :global(.mc-intro__croissant) {
+      animation: mc-wippen 3.2s ease-in-out infinite;
     }
   }
-  @keyframes mc-puls {
+  @keyframes mc-wippen {
     0%,
-    60%,
+    70%,
     100% {
-      transform: scale(1);
+      transform: none;
     }
-    15% {
-      transform: scale(1.12);
+    80% {
+      transform: rotate(-10deg) scale(1.05);
     }
-    30% {
-      transform: scale(0.98);
-    }
-    45% {
-      transform: scale(1.08);
+    90% {
+      transform: rotate(6deg) scale(1.05);
     }
   }
   .mc-punkte {
@@ -329,7 +333,7 @@ const herz =
     font-size: 0.9375rem;
   }
   .mc-punkte li::before {
-    content: '♡ ';
+    content: '– ';
     color: var(--c-ink-soft);
   }
   .mc-btn {
@@ -367,10 +371,6 @@ const herz =
     background: var(--c-ink);
     color: var(--c-bg);
   }
-  .mc-chip[aria-pressed='true']::before {
-    content: '♥ ';
-    color: var(--c-accent);
-  }
   .mc-chip[aria-disabled='true'] {
     opacity: 0.4;
   }
@@ -378,7 +378,30 @@ const herz =
     border-radius: 0;
   }
 
-  /* ---------- Fragen ---------- */
+  /* ---------- Fragen: zentriert, mit dem senkrechten Strich darüber ---------- */
+  .mc-screen--frage {
+    justify-items: center;
+    text-align: center;
+  }
+  .mc-screen--frage .mc-fortschritt {
+    justify-self: stretch;
+  }
+  .mc-linie {
+    height: clamp(48px, 9vh, 90px);
+    margin: 0.5rem auto 0;
+  }
+  .mc-screen--frage .mc-chips {
+    justify-content: center;
+  }
+  .mc-screen--frage .mc-skala {
+    width: 100%;
+  }
+  .mc-screen--frage .mc-nav {
+    justify-self: stretch;
+  }
+  .mc-screen--frage .mc-skala__labels span:first-child {
+    text-align: left;
+  }
   .mc-fortschritt {
     height: 3px;
     background: color-mix(in srgb, var(--c-ink) 12%, transparent);
@@ -403,42 +426,40 @@ const herz =
   .mc-herz {
     display: grid;
     place-items: center;
-    width: clamp(3rem, 15vw, 4rem);
+    width: clamp(3.4rem, 17vw, 4.5rem);
     aspect-ratio: 1;
-    padding: 0.35rem;
+    padding: 0.2rem;
     border: 0;
     background: transparent;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
-  .mc-herz svg {
-    width: 100%;
-    fill: transparent;
-    stroke: var(--c-ink);
-    stroke-width: 1.1;
-    transition:
-      fill var(--t-fast) var(--ease),
-      transform var(--t-fast) var(--ease);
+  .mc-herz :global(.croissant-art) {
+    --croissant-stroke: 1.4;
+    transition: transform 0.35s var(--ease);
   }
-  .mc-herz.is-an svg {
-    fill: var(--c-accent);
+  .mc-herz :global(.croissant-art__fill) {
+    transition: fill var(--t-fast) var(--ease);
   }
-  .mc-herz[aria-pressed='true'] svg {
-    transform: scale(1.12);
+  .mc-herz.is-an :global(.croissant-art) {
+    --croissant-fill: var(--c-accent);
+  }
+  .mc-herz[aria-pressed='true'] :global(.croissant-art) {
+    transform: rotate(-10deg) scale(1.12);
   }
   /* Vorschau beim Drüberfahren (nur mit Maus, damit am Handy nichts „hängen bleibt“) */
   @media (hover: hover) and (pointer: fine) {
-    .mc-herzen:hover .mc-herz:not(.is-an) svg {
-      fill: color-mix(in srgb, var(--c-accent) 55%, transparent);
+    .mc-herzen:hover .mc-herz:not(.is-an) :global(.croissant-art) {
+      --croissant-fill: color-mix(in srgb, var(--c-accent) 50%, transparent);
     }
-    .mc-herzen .mc-herz:hover ~ .mc-herz:not(.is-an) svg {
-      fill: transparent;
+    .mc-herzen .mc-herz:hover ~ .mc-herz:not(.is-an) :global(.croissant-art) {
+      --croissant-fill: transparent;
     }
   }
   .mc-herz:focus-visible {
     outline: 2px solid var(--c-focus);
     outline-offset: 2px;
-    border-radius: 50%;
+    border-radius: 8px;
   }
   .mc-skala__labels {
     display: flex;
@@ -471,9 +492,23 @@ const herz =
   }
 
   /* ---------- Ergebnis ---------- */
+  /* Ergebnis als 1–3 gefüllte Croissants */
   .mc-symbol {
-    font-size: 3rem;
-    line-height: 1;
+    display: flex;
+    gap: 0.4rem;
+  }
+  .mc-symbol :global(.croissant-art) {
+    width: 3.25rem;
+    --croissant-stroke: 1.4;
+    opacity: 0.35;
+    transition:
+      opacity 0.4s var(--ease),
+      transform 0.4s var(--ease);
+  }
+  .mc-symbol :global(.croissant-art.is-an) {
+    --croissant-fill: var(--c-accent);
+    opacity: 1;
+    transform: rotate(-8deg);
   }
   .mc-auswertung,
   .mc-tipp {
