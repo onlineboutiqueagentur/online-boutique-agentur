@@ -32,8 +32,14 @@ export const markencheck = {
     titel: 'Du darfst in deine Marke',
     titelBetont: 'verliebt sein.',
     text: 'Eine Marke ist nicht nur Logo und Farben. Man muss sie fühlen können, und du selbst solltest zu 100 % dahinterstehen. Denn wenn du deine Marke nicht fühlst, werden es auch deine Kund:innen nicht spüren. In zwei Minuten findest du heraus, wie sehr du deine Marke gerade spürst und lebst.',
-    punkte: ['10 Fragen, etwa 2 Minuten', 'Anonym, ohne Anmeldung', 'Dein Ergebnis siehst du sofort'],
+    /** Drei kleine Kacheln mit Icon (icon: uhr, anonym, sofort) */
+    punkte: [
+      { icon: 'uhr', titel: '2 Minuten', text: '10 kurze Fragen' },
+      { icon: 'anonym', titel: 'Anonym', text: 'ohne Anmeldung' },
+      { icon: 'sofort', titel: 'Sofort', text: 'dein Ergebnis direkt' },
+    ],
     start: 'Check starten',
+    startUnter: 'Sofort-Ergebnis · ohne Anmeldung',
   },
 
   gefuehl: {
