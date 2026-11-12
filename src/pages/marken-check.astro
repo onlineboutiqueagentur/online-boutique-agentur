@@ -67,7 +67,7 @@ const icons = {
         <p class="mc-slogan">
           <span class="sr-only">{m.intro.slogan.vor} {m.intro.slogan.woerter[0]} {m.intro.slogan.nach}</span>
           <span aria-hidden="true" data-typewriter={JSON.stringify(m.intro.slogan.woerter.map((word) => ({ word })))}>
-            {m.intro.slogan.vor} <span class="mc-slogan__wort" data-tw-word>{m.intro.slogan.woerter[0]}</span><span class="cursor">|</span> {m.intro.slogan.nach}
+            {m.intro.slogan.vor} <span class="mc-slogan__wort" data-tw-word>{m.intro.slogan.woerter[0]}</span><span class="cursor">|</span>{m.intro.slogan.nach}
           </span>
         </p>
         <p class="mc-lead">{m.intro.text}</p>
