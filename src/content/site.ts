@@ -258,8 +258,8 @@ export const testimonials = {
       quote:
         'Die Zusammenarbeit mit Nina war richtig klasse. Gemeinsam haben wir die Website SEO-optimiert aufgebaut. Sie hat ein super Gespür für Design, Stil und das gewisse Etwas. Das Ergebnis wirkt modern, klar und auf den Punkt – absolute Empfehlung!',
       quoteStyle: 'german',
-      links: [],
-      note: 'Eventmanagement',
+      links: ['https://www.evented.at/'],
+      note: '',
       image: tSandraSchier,
     },
   ],
