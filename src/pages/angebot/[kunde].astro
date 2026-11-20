@@ -146,7 +146,7 @@ const path = `/angebot/${a.slug}/`;
       <div class="a-price container--text">
         <div class="a-price__card reveal-up">
           <dl class="a-price__lines">
-            <div class="a-price__line">
+            <div class="a-price__line" data-a="concept-fest">
               <dt>{t.preis.onepager}</dt>
               <dd data-a="onepager">{euro(p.onepager)}</dd>
             </div>
@@ -162,6 +162,19 @@ const path = `/angebot/${a.slug}/`;
                 </div>
               )
             }
+            {
+              /* weitere Positionen aus dem CRM (z. B. „Brand Look“) – die Function setzt hier Zeilen ein */
+              a.slug === '_vorlage' && <div data-a="positionen" />
+            }
+            {
+            /* Rabatt aus dem CRM – nur in der Vorlage; die Function füllt die Zeile oder entfernt sie */
+            a.slug === '_vorlage' && (
+              <div class="a-price__line" data-a="rabatt">
+                <dt data-a="rabatt-name">Rabatt</dt>
+                <dd data-a="rabatt-betrag">− € 0,–</dd>
+              </div>
+            )
+          }
             <div class="a-price__line a-price__line--total">
               <dt>{t.preis.gesamt}</dt>
               <dd data-a="gesamt">{euro(gesamt)}</dd>
