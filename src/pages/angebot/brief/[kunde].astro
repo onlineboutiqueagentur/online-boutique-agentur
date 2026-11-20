@@ -8,13 +8,27 @@
  */
 import Base from '../../../layouts/Base.astro';
 import Footer from '../../../components/Footer.astro';
+import CroissantArt from '../../../components/CroissantArt.astro';
 import { Picture } from 'astro:assets';
 import { agency, intro } from '../../../content/site';
 import { angebot as t, angebote, angebotImages as img, preise as standardPreise, euro, type Angebot } from '../../../content/angebot';
-import { datum } from '../../../../lib/angebot-daten';
+import { betragPdf, datum, datumPdf } from '../../../../lib/angebot-daten';
+import kopfImg from '../../../assets/images/shared/online-boutique-agentur-angebot-kopf.jpg';
 
 export function getStaticPaths() {
-  return angebote.map((a) => ({ params: { kunde: a.slug }, props: { a } }));
+  /** Platzhalter für die Vorlage – functions/angebot/[[path]].ts ersetzt alle data-a-Stellen mit den CRM-Daten. */
+  const vorlage: Angebot = {
+    slug: '_vorlage',
+    anrede: 'Vorname',
+    firma: 'Firma',
+    name: 'Name',
+    email: 'mail@example.at',
+    zusatzSeiten: 1,
+    zusatzSeitenNotiz: 'Notiz',
+    erstellt: '2026-01-01',
+    gueltigBis: '2026-01-31',
+  };
+  return [...angebote, vorlage].map((a) => ({ params: { kunde: a.slug }, props: { a } }));
 }
 
 const { a } = Astro.props as { a: Angebot };
@@ -25,6 +39,7 @@ const gesamt = p.onepager + zusatzSumme;
 // Überschrift im Team-Abschnitt: „Wir lieben/leben Boutique Agentur.“ wie auf der Startseite (Schreibmaschine)
 const tw = intro.typewriter;
 const twSteps = tw.words.map((word) => ({ word }));
+const extras = [...t.toppings.items].sort((x, y) => b.extras.reihenfolge.indexOf(x.nr) - b.extras.reihenfolge.indexOf(y.nr));
 
 const title = `Für ${a.anrede}: dein Angebot | Online Boutique Agentur`;
 const description = `Ein persönliches Angebot für ${a.firma} von Pia & Nina.`;
@@ -38,75 +53,188 @@ const path = `/angebot/brief/${a.slug}/`;
   </header>
 
   <main id="inhalt" tabindex="-1" class="brief">
+    <!-- PDF (nur beim Drucken): Offerte im Design der Rechnung. Die Function füllt die data-a-Stellen mit den CRM-Daten. -->
+    <div class="pdf" aria-hidden="true">
+      <img class="pdf__kopf" src={kopfImg.src} alt="" width={kopfImg.width} height={kopfImg.height} />
+      <div class="pdf__body">
+        <div class="pdf__adresse">
+          <p><span data-a="pdf-name">{a.name}</span><br /><span data-a="firma">{a.firma}</span>{a.slug === '_vorlage' && <span data-a="pdf-anschrift" />}</p>
+          <dl class="pdf__meta">
+            <dt>{b.pdf.datum}</dt>
+            <dd data-a="pdf-datum">{datumPdf(a.erstellt)}</dd>
+            <dt>{b.pdf.gueltig}</dt>
+            <dd data-a="pdf-gueltig">{datumPdf(a.gueltigBis)}</dd>
+          </dl>
+        </div>
+        <h2 class="pdf__titel">{b.pdf.titel}</h2>
+        <table class="pdf__tabelle">
+          <thead>
+            <tr>
+              <th>{b.pdf.spalten.beschreibung}</th>
+              <th class="pdf__anzahl">{b.pdf.spalten.anzahl}</th>
+              <th class="pdf__summe">{b.pdf.spalten.gesamt}</th>
+            </tr>
+          </thead>
+          <!-- je Position ein tbody: graues Titelband über die ganze Breite, darunter Beschreibung -->
+          <tbody class="pdf__pos" data-a="concept-fest">
+            <tr class="pdf__band">
+              <td>{t.eyebrow}{a.slug === '_vorlage' && <span class="pdf__untertitel" data-a="concept-domain" />}</td>
+              <td class="pdf__anzahl">{b.pdf.pauschale}</td>
+              <td class="pdf__summe" data-a="pdf-onepager">{betragPdf(p.onepager)}</td>
+            </tr>
+            <tr class="pdf__inhalt">
+              <td colspan="3">
+                <p>{t.tagline}</p>
+                <ul>{b.inklusive.map((item) => <li>{item}</li>)}</ul>
+              </td>
+            </tr>
+          </tbody>
+          {
+            a.zusatzSeiten > 0 && (
+              <tbody class="pdf__pos" data-a="zusatz">
+                <tr class="pdf__band">
+                  <td>{b.pdf.zusatzTitel}</td>
+                  <td class="pdf__anzahl" data-a="pdf-zusatz-anzahl">{a.zusatzSeiten} × {betragPdf(p.zusatzSeite)}</td>
+                  <td class="pdf__summe" data-a="pdf-zusatz-summe">{betragPdf(zusatzSumme)}</td>
+                </tr>
+                {a.zusatzSeitenNotiz && (
+                  <tr class="pdf__inhalt" data-a="zusatz-notiz">
+                    <td colspan="3">{a.zusatzSeitenNotiz}</td>
+                  </tr>
+                )}
+              </tbody>
+            )
+          }
+          {a.slug === '_vorlage' && <tbody data-a="pdf-positionen" data-pauschale={b.pdf.pauschale} />}
+          {
+            a.slug === '_vorlage' && (
+              <tbody class="pdf__pos" data-a="rabatt">
+                <tr class="pdf__band">
+                  <td data-a="rabatt-name">Rabatt</td>
+                  <td class="pdf__anzahl" />
+                  <td class="pdf__summe" data-a="pdf-rabatt-betrag">− 0,00</td>
+                </tr>
+              </tbody>
+            )
+          }
+          <tfoot>
+            <tr>
+              <td colspan="2" class="pdf__gesamt-label">{b.pdf.gesamtbetrag}</td>
+              <td class="pdf__summe" data-a="pdf-gesamt">{betragPdf(gesamt)}</td>
+            </tr>
+          </tfoot>
+        </table>
+        <div class="pdf__hinweise">
+          <p data-a="betreuung-hinweis">{b.pdf.betreuung.vor}<span data-a="betreuung">{euro(p.betreuungMonat)}</span>{b.pdf.betreuung.nach}</p>
+          <p>{b.golive.text}</p>
+        </div>
+      </div>
+      <!-- Abschluss: Steuerhinweis, orange Zeile und Fußzeile bleiben zusammen, unten auf der letzten Seite -->
+      <div class="pdf__ende">
+        <p class="pdf__steuer">{t.preis.steuer}</p>
+        <p class="pdf__abschluss">{b.pdf.abschluss}</p>
+        <footer class="pdf__fuss">
+          <p>{agency.owner}<br />{agency.address.street}<br />{agency.address.zip} {agency.address.city}</p>
+          <p class="pdf__mitte">{agency.email}<br />{agency.url.replace('https://', '')}</p>
+          <p class="pdf__bank">{b.pdf.bank.inhaber}<br />IBAN: {b.pdf.bank.iban}<br />BIC: {b.pdf.bank.bic}</p>
+        </footer>
+      </div>
+    </div>
+
     <!-- 1 · Der Brief -->
-    <article class="b-letter" aria-label={`Brief an ${a.anrede}`}>
-      <h1 class="b-letter__hello">{a.briefAnrede || b.anrede(a.anrede)}</h1>
-      {a.grussHtml && <p set:html={a.grussHtml} />}
-      {b.absaetze(a.firma).slice(a.grussHtml ? 1 : 0).map((text) => <p>{text}</p>)}
+    <article class="b-letter" aria-label={`Brief an ${a.anrede}`} data-a="brief">
+      <h1 class="b-letter__hello" data-a="brief-hallo">{a.briefAnrede || b.anrede(a.anrede)}</h1>
+      <!-- erster Absatz: persönlicher Gruß aus dem CRM, sonst der Standardtext (FIRMA wird ersetzt) -->
+      <p data-a="brief-gruss" data-standard={b.absaetze('FIRMA')[0]} set:html={a.grussHtml || b.absaetze(a.firma)[0]} />
+      {/* unser Vorschlagstext – im CRM abwählbar (dann entfernt die Function diese Absätze) */}
+      {b.absaetze(a.firma).slice(1).map((text) => <p data-a={a.slug === '_vorlage' ? 'brief-standard' : undefined}>{text}</p>)}
 
       <div class="b-letter__sign">
         <figure class="b-letter__photo">
-          <Picture src={img.team.src} alt={img.team.alt} widths={[160, 320]} sizes="5rem" formats={['avif', 'webp']} loading="eager" decoding="async" />
+          <Picture src={img.gruss.src} alt={img.gruss.alt} widths={[240, 480]} sizes="7.5rem" formats={['avif', 'webp']} loading="eager" decoding="async" />
         </figure>
-        <p>{b.gruss},<br /><span class="b-letter__names">Pia & Nina</span></p>
+        <p>{b.gruss},<br /><span class="b-letter__names">Nina & Pia</span></p>
       </div>
-      <p class="b-letter__date">{b.ort}, {datum(a.erstellt)}</p>
     </article>
 
     <!-- 2 · Das Angebot -->
     <section class="b-offer" id="annehmen" aria-labelledby="b-offer">
+      <!-- nur im PDF: Logo und Absender -->
+      <div class="b-print b-print__head" aria-hidden="true">
+        <p class="b-print__brand">Online <em>Boutique</em> Agentur<sup>²</sup></p>
+        <p class="b-print__from">
+          {agency.name}<br />
+          {agency.address.street}<br />
+          {agency.address.zip} {agency.address.city}, {agency.address.countryName}
+        </p>
+      </div>
       <div class="b-offer__card">
-        <h2 class="b-offer__title" id="b-offer">{b.angebotTitel}<span class="b-offer__firma">{a.firma}</span></h2>
+        <h2 class="b-offer__title" id="b-offer">{b.angebotTitel} <span class="b-offer__firma" data-a="firma">{a.firma}</span><span class="b-offer__date" data-a="datum">{datum(a.erstellt)}</span></h2>
 
         <dl class="b-lines">
-          <div class="b-line">
+          <!-- fester Baustein nur bei älteren Angeboten; neue Angebote bringen das Concept als ausformulierte Position mit -->
+          <div class="b-line b-line--concept" data-a="concept-fest">
             <dt class="b-concept">
               <span class="b-concept__name">{t.eyebrow}.</span>
+              {a.slug === '_vorlage' && <span class="b-pos__domain" data-a="concept-domain" />}
               <span class="b-concept__tag">{t.tagline}</span>
             </dt>
-            <dd>{euro(p.onepager)}</dd>
+            <dd data-a="onepager">{euro(p.onepager)}</dd>
+            <dd class="b-incl">
+              <p class="b-print b-print__label">{b.pdf.inklusive}</p>
+              <ul role="list" class="b-incl__list">
+                {b.inklusive.map((item) => <li><a href="#zusammenarbeit" data-open-topic>{item}</a></li>)}
+              </ul>
+            </dd>
           </div>
           {
             a.zusatzSeiten > 0 && (
-              <div class="b-line">
+              <div class="b-line" data-a="zusatz">
                 <dt>
-                  {t.preis.zusatz(a.zusatzSeiten)}
-                  {a.zusatzSeitenNotiz && <span class="b-line__note">{a.zusatzSeitenNotiz}</span>}
+                  <span data-a="zusatz-text">{t.preis.zusatz(a.zusatzSeiten)}</span>
+                  {a.zusatzSeitenNotiz && <span class="b-line__note" data-a="zusatz-notiz">{a.zusatzSeitenNotiz}</span>}
                 </dt>
-                <dd>{euro(zusatzSumme)}</dd>
+                <dd data-a="zusatz-summe">{euro(zusatzSumme)}</dd>
+              </div>
+            )
+          }
+          {
+            /* weitere Positionen aus dem CRM (z. B. „Brand Look“) – die Function setzt hier Zeilen ein */
+            a.slug === '_vorlage' && <div data-a="positionen" />
+          }
+          {
+            /* Rabatt aus dem CRM – nur in der Vorlage; die Function füllt die Zeile oder entfernt sie */
+            a.slug === '_vorlage' && (
+              <div class="b-line" data-a="rabatt">
+                <dt data-a="rabatt-name">Rabatt</dt>
+                <dd data-a="rabatt-betrag">− € 0,–</dd>
               </div>
             )
           }
           <div class="b-line b-line--total">
-            <dt>{t.preis.gesamt}</dt>
-            <dd>{euro(gesamt)}</dd>
+            <dt>{b.gesamtTitel}</dt>
+            <dd data-a="gesamt">{euro(gesamt)}</dd>
           </div>
         </dl>
-        <p class="b-small">{t.preis.steuer}</p>
 
-        <div class="b-incl">
-          <p class="b-incl__title">{b.inklusiveTitel}</p>
-          <ul role="list" class="b-incl__list">
-            {b.inklusive.map((item) => <li>{item}</li>)}
-          </ul>
-          <p class="b-small">{t.preis.timing.text}</p>
-        </div>
+
 
 
         <form class="form b-form" action="/api/contact" method="post" novalidate data-contact-form>
           <div data-form-fields>
-            <input type="hidden" name="name" value={a.name} />
-            <input type="hidden" name="company" value={a.firma} />
-            <input type="hidden" name="email" value={a.email} />
-            <input type="hidden" name="message" value={`${t.eyebrow} · ${euro(gesamt)} · ${a.zusatzSeiten} Zusatzseite(n)`} />
+            <input type="hidden" name="name" value={a.name} data-a="name" />
+            <input type="hidden" name="company" value={a.firma} data-a="company" />
+            <input type="hidden" name="email" value={a.email} data-a="email" />
+            <input type="hidden" name="message" value={`${t.eyebrow} · ${euro(gesamt)} · ${a.zusatzSeiten} Zusatzseite(n)`} data-message data-a="message" />
             <div class="form__hp" aria-hidden="true">
               <label for="b-website">Website</label>
               <input id="b-website" name="website" type="text" tabindex="-1" autocomplete="off" />
             </div>
             <input type="hidden" name="ts" value="" data-ts />
             <input type="hidden" name="quelle" value="angebot" />
-            <input type="hidden" name="angebot" value={a.slug} />
+            <input type="hidden" name="angebot" value={a.slug} data-a="slug" />
             <input type="hidden" name="design" value="" data-design-field />
+            <p class="b-picked" hidden data-picked>{b.extras.gewaehlt} <span data-picked-list></span></p>
             <button class="btn btn--solid b-form__btn" type="submit" data-label={t.final.form.submit} data-sending={t.final.form.sending}>{t.final.form.submit}</button>
           </div>
           <div class="form__status" role="status" aria-live="polite" tabindex="-1" data-form-status>
@@ -115,18 +243,46 @@ const path = `/angebot/brief/${a.slug}/`;
           </div>
         </form>
 
+        <!-- nur im PDF: Timing und Unterschrift -->
+        <div class="b-print b-print__timing">
+          <p class="b-print__label">{b.golive.titel}</p>
+          <p>{b.golive.text}</p>
+        </div>
+        <div class="b-print b-print__sign">
+          <p class="b-print__label">{b.pdf.angenommen}</p>
+          <div class="b-print__sign-lines">
+            <span>{b.pdf.ort}</span>
+            <span>{b.pdf.unterschrift}</span>
+          </div>
+        </div>
+
+        <!-- Teaser: unter dem Kasten geht es weiter (nur mit dem Smart Website Concept, sonst gibt es keine Klappboxen) -->
+        <a class="b-more-teaser" href="#details" data-a="details">
+          <span class="b-more-teaser__line" aria-hidden="true"></span>
+          <span class="b-more-teaser__eyebrow">{b.mehrSubline}</span>
+          <span class="b-more-teaser__text">{b.mehrTeaser}</span>
+          <span class="b-more-teaser__arrow" aria-hidden="true">↓</span>
+        </a>
+
         <p class="b-direct">
-          Noch Fragen? <a href={agency.whatsapp} target="_blank" rel="noopener">WhatsApp</a> ·
+          Wir sind jederzeit gerne für dich da.<br /><a href={agency.whatsapp} target="_blank" rel="noopener">WhatsApp</a> ·
           <a href={`tel:${agency.phoneE164}`}>{agency.phone}</a> ·
           <a href={`mailto:${agency.email}`}>E-Mail</a>
         </p>
-        <p class="b-small b-valid">{t.final.gueltig(datum(a.gueltigBis))}</p>
+        <p class="b-small b-valid" data-a="gueltig">{t.final.gueltig(datum(a.gueltigBis))}</p>
+        <p class="b-small b-tax">{t.preis.steuer}</p>
       </div>
+      <!-- nur im PDF: Kontaktdaten -->
+      <p class="b-print b-print__foot" aria-hidden="true">
+        {agency.name} · Pia & Nina · {agency.phone} · {agency.email} · {agency.url.replace('https://', '')}
+      </p>
     </section>
 
-    <!-- 3 · Mehr Infos zum Aufklappen -->
-    <section class="b-more" aria-labelledby="b-more">
-      <h2 class="b-more__title" id="b-more">{b.mehrTitel}</h2>
+    <!-- 3 · Mehr Infos zum Aufklappen – nur wenn das Produkt „The Smart Website Concept“ gewählt ist -->
+    <section class="b-more" id="details" aria-labelledby="b-more" data-a="details">
+      <div class="v-line" aria-hidden="true"></div>
+      <p class="b-more__subline">{b.mehrSubline}</p>
+      <h2 class="heading b-more__title" id="b-more">{b.mehrTitel}</h2>
 
       <div class="b-topics">
         <details class="b-topic">
@@ -145,7 +301,7 @@ const path = `/angebot/brief/${a.slug}/`;
           </div>
         </details>
 
-        <details class="b-topic">
+        <details class="b-topic" id="zusammenarbeit">
           <summary>{b.themen.ablauf}</summary>
           <div class="b-topic__body">
             <ol role="list" class="b-steps">
@@ -171,19 +327,30 @@ const path = `/angebot/brief/${a.slug}/`;
         </details>
 
         <details class="b-topic">
+          <summary>{b.golive.titel}</summary>
+          <div class="b-topic__body">
+            <p>{b.golive.text}</p>
+          </div>
+        </details>
+
+        <details class="b-topic" id="extras">
           <summary>{b.themen.toppings}</summary>
           <div class="b-topic__body">
             <p>{t.toppings.text}</p>
             <ul role="list" class="b-toppings">
               {
-                t.toppings.items.map((item) => (
-                  <li class:list={['b-topping', { 'is-tipp': (a.empfohlen ?? []).includes(item.nr) }]}>
-                    <span class="b-topping__head">
+                extras.map((item) => (
+                  <li class:list={['b-topping', { 'is-tipp': (a.empfohlen ?? []).includes(item.nr) }]} data-brief-topping={item.nr}>
+                    <span class="b-topping__head" data-brief-tipp={item.nr} data-tipp-text={t.toppings.empfohlen}>
                       <b>{item.title}</b>
                       {(a.empfohlen ?? []).includes(item.nr) && <span class="b-topping__tipp">{t.toppings.empfohlen}</span>}
                     </span>
                     <span>{item.text}</span>
                     <span class="b-topping__price">{item.preis}</span>
+                    <label class="b-topping__pick">
+                      <input type="checkbox" data-extra={`${item.title} (${item.preis})`} />
+                      {b.extras.anhaken}
+                    </label>
                   </li>
                 ))
               }
@@ -200,7 +367,7 @@ const path = `/angebot/brief/${a.slug}/`;
     <div class="v-line" aria-hidden="true"></div>
     <div class="b-team container">
       <figure class="b-team__media reveal">
-        <Picture src={img.team.src} alt={img.team.alt} widths={[500, 800, 1100]} sizes="(min-width: 48rem) 32rem, 90vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
+        <Picture src={img.teamFarbe.src} alt={img.teamFarbe.alt} widths={[500, 780]} sizes="(min-width: 48rem) 32rem, 90vw" formats={['avif', 'webp']} loading="lazy" decoding="async" />
       </figure>
       <div class="b-team__text">
         <h2 class="heading b-team__title" id="b-team">
@@ -216,10 +383,12 @@ const path = `/angebot/brief/${a.slug}/`;
 
   <!-- 5 · Zum Schluss: unser Statement -->
   <section class="b-statement" aria-label="Unser Statement">
+    <div class="v-line" aria-hidden="true"></div>
+    <CroissantArt draw class="b-statement__art" label="Feine Linienzeichnung eines Croissants" />
     <p class="b-statement__text">
-      {b.statement.lead}
-      {[...b.statement.zeilen, b.statement.claim].map((z) => <><br />{z}</>)}
-      <br /><em>{b.statement.schluss}</em>
+      <span class="b-statement__lead">{b.statement.lead}</span>
+      <span class="b-statement__lead">{b.statement.zeilen.map((z, i) => <>{i > 0 && <br />}{z}</>)}</span>
+      <em>{b.statement.schluss}</em>
     </p>
   </section>
 
@@ -230,15 +399,36 @@ const path = `/angebot/brief/${a.slug}/`;
   import '../../../scripts/contact-form';
   import '../../../scripts/typewriter';
 
-  document.querySelectorAll<HTMLButtonElement>('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));
+  // Angehakte Extras gehen beim „Angebot annehmen“ in der Nachricht mit
+  const message = document.querySelector<HTMLInputElement>('[data-message]');
+  const picked = document.querySelector<HTMLElement>('[data-picked]');
+  const pickedList = document.querySelector<HTMLElement>('[data-picked-list]');
+  const hint = document.querySelector<HTMLElement>('[data-pick-hint]');
+  const extras = [...document.querySelectorAll<HTMLInputElement>('[data-extra]')];
+  const basis = message?.value ?? '';
+  const aktualisieren = () => {
+    const gewaehlt = extras.filter((x) => x.checked).map((x) => x.dataset.extra ?? '');
+    if (message) message.value = gewaehlt.length ? `${basis} · Extras: ${gewaehlt.join(', ')}` : basis;
+    if (pickedList) pickedList.textContent = gewaehlt.map((g) => g.replace(/ \(.*\)$/, '')).join(', ');
+    if (picked) picked.hidden = gewaehlt.length === 0;
+    if (hint) hint.hidden = gewaehlt.length > 0;
+    extras.forEach((x) => x.closest('.b-topping')?.classList.toggle('is-picked', x.checked));
+  };
+  extras.forEach((x) => x.addEventListener('change', aktualisieren));
+  aktualisieren();
 
-  // Im PDF sollen alle Themen sichtbar sein – danach wieder wie vorher
-  let offen: HTMLDetailsElement[] = [];
-  window.addEventListener('beforeprint', () => {
-    offen = [...document.querySelectorAll<HTMLDetailsElement>('.b-topic:not([open])')];
-    offen.forEach((d) => (d.open = true));
-  });
-  window.addEventListener('afterprint', () => offen.forEach((d) => (d.open = false)));
+  // Leistungs-Buttons öffnen unten „Zusammenarbeit“ und springen hin
+  document.querySelectorAll<HTMLAnchorElement>('[data-open-topic], [data-pick-hint] a').forEach((link) =>
+    link.addEventListener('click', (e) => {
+      const ziel = document.querySelector<HTMLDetailsElement>(link.hash);
+      if (!ziel) return;
+      e.preventDefault();
+      ziel.open = true;
+      ziel.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+      ziel.querySelector('summary')?.focus({ preventScroll: true });
+    }),
+  );
+  document.querySelectorAll<HTMLButtonElement>('[data-print]').forEach((b) => b.addEventListener('click', () => window.print()));
 </script>
 
 <style>
@@ -269,16 +459,11 @@ const path = `/angebot/brief/${a.slug}/`;
     background: var(--c-card);
     border-radius: var(--radius);
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 40px rgb(0 0 0 / 0.05);
-    font-size: 1.0625rem;
+    font-size: 0.9375rem;
     line-height: 1.75;
   }
   .b-letter p + p {
     margin-top: 1em;
-  }
-  .b-letter__date {
-    margin-top: 1.5rem;
-    font-size: 0.875rem;
-    color: var(--c-ink-soft);
   }
   .b-letter__hello {
     margin: 0 0 1rem;
@@ -296,11 +481,11 @@ const path = `/angebot/brief/${a.slug}/`;
   }
   .b-letter__photo {
     flex: none;
-    width: 4.5rem;
+    width: 7.5rem;
   }
   .b-letter__photo :global(img) {
-    width: 4.5rem;
-    height: 4.5rem;
+    width: 7.5rem;
+    height: 7.5rem;
     border-radius: 50%;
     object-fit: cover;
   }
@@ -315,6 +500,7 @@ const path = `/angebot/brief/${a.slug}/`;
   }
   .b-offer__card {
     padding: clamp(1.75rem, 5vw, 3rem);
+    padding-bottom: clamp(1.25rem, 3vw, 1.75rem);
     border: 1px solid currentColor;
     border-radius: var(--radius);
   }
@@ -334,15 +520,24 @@ const path = `/angebot/brief/${a.slug}/`;
     font-size: 0.875rem;
     color: var(--c-ink-soft);
   }
+  /* klein, rechts oben in der Ecke */
   .b-offer__title {
-    margin: 0 0 1.25rem;
+    margin: -0.75rem -0.75rem 3.5rem 0;
     font-family: var(--f-display);
     font-weight: var(--w-regular);
-    font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
-    line-height: 1.3;
+    font-size: 0.875rem;
+    line-height: 1.35;
+    text-align: right;
+    color: var(--c-ink-soft);
   }
   .b-offer__firma {
     display: block;
+  }
+  .b-offer__date {
+    display: block;
+    margin-top: 0.35rem;
+    font-family: var(--f-body);
+    font-size: 0.75rem;
   }
   .b-lines {
     display: grid;
@@ -366,6 +561,7 @@ const path = `/angebot/brief/${a.slug}/`;
   .b-line--total {
     border-bottom: 0;
     padding-top: 1.1rem;
+    padding-bottom: 0.35rem;
     font-size: 1.1875rem;
     font-weight: var(--w-bold);
   }
@@ -376,61 +572,196 @@ const path = `/angebot/brief/${a.slug}/`;
     font-size: 0.8125rem;
     color: var(--c-ink-soft);
   }
-  .b-incl {
-    margin-top: 1.75rem;
+  /* hängt direkt unter den Gesamtkosten, danach mehr Luft */
+  .b-tax {
+    margin-top: 0.25rem;
+    text-align: center;
   }
-  .b-incl__title {
-    margin-bottom: 0.6rem;
+  /* All inclusive direkt unter dem Konzept, volle Breite */
+  .b-line--concept {
+    flex-wrap: wrap;
+    padding-bottom: 1.5rem;
+  }
+  .b-line--concept > dt {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  /* Ausformulierte Position aus dem CRM: Titel, Anzahl, Preis, darunter Beschreibung und Aufzählung */
+  /* mehr Luft nach der Trennlinie, weniger zwischen Titel/Anzahl und Text */
+  .b-line--pos {
+    flex-wrap: wrap;
+    padding-top: 2rem;
+    padding-bottom: 1.75rem;
+  }
+  .b-line--pos > dt {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  /* Domain der Kund:in unter „The Smart Website Concept“ */
+  .b-pos__domain {
+    font-size: 0.875rem;
+    color: var(--c-ink-soft);
+  }
+  /* „Pauschale“ klein in derselben Zeile, zwischen Titel und Preis */
+  .b-line .b-pos__anzahl {
+    margin-left: auto;
+    padding-top: 0.35rem;
+    font-size: 0.8125rem;
+    color: var(--c-ink-soft);
+    white-space: nowrap;
+  }
+  .b-line .b-pos {
+    flex-basis: 100%;
+    margin: 0.4rem 0 0;
+    white-space: normal;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+  .b-pos :global(strong),
+  .b-letter :global(strong) {
     font-weight: var(--w-bold);
+  }
+  .b-pos p + p {
+    margin-top: 0.6rem;
+  }
+  .b-pos__list {
+    margin: 0.6rem 0 0;
+    padding-left: 1.15rem;
+    list-style: disc;
+  }
+  .b-pos__list li + li {
+    margin-top: 0.25rem;
+  }
+  .b-line .b-incl {
+    flex-basis: 100%;
+    margin-inline-start: 0;
+    margin-top: 1.25rem;
+    white-space: normal;
   }
   .b-incl__list {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 0.75rem;
   }
-  .b-incl__list li {
+  .b-incl__list a {
+    display: block;
     padding: 0.3rem 0.8rem;
     border-radius: 999px;
     background: var(--c-card);
     font-size: 0.875rem;
+    color: inherit;
+    text-decoration: none;
+    transition: background var(--t-fast) var(--ease);
+  }
+  .b-incl__list a:hover {
+    background: var(--c-ink);
+    color: var(--c-card);
+  }
+  .b-incl__list a:focus-visible {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 2px;
   }
   .b-form {
-    margin-top: 2rem;
+    margin-top: 2.75rem;
+    text-align: center;
   }
+  /* Button nur so breit wie der Schriftzug, mittig */
   .b-form__btn {
-    width: 100%;
+    display: flex;
+    width: fit-content;
+    margin-inline: auto;
     min-height: 56px;
+    padding-inline: 2.5rem;
     font-size: 1rem;
   }
   .b-form__ok {
     white-space: pre-line;
     text-align: center;
   }
+  /* Teaser zu „Good to know.“ – gut sichtbar unter dem Button, ganze Fläche klickbar */
+  .b-more-teaser {
+    display: grid;
+    justify-items: center;
+    gap: 0.45rem;
+    margin: 2rem auto 0;
+    padding: 0 1.25rem 1.1rem;
+    max-width: 30rem;
+    border-bottom: 1px solid rgb(0 0 0 / 0.15);
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+  }
+  /* kurzer senkrechter Strich wie bei den Sektionen */
+  .b-more-teaser__line {
+    width: 1px;
+    height: 2.5rem;
+    margin-bottom: 0.9rem;
+    background: currentColor;
+  }
+  .b-more-teaser__eyebrow {
+    font-family: var(--f-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  .b-more-teaser__text {
+    font-family: var(--f-display);
+    font-size: 1.0625rem;
+    line-height: 1.45;
+    text-wrap: balance;
+  }
+  .b-more-teaser__arrow {
+    font-size: 1.25rem;
+    line-height: 1;
+    transition: translate 0.3s ease;
+  }
+  .b-more-teaser:hover .b-more-teaser__arrow,
+  .b-more-teaser:focus-visible .b-more-teaser__arrow {
+    translate: 0 4px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .b-more-teaser__arrow {
+      animation: b-teaser-nudge 2.4s ease-in-out 1.5s 3;
+    }
+    @keyframes b-teaser-nudge {
+      0%, 60%, 100% { translate: 0 0; }
+      30% { translate: 0 5px; }
+    }
+  }
   .b-direct {
-    margin-top: 1rem;
+    margin-top: 2rem;
     text-wrap: balance;
     text-align: center;
     font-size: 0.9375rem;
   }
   .b-valid {
-    margin-top: 0.4rem;
+    margin-top: 1.75rem;
     text-align: center;
+    font-size: 0.75rem;
   }
 
   /* ---------- Mehr erfahren ---------- */
   .b-more {
     margin-top: clamp(3rem, 7vw, 4.5rem);
   }
+  /* wie die anderen Sektionen: senkrechter Strich, Überschrift zentriert */
+  /* Subline klein und serifenlos über der Überschrift – wie bei den anderen Sektionen der Website */
+  .b-more__subline {
+    margin-bottom: 0.6rem;
+    font-family: var(--f-body);
+    font-size: 0.8125rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--c-ink);
+  }
   .b-more__title {
-    margin-bottom: 1.25rem;
-    font-family: var(--f-display);
-    font-weight: var(--w-regular);
-    font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+    margin-bottom: 1.5rem;
+    text-align: center;
   }
   .b-topics {
     display: grid;
-    gap: 0.75rem;
+    gap: 0.6rem;
   }
   .b-topic {
     background: var(--c-card);
@@ -441,7 +772,7 @@ const path = `/angebot/brief/${a.slug}/`;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 1.1rem 1.4rem;
+    padding: 0.75rem 1.4rem;
     cursor: pointer;
     list-style: none;
     font-family: var(--f-display);
@@ -481,9 +812,14 @@ const path = `/angebot/brief/${a.slug}/`;
     display: grid;
     gap: 0.75rem;
   }
-  .b-points li {
-    padding-left: 1rem;
-    border-left: 1px solid currentColor;
+  /* senkrechter Strich über dem Punkt, wie über den Headlines */
+  .b-points li::before {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 2rem;
+    margin: 0.5rem auto 0.75rem;
+    background: currentColor;
   }
   .b-steps li {
     display: grid;
@@ -500,6 +836,36 @@ const path = `/angebot/brief/${a.slug}/`;
     padding: 0.9rem 1rem;
     border-radius: var(--radius);
     background: var(--c-bg);
+  }
+  .b-topping__pick {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+  .b-topping__pick input {
+    width: 1.125rem;
+    height: 1.125rem;
+    accent-color: var(--c-ink, #111);
+    cursor: pointer;
+  }
+  .b-topping.is-picked {
+    outline: 2px solid currentColor;
+  }
+  .b-picked {
+    margin-bottom: 0.75rem;
+    font-size: 0.9375rem;
+    font-weight: var(--w-bold);
+  }
+  .b-pick-hint :global(a) {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+  .b-pick-hint {
+    margin-bottom: 1.75rem;
   }
   .b-topping.is-tipp {
     outline: 1px solid currentColor;
@@ -551,14 +917,48 @@ const path = `/angebot/brief/${a.slug}/`;
   .b-statement {
     width: min(100% - 2 * var(--gutter), 46rem);
     margin: 0 auto;
-    padding: clamp(1rem, 3vw, 2rem) 0 clamp(4rem, 9vw, 6.5rem);
+    padding: 0 0 clamp(3rem, 7vw, 5rem);
     text-align: center;
+  }
+  .b-statement .v-line {
+    margin-top: 0;
+    margin-bottom: clamp(1.25rem, 3vw, 2rem);
+  }
+  .b-statement :global(.b-statement__art) {
+    width: min(45%, 10rem);
+    margin: 0 auto clamp(1rem, 3vw, 1.5rem);
+    color: var(--c-ink);
+  }
+  /* beim Drüberfahren wackelt das Croissant – wie auf „Das Croissant-Prinzip“ */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .b-statement :global(.b-statement__art:hover) {
+      animation: b-wiggle 0.9s var(--ease);
+    }
+  }
+  @keyframes b-wiggle {
+    0%,
+    100% {
+      transform: none;
+    }
+    25% {
+      transform: rotate(-8deg) scale(1.04);
+    }
+    50% {
+      transform: rotate(5deg) scale(1.04);
+    }
+    75% {
+      transform: rotate(-3deg) scale(1.02);
+    }
   }
   .b-statement__text {
     font-family: var(--f-display);
-    font-size: clamp(1.375rem, 1.1rem + 1.2vw, 2rem);
-    line-height: 1.45;
+    font-size: clamp(1.1875rem, 1rem + 0.8vw, 1.625rem);
+    line-height: 1.35;
     text-wrap: balance;
+  }
+  .b-statement__lead {
+    display: block;
+    margin: 0 auto 0.4em;
   }
   @media (min-width: 48rem) {
     .b-team {
@@ -566,36 +966,420 @@ const path = `/angebot/brief/${a.slug}/`;
     }
   }
 
+  .b-print {
+    display: none;
+  }
+  /* Im PDF nur der Angebotskasten, mit Logo/Absender oben und Kontakt unten */
   @media print {
-    .b-head button,
-    .b-form,
-    .b-direct a {
-      display: none;
+    @page {
+      size: A4;
+      margin: 14mm 18mm 12mm;
     }
-    .b-letter {
-      box-shadow: none;
+    :global(html),
+    :global(body) {
+      background: #fff;
+    }
+    .brief,
+    .b-offer {
+      width: 100%;
+      margin: 0;
       padding: 0;
+      font-size: 10.5pt;
     }
-    .b-offer,
-    .b-topic,
-    .b-team,
-    .b-statement {
+    /* A4-Seite: Kopf, Angebot, Fuß */
+    .b-offer {
+      display: flex;
+      flex-direction: column;
+      min-height: 266mm;
       break-inside: avoid;
     }
-    /* Schreibmaschine im PDF als ruhiger Text */
-    .b-team__title [aria-hidden] {
-      display: none;
+    .b-print {
+      display: block;
     }
-    .b-team__title :global(.sr-only) {
-      position: static !important;
-      width: auto;
-      height: auto;
+    .b-print__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 2rem;
+      padding-bottom: 5mm;
+      border-bottom: 1px solid #000;
+    }
+    .b-print__brand {
+      font-family: var(--f-display);
+      font-size: 17pt;
+      line-height: 1;
+    }
+    .b-print__from {
+      font-size: 8pt;
+      line-height: 1.5;
+      text-align: right;
+      color: var(--c-ink-soft);
+    }
+    .b-print__label {
+      margin-bottom: 2.5mm;
+      font-size: 7.5pt;
+      font-weight: var(--w-bold);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--c-ink-soft);
+    }
+    .b-print__foot {
+      margin-top: 6mm;
+      padding-top: 3mm;
+      border-top: 1px solid rgb(0 0 0 / 0.15);
+      font-size: 7.5pt;
+      white-space: nowrap;
+      text-align: center;
+      color: var(--c-ink-soft);
+    }
+    /* kein Kasten: das Blatt selbst ist das Angebot */
+    .b-offer__card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+    }
+    /* Titel groß und links, mit senkrechtem Strich wie bei den Headlines */
+    .b-offer__title {
+      margin: 0 0 8mm;
+      padding-top: 20mm;
+      position: relative;
+      font-size: 9pt;
+      text-align: left;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-family: var(--f-body);
+      font-weight: var(--w-bold);
+    }
+    .b-offer__title::before {
+      content: '';
+      position: absolute;
+      top: 7mm;
+      left: 0;
+      height: 10mm;
+      border-left: 1px solid #000;
+    }
+    .b-offer__firma {
+      margin-top: 2mm;
+      font-family: var(--f-display);
+      font-weight: var(--w-regular);
+      font-size: 24pt;
+      line-height: 1.2;
+      letter-spacing: 0;
+      text-transform: none;
+      color: #000;
+    }
+    .b-offer__date {
+      margin-top: 2mm;
+      font-size: 8.5pt;
+      font-weight: var(--w-regular);
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .b-lines {
+      border-top: 1px solid rgb(0 0 0 / 0.15);
+    }
+    .b-line {
+      padding: 5mm 0;
+    }
+    .b-concept__name {
+      font-size: 15pt;
+    }
+    .b-concept__tag {
+      font-size: 10pt;
+    }
+    .b-line .b-incl {
+      margin-top: 6mm;
+    }
+    /* Leistungen als zweispaltige Liste statt Buttons */
+    .b-incl__list {
+      display: grid;
+      grid-template-rows: repeat(4, auto);
+      grid-auto-flow: column;
+      gap: 2mm 8mm;
+    }
+    .b-incl__list a {
+      display: flex;
+      gap: 2.5mm;
+      align-items: baseline;
+      padding: 0;
+      border-radius: 0;
+      background: none;
+      font-size: 9.5pt;
+    }
+    .b-incl__list a::before {
+      content: '';
+      flex: none;
+      width: 1.6mm;
+      height: 1.6mm;
+      border-radius: 50%;
+      background: var(--c-accent);
+      transform: translateY(-0.4mm);
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+    /* Gesamtkosten als Band */
+    .b-line--total {
+      margin-top: 4mm;
+      padding: 4mm 5mm;
+      border: 0;
+      border-radius: 2mm;
+      background: var(--c-bg);
+      font-size: 12.5pt;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+    /* dazugebuchte Extras kommen mit ins PDF */
+    .b-form {
+      margin-top: 5mm;
+      text-align: left;
+    }
+    .b-picked {
+      font-size: 9.5pt;
+    }
+    .b-print__timing {
+      margin-top: 8mm;
+      font-size: 9.5pt;
+      line-height: 1.55;
+    }
+    .b-print__timing p:last-child {
+      max-width: 125mm;
+    }
+    .b-print__sign {
+      margin-top: auto;
+      padding-top: 8mm;
+    }
+    .b-print__sign-lines {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 12mm;
+      margin-top: 12mm;
+    }
+    .b-print__sign-lines span {
+      padding-top: 1.5mm;
+      border-top: 1px solid #000;
+      font-size: 7.5pt;
+      color: var(--c-ink-soft);
+    }
+    .b-valid,
+    .b-tax {
+      margin-top: 8mm;
+      text-align: left;
+      font-size: 7.5pt;
+    }
+    .b-tax {
+      margin-top: 0.5mm;
+    }
+    :global(body > *:not(main)),
+    .brief > :not(.b-offer),
+    .b-pick-hint,
+    .b-form__btn,
+    .b-form .form__status,
+    .b-direct {
+      display: none !important;
+    }
+  }
+
+
+  /* ---------- PDF im Design der Rechnung (Offerte) – nur beim Drucken ---------- */
+  .pdf {
+    display: none;
+  }
+  @media print {
+    /* Randlos (Kopfbild, cremefarbener Hintergrund auf allen Seiten); Folgeseiten bekommen oben Luft über box-decoration-break */
+    @page {
+      size: A4;
       margin: 0;
-      clip-path: none;
-      white-space: normal;
     }
-    .b-topic summary::after {
-      display: none;
+    :global(html),
+    :global(body) {
+      background: #f5f4f2 !important;
+    }
+    /* Nur die Offerte drucken – Brief, Angebotskarte, Kopf und Fuß der Seite ausblenden */
+    :global(body > *:not(main)),
+    .brief > :not(.pdf) {
+      display: none !important;
+    }
+    .brief {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+    }
+    /* Vorrang vor den älteren Druckregeln, die nur die Angebotskarte zeigen */
+    .brief > .pdf {
+      display: block !important;
+    }
+    .brief > .b-offer {
+      display: none !important;
+    }
+    /* Blocklayout statt Flexbox: Firefox teilt Flex-Container beim Seitenumbruch nicht sauber */
+    .pdf {
+      display: block;
+      background: #f5f4f2;
+      color: #1c1b19;
+      font-family: var(--f-body);
+      font-size: 9pt;
+      line-height: 1.4;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+    .pdf__kopf {
+      display: block;
+      width: 100%;
+      height: 60mm;
+      object-fit: cover;
+      /* Köpfe und Schriftzug ganz im Bild – oben und unten nur Vorhang abgeschnitten */
+      object-position: center 40%;
+    }
+    .pdf__body {
+      /* schiebt den Abschluss bei kurzen Angeboten ans Seitenende (A4 − Kopf − Abschluss) */
+      min-height: 186mm;
+      padding: 9mm 18mm 0 21mm;
+      /* beim Seitenumbruch Innenabstand auch oben auf der Folgeseite */
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+    .pdf__adresse {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10mm;
+    }
+    .pdf__meta {
+      display: grid;
+      grid-template-columns: auto auto;
+      align-content: start;
+      gap: 0.5mm 12mm;
+      margin: 0;
+    }
+    .pdf__meta dd {
+      margin: 0;
+      text-align: right;
+    }
+    .pdf__titel {
+      margin: 8mm 0 6mm;
+      font-family: var(--f-body);
+      font-size: 11pt;
+      font-weight: var(--w-bold);
+      letter-spacing: 0.02em;
+    }
+    .pdf__tabelle {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    .pdf__tabelle th {
+      padding: 0 3mm 2mm;
+      border-bottom: 1px solid #4f5a77;
+      font-size: 9.5pt;
+      font-weight: var(--w-regular);
+      text-align: left;
+    }
+    .pdf__tabelle td {
+      padding: 0 3mm 5mm;
+      vertical-align: top;
+    }
+    /* Eine Position = ein tbody; bleibt beim Seitenumbruch zusammen, Linie darunter */
+    .pdf__pos {
+      break-inside: avoid;
+    }
+    .pdf__pos tr:last-child td {
+      border-bottom: 1px solid #4f5a77;
+    }
+    /* Titel jeder Position: fett, ohne Hintergrund */
+    .pdf__band td {
+      padding: 2.5mm 3mm 0.5mm;
+    }
+    .pdf__band td:first-child {
+      font-weight: var(--w-bold);
+    }
+    .pdf__untertitel {
+      display: block;
+      font-weight: var(--w-regular);
+      font-style: italic;
+    }
+    .pdf__pos tr:first-child td {
+      border-top: 2mm solid transparent;
+      background-clip: padding-box;
+    }
+    .pdf__inhalt td {
+      padding: 1.5mm 3mm 3mm;
+    }
+    .pdf__inhalt p {
+      margin: 0 0 1mm;
+    }
+    /* Aufzählungen zweispaltig, damit eine normale Offerte auf eine Seite passt */
+    .pdf__inhalt ul {
+      columns: 2;
+      column-gap: 10mm;
+      margin: 1mm 0 0;
+      padding-left: 4mm;
+    }
+    .pdf__inhalt li {
+      break-inside: avoid;
+    }
+    .pdf__inhalt ul.pdf__liste-lang {
+      columns: 1;
+    }
+    .pdf__anzahl {
+      width: 32mm;
+    }
+    .pdf__summe {
+      width: 26mm;
+      text-align: right !important;
+      white-space: nowrap;
+    }
+    .pdf__tabelle tfoot td {
+      padding: 3mm 3mm;
+      font-size: 10pt;
+      font-weight: var(--w-bold);
+    }
+    .pdf__gesamt-label {
+      text-align: right;
+      padding-right: 8mm !important;
+    }
+    .pdf__hinweise {
+      margin-top: 4mm;
+      font-size: 8.5pt;
+    }
+    .pdf__hinweise p {
+      margin: 0 0 1mm;
+    }
+    .pdf__ende {
+      break-inside: avoid;
+      padding-top: 5mm;
+    }
+    .pdf__steuer {
+      margin: 0;
+      font-size: 8.5pt;
+      text-align: center;
+    }
+    .pdf__abschluss {
+      margin-top: 2mm;
+      font-family: var(--f-bold);
+      font-size: 15pt;
+      line-height: 1.2;
+      color: #f0b25c;
+      text-align: center;
+    }
+    .pdf__fuss {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 6mm;
+      padding: 7mm 12mm 8mm 17mm;
+      font-size: 8.5pt;
+      break-inside: avoid;
+    }
+    .pdf__mitte {
+      text-align: center;
+      white-space: nowrap;
+    }
+    .pdf__bank {
+      font-size: 8pt;
+      white-space: nowrap;
     }
   }
 </style>

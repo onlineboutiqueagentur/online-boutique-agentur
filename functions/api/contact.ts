@@ -63,7 +63,7 @@ async function sendMail(env: Env, a: Anfrage, adminUrl: string): Promise<boolean
       : check
         ? `🥐 Marken-Check ausgefüllt – Ergebnis: ${a.ergebnis ?? '–'}`
         : angebot
-        ? `✨ Angebot angenommen – www.online-boutique-agentur.at/angebot/${a.angebot}/`
+        ? `✨ Angebot angenommen – www.online-boutique-agentur.at/angebot/brief/${a.angebot}/`
         : 'Neue Anfrage über www.online-boutique-agentur.at',
     '',
     `Name: ${a.name}`,
